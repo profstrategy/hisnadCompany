@@ -4,7 +4,7 @@ A web application for managing Land and House services.
 ## Features
 
 - Authentication and user management
-- Client dashboard with analytics
+- Admin dashboard with analytics
   - Revenue tracking
   - Performance metrics
   - Data visualization (Area, Bar and Pie charts)
