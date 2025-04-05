@@ -54,7 +54,7 @@ const Footer = () => {
       </div>
 
       {/* Contact & Socials */}
-      <div className='border-t border-gray-300 mt-12 pt-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left'>
+      <div className='border-t border-gray-300 mt-12 pt-8 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-48 text-center md:text-left'>
         <div>
           <AppHeading variant='h4'>Office Line</AppHeading>
           

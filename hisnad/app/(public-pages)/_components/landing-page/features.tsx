@@ -1,20 +1,16 @@
 'use client'
 import { deguardian, nairametrics, tribune, ustimes, vanguard } from "@/public";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import React from "react";
 import { motion, useAnimation } from "framer-motion"; 
 import Image from "next/image";
 import { AppHeading } from "@/components/reusables/app-heading";
+import { features } from "@/constants/types";
 
 
 export default function Features() {
     const controls = useAnimation()
-  interface Features {
-    id: string;
-    image: StaticImport;
-  }
 
-  const words_1: Features[] = [
+  const words_1: features[] = [
     { id: "vanguard", image: vanguard },
     { id: "deguardian", image: deguardian },
     { id: "ustimes", image: ustimes },
@@ -51,7 +47,7 @@ export default function Features() {
         Featured In the Media
       </AppHeading>
 
-      <div className="sm:flex flex-wrap justify-center items-center gap-12 -mt-10 hidden">
+      <div className="md:flex flex-wrap justify-center items-center gap-12 -mt-4 sm:-mt-8 md:-mt-4 hidden">
                 {words_1.map((img, i) => (
                     <motion.div
                         key={img.id}
@@ -81,7 +77,7 @@ export default function Features() {
 
       {/* Scrolling Container on smaller screen sizes */}
       <motion.div
-        className="flex w-max items-center gap-12 sm:animate-none sm:hidden"
+        className="flex w-max items-center md:gap-12 gap-16 md:hidden"
         animate={controls}
         transition={{ ease: "easeInOut", duration: 1000, repeat: Infinity }}
       >
@@ -99,14 +95,14 @@ export default function Features() {
               height={100}
               quality={100}
               alt={img.id}
-              className="object-contain w-10 h-10 sm:w-12 sm:h-12 rounded-xl "
+              className="object-contain w-10 h-10 sm:w-14 sm:h-14 md:w-12 md:h-12 rounded-xl "
             /> : <Image
             src={img.image}
             width={100}
             height={100}
             quality={100}
             alt={img.id}
-            className={`object-contain w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40`}
+            className={`object-contain w-24 h-24 sm:w-36 sm:h-40 md:w-40 md:h-32 lg:w-40 lg:h-40`}
           />}
           </motion.div>
         ))}
