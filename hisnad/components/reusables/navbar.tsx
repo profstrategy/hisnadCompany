@@ -196,7 +196,7 @@ const Navbar = () => {
       className=' border-b border-border-primary shadow-xs'
     >
       <nav
-        className='bg-white max-w-[700px] px-2 xmd:px-4 md:px-6 lg:px-8 h-16 mx-auto grid items-center sm:max-w-[125rem] lg:max-w-[75rem]'
+        className='bg-white max-w-[700px] px-2 xmd:px-4 md:px-6 lg:px-8 h-16 mx-auto grid items-center sm:max-w-[50rem] md:max-w-[75rem]'
       >
         <ul className="flex justify-between items-center">
           <Logo />
