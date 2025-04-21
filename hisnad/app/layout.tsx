@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Roboto_Serif } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
-import Navbar from "../components/reusables/navbar";
-import Footer from "../components/reusables/footer";
+
 
 const roboto = Roboto_Serif({
   subsets: ['latin'],

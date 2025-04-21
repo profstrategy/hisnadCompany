@@ -8,7 +8,7 @@ import { FiFacebook } from 'react-icons/fi';
 
 const Footer = () => {
   return (
-    <footer className='bg-white text-gray-800 py-12 px-6 md:px-12 lg:px-16'>
+    <footer className=' text-gray-800 py-12 px-6 md:px-12 lg:px-16'>
       <div className='max-w-[75rem] mx-auto grid grid-cols-1 md:grid-cols-4 gap-12'>
         {/* Logo & Address */}
         <div className='flex flex-col gap-4'>
