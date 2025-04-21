@@ -20,7 +20,6 @@ export const navItems: NavItems[] = [
   { id: "home", item: "Home" },
   { id: "properties", item: "Our-Properties" },
   { id: "about", item: "About" },
-  // { id: "contact", item: "Contact" },
 ];
 
 export const abouthisnad: AboutHusnad[] = [
