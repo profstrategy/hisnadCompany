@@ -8,10 +8,19 @@ import ustimes from './ustimes.png'
 import nairametrics from './nairametrics.png'
 import vanguard from './vanguard.svg'
 import deguardian from './guardian.png'
-import fast_docs from './docs.png'
+import mark from './mark.svg'
 import invest from './invest.png'
 import invests from './invests.png'
+import trust from  './trust.png'
+import vicinity from './vicinity.jpg'
+import bgImage from './bgImage.svg'
+import image1 from './image-1.jpeg'
+import image2 from './image-2.jpeg'
+import image3 from './image-3.jpeg'
+import hisnad_1 from './hisnad-1.jpg'
+import hisnad_2 from './hisnad-2.jpg'
+import hisnad_3 from './hisnad-3.jpg'
+import houses from './houses.png'
 
 
-export { logo, license_1, license_3, license_2, estate, invest, ustimes, vanguard,deguardian, nairametrics, tribune, invests, fast_docs
- }
+export { logo, license_1, license_3, license_2, estate, invest, ustimes, vanguard,deguardian, nairametrics, tribune, invests, mark , trust, vicinity, bgImage, image1, image2, image3, hisnad_1, hisnad_2, hisnad_3, houses}

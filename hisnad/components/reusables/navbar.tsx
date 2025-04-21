@@ -5,49 +5,79 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { DesktopNavLinksProps, MobileNavMenuProps, NavItems } from '@/constants/types';
 import { usePathname, useRouter } from 'next/navigation';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import AppButton from '@/components/reusables/app-button';
 import { IoMdArrowRoundForward } from 'react-icons/io';
 import { LiaTimesSolid } from 'react-icons/lia';
 import { FaBarsStaggered } from 'react-icons/fa6';
 import { navItems } from '@/constants/contents';
 
-
-// Logo Component
-const Logo = () => {
+export const Logo = () => {
   return (
-    <Link href="/">
-      <div className="flex gap-2 mobile:gap-3 items-center group relative cursor-pointer xmd:w-full rounded-lg whitespace-nowrap">
-        <Image
-          src={logo}
-          className="xmd:w-12 xmd:h-12 lg:w-10 lg:h-10 tab:w-8 tab:h-7"
-          alt="Brand Logo"
-          width={50}
-          height={50}
-        />
-        {/* <div className="tab:hidden xmd:relative tab:group-hover:block transition-all">
-          Hisnad
-        </div> */}
+    <Link href="/home" className="group" aria-label="Hisnad Home">
+      <div className="flex items-center gap-2 sm:gap-3 cursor-pointer transition-all duration-300 hover:-translate-y-0.5">
+        <div className="relative">
+          <Image
+            src={logo}
+            alt="Hisnad Logo"
+            width={64}
+            height={64}
+            className="w-10 h-10 sm:w-14 sm:h-14 transition-all duration-500 group-hover:rotate-[15deg] group-hover:scale-110 drop-shadow-lg"
+            priority
+          />
+          <div className="absolute inset-0 rounded-full border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:scale-110 -z-10" />
+        </div>
+        <div className="flex flex-col leading-none transition-all duration-500 group-hover:translate-x-1">
+          <h1 className="font-black text-lg sm:text-2xl tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent group-hover:from-accent group-hover:to-primary transition-all duration-500">
+            Hisnad
+          </h1>
+          <span className="font-medium text-xs sm:text-sm text-muted-foreground group-hover:text-primary transition-all duration-500 group-hover:translate-x-1">
+            Home
+          </span>
+        </div>
       </div>
     </Link>
   );
-}
+};
 
 const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinksProps) => {
+  const router = useRouter();
   return (
-    <ul className="flex items-center justify-center lg:gap-12 md:gap-10">
+    <ul className="md:flex items-center justify-center lg:gap-8 md:gap-6 hidden">
       {navItems?.map((item) => (
-        <li
-          key={item.id}
-          onClick={() => setActiveItem(item.id)}
-          className={`mobile:hidden xmd:hidden hidden md:flex hover:text-hover-color transition-all cursor-pointer md:text-[1rem] xmd:text-sm ${item.id === activeItem
-              ? ' text-accent-secondary opacity-40 font-bold'
-              : `text-black`
-            }`}
-        >
-          <Link href={`/${item.id}`}>{item.item}</Link>
+        <li key={item.id} className="relative">
+          <Link 
+            href={`${item.id === 'home' ? 'home' : item.id}`}
+            onClick={() => setActiveItem(item.id)}
+            className={`px-3 py-2 rounded-md transition-all md:text-[0.95rem] lg:text-[1rem] font-medium relative
+              ${
+                item.id === activeItem 
+                  ? 'text-accent-primary font-semibold' 
+                  : 'text-gray-700 hover:text-accent-primary'
+              }`}
+          >
+            {item.item}
+            {item.id === activeItem && (
+              <motion.span 
+                className="absolute bottom-0 left-1/2 h-0.5 bg-accent-primary w-4/5 -translate-x-1/2"
+                layoutId="activeNavItem"
+                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              />
+            )}
+          </Link>
         </li>
       ))}
+
+<div className="hidden md:flex items-center">
+          <AppButton
+            variant="primary"
+            className="px-6 text-white"
+            icon={<IoMdArrowRoundForward className="w-5 h-5" />}
+            onClick={() => router.push("/properties")}
+          >
+            Get Started
+          </AppButton>
+        </div>
     </ul>
   )
 }
@@ -60,83 +90,93 @@ const MobileNavMenu = ({
   setIsOpen,
 }: MobileNavMenuProps) => {
   const router = useRouter();
+  
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div 
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="bg-subtle-accent absolute top-28 left-5 right-5 shadow-sm bottom-0 lg:hidden tab:hidden grid items-center justify-center md:hidden px-4 z-50"
-        >
         <motion.div
-          
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed z-10 w-full xmd:mx-auto md:w-[80%] min-h-9/12 max-h-[1000px] overflow-y-scroll drop-shadow-xs lg:hidden tab:hidden bg-white"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
         >
-          <motion.ul
-            className="text-sm font-normal gap-6 flex flex-col justify-start items-center relative mt-8 p-6"
-            initial="closed"
-            animate="open"
-            variants={{
-              open: {
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-              closed: {
-                transition: {
-                  staggerChildren: 0.05,
-                  staggerDirection: -1,
-                },
-              },
-            }}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="absolute right-0 top-0 h-full w-4/5 max-w-sm shadow-xl bg-background"
+            onClick={(e) => e.stopPropagation()}
           >
-            {navItems?.map((item) => (
-              <motion.li
-                key={item.id}
-                variants={{
-                  open: { y: 0, opacity: 1 },
-                  closed: { y: 20, opacity: 0 },
-                }}
-                onClick={() => {
-                  setActiveItem(item.id);
-                  setIsOpen(false);
-                }}
-                className={`mobile:block w-full text-center tab:hidden hover:text-hover-color transition-all p-3 cursor-pointer border-b border-border-primary shadow-2xs grid items-center ${item.id === activeItem
-                    ? ' text-accent-secondary opacity-40 font-bold'
-                    : `text-black text-[1rem]`
-                  }`}
+            <div className="flex justify-end p-4">
+              <button 
+                onClick={() => setIsOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Close menu"
               >
-                <Link href={`/${item.id}`}>{item.item}</Link>
-              </motion.li>
-            ))}
-
-            <motion.div
+                <LiaTimesSolid className="w-6 h-6 text-gray-700" />
+              </button>
+            </div>
+            
+            <motion.ul
+              className="flex flex-col p-6 space-y-4"
+              initial="closed"
+              animate="open"
               variants={{
-                open: { y: 0, opacity: 1 },
-                closed: { y: 20, opacity: 0 },
+                open: {
+                  transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+                },
+                closed: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
               }}
-              className="w-full flex justify-center pt-4"
             >
-              <Link
-                href={``}
-                className="w-full flex justify-center"
+              {navItems?.map((item) => (
+                <motion.li
+                  key={item.id}
+                  variants={{
+                    open: { x: 0, opacity: 1 },
+                    closed: { x: 50, opacity: 0 },
+                  }}
+                  transition={{ type: 'spring', stiffness: 500 }}
+                >
+                  <Link
+                    href={`/${item.id === '/home' ? '/home' : item.id}`}
+                    onClick={() => {
+                      setActiveItem(item.id);
+                      setIsOpen(false);
+                    }}
+                    className={`block px-4 py-3 rounded-lg text-lg font-medium transition-colors
+                      ${
+                        item.id === activeItem
+                          ? 'bg-accent-white/10 text-accent-primary'
+                          : 'text-gray-700 hover:bg-white'
+                      }`}
+                  >
+                    {item.item}
+                  </Link>
+                </motion.li>
+              ))}
+
+              <motion.li
+                variants={{
+                  open: { x: 0, opacity: 1 },
+                  closed: { x: 50, opacity: 0 },
+                }}
+                transition={{ type: 'spring', stiffness: 500 }}
+                className="mt-8"
               >
                 <AppButton
-                  className="text-fz-xs w-full text-white"
-                  icon={<IoMdArrowRoundForward />}
-                  onClick={() => {
-                    router.push(
-                      ``
-                    );
-                  }}
-                  
+                  variant="primary"
+                  className="w-full py-3 text-lg text-white"
+                  icon={<IoMdArrowRoundForward className="w-5 h-5" />}
+                  onClick={() => router.push("/properties")}
                 >
                   Get Started
                 </AppButton>
-              </Link>
-            </motion.div>
-          </motion.ul>
-        </motion.div>
+              </motion.li>
+            </motion.ul>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -148,111 +188,68 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState(
-    pathname === '/' ? '/' : pathname.slice(1)
+    pathname === '/home' ? 'home' : pathname.split('/')[1] || 'home'
   );
-  const router = useRouter();
-  
 
   useEffect(() => {
     const handleScroll = () => {
-      setHasScrolled(window.scrollY > 0);
+      setHasScrolled(window.scrollY > 10);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Update active item when pathname changes
   useEffect(() => {
-    setActiveItem(pathname === '/home' ? '/' : pathname.slice(1));
+    setActiveItem(pathname === '/home' ? 'home' : pathname.split('/')[1] || 'home');
   }, [pathname]);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isOpen) {
-        document.body.style.backgroundColor = "";
-        // document.body.style.opacity = "0.9"
-        document.body.style.transition = "opacity 0.3s ease, background-color 0.3s ease";
+      document.body.style.overflow = 'hidden';
     } else {
-        document.body.style.backgroundColor = "";
-        document.body.style.opacity = "";
-      }
-
-    if (isOpen) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'unset';
     }
     return () => {
-        document.body.style.overflow = 'unset';
-        document.body.style.backgroundColor = "";
-        // document.body.style.opacity = "";
+      document.body.style.overflow = 'unset';
     };
-
-}, [isOpen]);
+  }, [isOpen]);
 
   return (
-    <section
-      className=' border-b border-border-primary shadow-xs'
-    >
-      <nav
-        className='bg-white max-w-[700px] px-2 xmd:px-4 md:px-6 lg:px-8 h-16 mx-auto grid items-center sm:max-w-[50rem] md:max-w-[75rem]'
-      >
-        <ul className="flex justify-between items-center">
-          <Logo />
+    <header className={`sticky top-0 z-30 bg-white transition-shadow duration-300 ${
+      hasScrolled ? 'shadow-md' : 'shadow-sm'
+    }`}>
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
+        <Logo />
 
-          <DesktopNavMenu
-            navItems={navItems}
-            activeItem={activeItem}
-            setActiveItem={setActiveItem}
-          />
-         
-         
-            <Link
-              href={``}
-              aria-label="Get started with Hisnad"
-            >
-              <AppButton
-                className=" font-bold xmd:hidden hidden md:flex items-center justify-center " variant='secondary'
-                icon={<IoMdArrowRoundForward className="w-6 h-4" />}
-                onClick={() =>
-                  router.push(``)
-                }
-              >
-                Get Started
-              </AppButton>
-            </Link>
-            
+        <DesktopNavMenu
+          navItems={navItems}
+          activeItem={activeItem}
+          setActiveItem={setActiveItem}
+        />
 
+        <button
+          className="md:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? 'Close menu' : 'Open menu'}
+        >
+          {isOpen ? (
+            <LiaTimesSolid className="w-6 h-6 text-gray-700" />
+          ) : (
+            <FaBarsStaggered className="w-6 h-6 text-gray-700" />
+          )}
+        </button>
 
-            <button
-              className={` rounded-sm p-1 cursor-pointer md:hidden z-50`}
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            >
-              {isOpen ? (
-                <LiaTimesSolid
-                  className={`w-6 h-6 text-black`}
-                />
-              ) : (
-                <FaBarsStaggered
-                  className={`w-6 h-6 text-black`}
-                />
-              )}
-            </button>
-          
-        </ul>
+        <MobileNavMenu
+          isOpen={isOpen}
+          navItems={navItems}
+          activeItem={activeItem}
+          setActiveItem={setActiveItem}
+          setIsOpen={setIsOpen}
+        />
       </nav>
-
-      <MobileNavMenu
-        isOpen={isOpen}
-        navItems={navItems}
-        activeItem={activeItem}
-        setActiveItem={setActiveItem}
-        setIsOpen={setIsOpen}
-      />
-    </section>
+    </header>
   )
 }
 
-export default Navbar
+export default Navbar;
