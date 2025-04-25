@@ -7,10 +7,11 @@ import SingularProperty from '../../_components/properties-page/singular-propert
 export default async function SingularPropertiesPage({
   params,
 }: {
-  params: { propertiesId: string }
+  params: Promise<{ propertiesId: string }>
 }) {
+  const awaitedParams = await params;
+  const { propertiesId } = awaitedParams;
 
-  const { propertiesId } = await params
   // First validate the params
   if (!propertiesId) {
     return <PropertyEmptyState message={'Missing property ID'} key={propertiesId} />
