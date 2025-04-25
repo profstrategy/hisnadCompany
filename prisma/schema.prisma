@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DIRECT_URL")
+}
+
+model SegregatedProperties {
+  id          Int      @id @default(autoincrement())
+  type        Type
+  mainImage   String[]
+  tier        Tier
+  status      Status
+  price       String[]
+  title       String
+  slug        String
+  location    String
+  category    String
+  features    String[]
+  description String?
+  benefit     String[]
+  documents   String[]
+  payment     String[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+enum Type {
+  Hisnad
+  Crestwood
+}
+
+enum Tier {
+  Residential
+  Farmland
+}
+
+enum Status {
+  Available
+  Sold
+}
