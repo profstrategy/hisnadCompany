@@ -1,11 +1,11 @@
-import { image1, image2, image3 } from "@/public";
+
+import { testimonial_1, testimonial_2, testimonial_3, testimonial_4 } from "@/public";
 import {
   AboutHusnad,
   Faqs,
   NavItems,
   OfficeAddress,
-  SegregatedProperties,
-  Status,
+  Testimonial,
 } from "./types";
 
 export const address: OfficeAddress[] = [
@@ -17,7 +17,7 @@ export const address: OfficeAddress[] = [
 ];
 
 export const navItems: NavItems[] = [
-  { id: "home", item: "Home" },
+  { id: "/", item: "Home" },
   { id: "properties", item: "Our-Properties" },
   { id: "about", item: "About" },
   // { id: "contact", item: "Contact" },
@@ -65,115 +65,41 @@ export const faqs: Faqs[] = [
   },
 ];
 
-export const segregatedproperties: SegregatedProperties[] = [
+export const testimonials:Testimonial[] = [
   {
-    id: "al-Hisnad-estate",
-    type: "Hisnad",
-    image: image1,
-    alt: "estate-1",
-    tier: "RESIDENTIAL",
-    status: Status.Available,
-    price: [{ id: "plot", price: "₦3.5 Million" }],
-    title: "Al-Hisnad Estate, Shimawa. Ogun State",
-    location: "Shimawa. Ogun State",
-    description:
-      "Al-Hisnad Estate, Shimawa, Ogun State, a 2-mins drive to Cape Town, Shimawa, Ogun State. This phase is designed to offer comfort, recreation, business opportunities, and wholesome family life in a serene environment cater to the needs of modern families. From recreational spaces to business opportunities, this phase has something for everyone. Don’t miss out on the chance to be part of this thriving community. There are many reasons to choose Al-Hisnad Estate for your next home or investment property. The location Ogun State offers a peaceful retreat from the chaos of the city, while still providing easy access to essential amenities. The design and construction of the property are of the highest quality, ensuring that residents enjoy a comfortable and luxurious lifestyle.",
-    category: "Landed property, Residential",
-    features: [
-      "10% discount for bulk purchases",
-      "Easy access to Lagos-Ibadan Expressway",
-      "2-mins drive to Adron's Cape Town, Shimawa, Ogun State",
-      "Instant allocation",
-      "C of O processing",
-      "Deed of assignment",
-      "Registered survey",
-    ],
-
-    mainImage: {
-      id: "al-Hisnad-estate-images",
-      image: [image1],
-    },
-
-    payment: [
-      { id: "Initial Payment Plan", payment: ` Initial Deposit`},
-      { id: "Outright/ 3 Months Payment", payment: "Balance" },
-    ]
+    id: 1,
+    name: "Adebayo Okafor",
+    role: "Residential Investor",
+    testimonial: "Buying a plot at Al-Hisnad Estate. The location is perfect—close to Lagos-Ibadan Expressway yet serene. The documentation process was seamless, and I got my C of O faster than expected. Highly recommended!",
+    image: testimonial_1,
+    property: "Al-Hisnad Estate, Shimawa",
+    rating: 4.8
   },
   {
-    id: "crestwood-green-acres",
-    type: "Crestwood",
-    image: image2,
-    alt: "farmland-1",
-    tier: "FARMLAND",
-    status: Status.Available,
-    price: [
-      { id: "plot", price: "₦500,000" },
-      { id: "acre", price: "₦2.1Million" },
-    ],
-    title: "Crestwood Green Acres (Featured Farmland)",
-    location: "Orile Oko Community, Ogun State",
-    description:
-      "Crestwood Green Acres, managed by Al-Hisnad Home and Property, offers investors a turnkey farmland investment opportunity in Orile-Oko community, Remo North, Ogun State. The model allows investors to purchase freehold farmland while our team handles end-to-end agribusiness management.",
-    category: "Agricultural Investment/Farmland",
-    features: [
-      "10% discount for bulk purchases",
-      "Two management options: Full-service (60/40 profit share) or self-managed",
-      "Earn lifetime returns without active farming involvement",
-      "Short-Term Crops: Focus on high-demand crops (maize, cassava) with quick ROI",
-      "Risk Mitigation: Professional management reduces operational risks.",
-      "Land Appreciation: Freehold title guarantees long-term asset value growth",
-      "18-25% average annual ROI (with risk-adjusted projections)",
-      "Professional agronomy team with guaranteed off-taker networks",
-      "Flexible exit/management change options",
-    ],
-    benefit: [
-      "Free 10kg premium hybrid maize seeds per acre and Free 20 bundles of cassava stems per acre",
-    ],
-
-    mainImage: {
-      id: "crestwood-green-acres-images",
-      image: [image1, image2],
-    },
-
-    payment: [
-      { id: "Initial Payment Plan", payment: ` Initial Deposit`},
-      { id: "Outright/ 3 Months Payment", payment: "Balance" },
-    ]
+    id: 2,
+    name: "Chioma Eze",
+    role: "Farmland Investor",
+    testimonial: "Crestwood Green Acres has been a game-changer for me. I opted for the full-service farming option, and the returns have been impressive. The 25% annual ROI is real! The team handles everything, so I just sit back and earn.",
+    image: testimonial_2,
+    property: "Crestwood Green Acres",
+    rating: 4.5
   },
-
   {
-    id: "flourish-farm-estate",
-    type: "Crestwood",
-    image: image3,
-    alt: "farmland-2",
-    tier: "FARMLAND",
-    status: Status.Available,
-    price: [
-      { id: "plot", price: "₦500,000" },
-      { id: "acre", price: "₦2.1Million" },
-    ],
-    title: "Flourish farm Estate (Featured Farmland)",
-    location: "Ikanna Balogun, Obafemi Owode local government, Ogun State.",
-    description:
-      "Freehold farmland along Lagos-Ibadan Expressway, Ikanna Balogun, Obafemi Owode local government, Ogun State with turnkey agribusiness management. Ideal for investors seeking 18-25% annual ROI through long-term and short-term cultivation.",
-    category: "Agricultural Investment/Farmland",
-    features: [
-      "10% discount for bulk purchases",
-      "Deed of Assignment",
-      "Registered Survey Plan",
-      "Certificate of occupancy (in view)",
-    ],
-    benefit: [
-      "Free 10kg premium hybrid maize seeds per acre and Free 20 bundles of cassava stems per acre",
-    ],
-    mainImage: {
-      id: "flourish-farm-estate-images",
-      image: [image1, image2, image3],
-    },
-
-    payment: [
-      { id: "Initial Payment Plan", payment: ` Initial Deposit`},
-      { id: "Outright/ 3 Months Payment", payment: "Balance" },
-    ]
+    id: 3,
+    name: "Emeka Ibrahim",
+    role: "Agri-Investor",
+    testimonial: "Flourish Farm Estate gave me a secure farmland investment with zero stress. The free cassava stems and hybrid maize seeds were a bonus. The deed of assignment was processed smoothly, and I’m already seeing appreciation in land value.",
+    image: testimonial_3,
+    property: "Flourish Farm Estate",
+    rating: 4
   },
+  {
+    id: 4,
+    name: "Folake Adeleke",
+    role: "First-Time Buyer",
+    testimonial: "As a first-time investor, I was nervous, but Al-Hisnad made it easy. The 10% discount for bulk purchase helped, and their payment plan was flexible. The estate is developing fast, and I’m confident in my investment’s future value.",
+    image: testimonial_4,
+    property: "Al-Hisnad Estate, Shimawa",
+    rating: 5
+  }
 ];

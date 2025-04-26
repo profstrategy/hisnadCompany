@@ -1,15 +1,17 @@
 'use client';
 import React from 'react';
-import { Properties } from '@/constants/types';
+import { ActivePropertyPreview } from '@/constants/types';
 import useSlider from '@/hooks/use-slider';
-import { image1, image2, image3 } from '@/public';
 import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useRouter } from 'next/navigation';
 import { CLIENT_ROUTES } from '@/lib/routes';
-import { segregatedproperties } from '@/constants/contents';
 
-const PropertiesCarousel = () => {
+interface PropertiesCarouselProps {
+    segregatedproperties: ActivePropertyPreview[]
+}
+
+const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) => {
     const { setApi, count, current } = useSlider();
     const [hovered, setHovered] = React.useState<number | null>(null);
     const [angleMap, setAngleMap] = React.useState<{ [key: number]: number }>({});
@@ -24,7 +26,7 @@ const PropertiesCarousel = () => {
     };
 
     const getButtonTransform = (angle: number) => {
-        const radius = 60; // pixels
+        const radius = 60; 
         const rad = (angle * Math.PI) / 180;
         const x = radius * Math.cos(rad);
         const y = radius * Math.sin(rad);
@@ -48,8 +50,8 @@ const PropertiesCarousel = () => {
                                 className="relative w-full h-full rounded-2xl overflow-hidden"
                             >
                                 <Image
-                                    src={property.image ?? ''}
-                                    alt={property.alt}
+                                    src={property.mainImage?.[0] ?? ''}
+                                    alt={`${property.id}-img`}
                                     fill
                                     className="object-cover rounded-2xl"
                                     priority
@@ -65,7 +67,7 @@ const PropertiesCarousel = () => {
                                                     transform: getButtonTransform(angleMap[property.id as unknown as number] || 0),
                                                     transition: 'transform 0.1s linear',
                                                 }}
-                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.details(property.id)}`)}
+                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.details(property.slug)}`)}
                                             >
                                                 View property details &gt;
                                             </button>
@@ -77,7 +79,7 @@ const PropertiesCarousel = () => {
                                                     transition: 'transform 0.1s linear',
                                                 }}
 
-                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.details(property.id)}`)}
+                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.details(property.slug)}`)}
                                             >
                                                 View property details &gt;
                                             </button>

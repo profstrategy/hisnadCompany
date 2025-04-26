@@ -21,6 +21,10 @@ import hisnad_1 from './hisnad-1.jpg'
 import hisnad_2 from './hisnad-2.jpg'
 import hisnad_3 from './hisnad-3.jpg'
 import houses from './houses.png'
+import testimonial_1 from './testimonial-1.jpg'
+import testimonial_2 from './testimonial-2.jpg'
+import testimonial_3 from './testimonial-3.jpg'
+import testimonial_4 from './testimonial-4.jpeg'
 
 
-export { logo, license_1, license_3, license_2, estate, invest, ustimes, vanguard,deguardian, nairametrics, tribune, invests, mark , trust, vicinity, bgImage, image1, image2, image3, hisnad_1, hisnad_2, hisnad_3, houses}
+export { logo, license_1, license_3, license_2, estate, invest, ustimes, vanguard,deguardian, nairametrics, tribune, invests, mark , trust, vicinity, bgImage, image1, image2, image3, hisnad_1, hisnad_2, hisnad_3, houses, testimonial_1, testimonial_2, testimonial_3, testimonial_4}

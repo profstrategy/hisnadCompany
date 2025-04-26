@@ -3,7 +3,7 @@ import React from 'react'
 
 const AboutHisnad = () => {
   return (
-    <section className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+    <section className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-8'>
         <div className='mb-8 max-w-2xl m-auto text-center'>
             <AppHeading variant='h1' className='text-center'>Tackling Africa’s real estate hurdles, one challenge at a time</AppHeading>
 

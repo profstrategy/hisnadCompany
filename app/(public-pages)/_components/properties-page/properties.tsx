@@ -1,5 +1,5 @@
 'use client';
-import { SegregatedProperties, Status } from '@/constants/types';
+import { ActivePropertyPagePreview, SegregatedProperties } from '@/constants/types';
 import { CLIENT_ROUTES } from '@/lib/routes';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 interface PropertiesProps {
-    pkg: SegregatedProperties;
+    pkg: ActivePropertyPagePreview;
     theme?: 'light' | 'dark';
 }
 
@@ -47,13 +47,11 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
     const styles = themeStyles[theme];
 
     const singlePackageLink = CLIENT_ROUTES.PublicPages.properties.details(
-        pkg?.id ?? ''
+        pkg?.slug ?? ''
     );
 
     const handleClick = () => {
-        router.push(
-            singlePackageLink
-        );
+        router.push(singlePackageLink);
     };
 
     const cardVariants = {
@@ -77,6 +75,34 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
         }
     };
 
+    // Only render image if mainImage exists and has at least one item
+    const renderImage = () => {
+        if (!pkg.mainImage || pkg.mainImage.length === 0 || !pkg.mainImage[0]) {
+            return (
+                <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-gray-300 dark:bg-gray-700 flex items-center justify-center">
+                    <span className="text-gray-500 dark:text-gray-400">No image available</span>
+                </div>
+            );
+        }
+
+        return (
+            <motion.div
+                className="relative h-48 w-full mb-4 rounded-lg overflow-hidden"
+                variants={imageVariants}
+                transition={{ duration: 0.3 }}
+            >
+                <Image
+                    src={pkg.mainImage[0]}
+                    alt={`${pkg.id}-image`}
+                    quality={100}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+            </motion.div>
+        );
+    };
+
     return (
         <motion.div
             className={`${styles.background} p-6 rounded-lg border ${styles.border} ${styles.hoverBorder} transition-all duration-300 flex flex-col h-full relative overflow-hidden`}
@@ -87,7 +113,7 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
             onHoverEnd={() => setIsHovered(false)}
         >
             {/* Floating badge for status */}
-            {pkg.status === Status.Available && (
+            {pkg.status === 'Available' && (
                 <motion.div
                     className="absolute top-4 right-4 z-10"
                     initial={{ opacity: 0, y: -10 }}
@@ -100,7 +126,7 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
                 </motion.div>
             )}
 
-            {pkg.status === Status.Sold && (
+            {pkg.status === 'Sold' && (
                 <motion.div
                     className="absolute top-4 right-4 z-10"
                     initial={{ opacity: 0, y: -10 }}
@@ -118,17 +144,17 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
                     <div
                         className={`w-8 h-8 rounded-full ${styles.iconBg} flex items-center justify-center`}
                     >
-                        {pkg.tier === 'RESIDENTIAL' && (
+                        {pkg.tier === 'Residential' && (
                             <span className={`${styles.text.primary} text-lg`}>🏠</span>
                         )}
-                        {pkg.tier === 'FARMLAND' && (
+                        {pkg.tier === 'Farmland' && (
                             <span className={`${styles.text.primary} text-lg`}>🌾</span>
                         )}
                     </div>
                     <span className={`text-sm ${styles.text.tertiary} uppercase tracking-wider`}>
                         {pkg?.type} - {pkg.tier}
                     </span>
-                    {pkg.tier === 'RESIDENTIAL' && (
+                    {pkg.tier === 'Residential' && (
                         <motion.span
                             className={`text-xs ${styles.badge} px-3 py-1 rounded-full font-medium`}
                             initial={{ scale: 0.9 }}
@@ -140,20 +166,7 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
                     )}
                 </div>
 
-                <motion.div
-                    className="relative h-48 w-full mb-4 rounded-lg overflow-hidden"
-                    variants={imageVariants}
-                    transition={{ duration: 0.3 }}
-                >
-                    <Image
-                        src={pkg.image ?? ''}
-                        alt={pkg.alt}
-                        quality={100}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                </motion.div>
+                {renderImage()}
 
                 <h3 className={`text-xl font-bold ${styles.text.primary} mb-2 line-clamp-2`}>
                     {pkg.title}
@@ -169,11 +182,16 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-
-                    {pkg.price.map((price) => (
-                        <p className={`text-2xl font-extrabold ${styles.text.primary} mb-1`} key={price.id}>{price.id === 'plot' ?  `${price.price} per Plot` : `${price.price} per Acre`}</p>
+                    {pkg.price?.map((price, i) => (
+                        <>
+                            <p
+                                className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}
+                                key={price}
+                            >
+                                {i === 0 ? `${price} per Plot` : `${price} per Acre`}
+                            </p>
+                        </>
                     ))}
-
                 </div>
             </div>
 

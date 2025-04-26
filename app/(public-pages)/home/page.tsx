@@ -10,7 +10,6 @@ import ActiveProperties from "../_components/properties-page/active-properties";
 export default function PublicPages() {
     return (
         <div className="min-h-screen grid grid-cols-1 gap-20">
-          
             <HeroSection />
             <ActiveProperties />
             <OurGoals />

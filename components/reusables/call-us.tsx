@@ -11,7 +11,7 @@ const CallUs = () => {
     return (
         <section className="w-full">
             {/* Image Container - Responsive height */}
-            <div className='relative w-full h-[50vh] sm:h-[60vh] md:h-[66.67vh] lg:h-[70vh]'>
+            <div className='relative w-full h-[60vh] sm:h-[70vh] md:h-[76.67vh] lg:h-[80vh]'>
                 <Image
                     src={houses}
                     fill

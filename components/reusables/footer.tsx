@@ -2,6 +2,7 @@ import { AppHeading } from '@/components/reusables/app-heading';
 import { abouthisnad, abouthisnad_1, address, navItems } from '@/constants/contents';
 import { license_1, license_2, license_3, logo } from '@/public';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 import { FaSquareInstagram, FaSquareWhatsapp, FaTiktok } from 'react-icons/fa6';
 import { FiFacebook } from 'react-icons/fi';
@@ -28,7 +29,7 @@ const Footer = () => {
           <AppHeading className='text-black' variant='h4'>Navigation</AppHeading>
           <ul className='space-y-2'>
             {navItems.map((itm) => (
-              <li key={itm.id} className='text-gray-700 text-sm cursor-pointer hover:text-black'>{itm.item}</li>
+              <Link href={`/${itm.id}`}><li key={itm.id} className='text-gray-700 text-sm cursor-pointer hover:text-black'>{itm.item}</li></Link>
             ))}
           </ul>
         </div>

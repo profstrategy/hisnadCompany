@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import { AppHeading } from '@/components/reusables/app-heading';
 import { FaSearch } from 'react-icons/fa';
@@ -7,11 +6,15 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { addSearchParamsToUrl } from '@/lib/utils';
 import { PROPERTY_TYPES } from '@/constants/generic';
 import { PropertiesEmptyState } from '@/components/reusables/empty-states';
-import { segregatedproperties } from '@/constants/contents';
 import { Properties } from './properties';
 import { motion } from 'framer-motion';
+import { ActivePropertyPagePreview } from '@/constants/types';
 
-const PropertiesSection = () => {
+interface PropertySectionProps {
+    allActiveProperties: ActivePropertyPagePreview[]
+}
+
+const PropertiesSection = ({ allActiveProperties }:PropertySectionProps) => {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -62,7 +65,7 @@ const PropertiesSection = () => {
 
     // Memoize segregated packages
     const filteredProperties = React.useMemo(() => {
-        return segregatedproperties.filter(
+        return allActiveProperties.filter(
             (property) =>
                 property?.type?.toUpperCase() === activeTab &&
                 (!searchTerm ||
@@ -95,7 +98,7 @@ const PropertiesSection = () => {
                                     <motion.button
                                         key={value}
                                         onClick={() => handleTabChange(value)}
-                                        className={`px-6 py-3 text-sm font-medium rounded-md relative transition-colors duration-200 ${activeTab === value
+                                        className={`px-6 py-3 md:text-sm text-[.8rem]  font-medium rounded-md relative transition-colors duration-200 ${activeTab === value
                                             ? 'text-primary-600 bg-accent-primary text-white'
                                             : 'text-gray-500 hover:text-gray-700 '
                                             }`}
@@ -169,7 +172,7 @@ const PropertiesSection = () => {
                                     transition={{ duration: 0.3, delay: index * 0.1 }}
                                     className="px-2"
                                 >
-                                    <Properties pkg={pkg} theme="light" />
+                                    <Properties pkg={pkg} theme="light" key={`${index}-${pkg.id}--`} />
                                 </motion.div>
                             ))}
                         </div>

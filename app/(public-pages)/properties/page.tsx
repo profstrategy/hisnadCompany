@@ -1,11 +1,18 @@
-import React from 'react';
+
+import React, { Suspense } from 'react';
 import PropertiesSection from '../_components/properties-page/properties-section';
 import Inspection from '../_components/properties-page/inspection';
+import { ActivePropertyPagePreview } from '@/constants/types';
+import { getAllProperties } from '@/api';
+import PropertiesSkeleton from './properties-skeleton-page';
 
-const page = () => {
+const page = async () => {
+    const allActiveProperties: ActivePropertyPagePreview[] = await getAllProperties()
     return (
         <div>
-            <PropertiesSection />
+            <Suspense fallback={<PropertiesSkeleton />}>
+            <PropertiesSection allActiveProperties={allActiveProperties} />
+            </Suspense>
             <Inspection />
         </div>
     );

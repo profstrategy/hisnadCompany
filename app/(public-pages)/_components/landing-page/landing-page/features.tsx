@@ -41,7 +41,6 @@ export default function Features() {
             ease: "linear"
           }
         });
-        controls.set({ x: "0%" });
       }
     };
     scroll();

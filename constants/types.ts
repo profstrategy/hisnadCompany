@@ -49,11 +49,6 @@ export interface MobileNavMenuProps {
     [key: `answer_${number}`]: string | undefined;
   }
 
-  interface Images {
-    id: string;
-    image: [StaticImageData, ...StaticImageData[]];
-  }
-
   interface Price {
     id: string;
     price:  string;
@@ -64,26 +59,68 @@ export interface MobileNavMenuProps {
     payment: string
   }
 
-  export enum Status {
-    Available = 'Available',
-    Sold = 'Sold',
-  }
-
   export type SegregatedProperties = {
-    id: string;
+    id: number;
     type: 'Hisnad' | 'Crestwood';
-    image?: StaticImport;
-    mainImage?: Images 
-    alt: string;
-    tier: string;
-    status: Status;
+    mainImage?: string[] 
+    // alt: string;
+    tier: 'Residential' | 'Farmland';
+    status: 'Available' | 'Sold';
     price: Price[];
     title: string;
+    slug: string;
     location: string;
     features?: string[];
     description?: string;
     category?: string;
     benefit?: string[];
     documents?: string[];
-    payment?: Payment[];
+    payment?: string[];
+    created_at?: string;
+    updated_at?: string;
   };
+
+  export type ActivePropertyPreview = {
+    mainImage?: string[]
+    id: number,
+    slug: string,
+    title: string;
+    location: string;
+  };
+
+  export type ActivePropertyPagePreview = {
+    id: number,
+    tier: 'Residential' | 'Farmland';
+    status: 'Available' | 'Sold';
+    title: string,
+    type: 'Hisnad' | 'Crestwood';
+    mainImage: string[],
+    location: string,
+    price: string[],
+    slug: string
+  }
+
+  export type SingularPropertyPreview = {
+    title?: string
+    location: string;
+    features?: string[];
+    description: string | null;
+    category?: string;
+    benefit?: string[];
+    mainImage: string[],
+    status: 'Available' | 'Sold';
+    price: string[],
+    payment?: string[];
+    created_at: Date;
+    updated_at: Date;
+  }
+
+  export interface Testimonial {
+    id: number;
+    name: string;
+    role: string;
+    rating: number
+    testimonial: string;
+    image: StaticImport;
+    property: string;
+  }

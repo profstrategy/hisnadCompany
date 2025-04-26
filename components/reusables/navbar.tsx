@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { logo } from '@/public';
 import Link from 'next/link';
 import Image from 'next/image';
-import { DesktopNavLinksProps, MobileNavMenuProps, NavItems } from '@/constants/types';
+import { DesktopNavLinksProps, MobileNavMenuProps } from '@/constants/types';
 import { usePathname, useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import AppButton from '@/components/reusables/app-button';
@@ -14,7 +14,7 @@ import { navItems } from '@/constants/contents';
 
 export const Logo = () => {
   return (
-    <Link href="/home" className="group" aria-label="Hisnad Home">
+    <Link href="/" className="group" aria-label="Hisnad Home">
       <div className="flex items-center gap-2 sm:gap-3 cursor-pointer transition-all duration-300 hover:-translate-y-0.5">
         <div className="relative">
           <Image
@@ -47,7 +47,7 @@ const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinks
       {navItems?.map((item) => (
         <li key={item.id} className="relative">
           <Link 
-            href={`${item.id === 'home' ? 'home' : item.id}`}
+            href={`${item.id === '/' ? '/' : item.id}`}
             onClick={() => setActiveItem(item.id)}
             className={`px-3 py-2 rounded-md transition-all md:text-[0.95rem] lg:text-[1rem] font-medium relative
               ${
@@ -139,19 +139,20 @@ const MobileNavMenu = ({
                     closed: { x: 50, opacity: 0 },
                   }}
                   transition={{ type: 'spring', stiffness: 500 }}
+                  onClick={() => {
+                    setActiveItem(item.id);
+                    setIsOpen(false);
+                  }}
+                  className={`block px-4 py-3 rounded-lg text-lg font-medium transition-colors
+                    ${
+                      item.id === activeItem
+                        ? 'bg-accent-white/10 text-accent-primary'
+                        : 'text-gray-700 hover:bg-white'
+                    }`}
                 >
                   <Link
-                    href={`/${item.id === '/home' ? '/home' : item.id}`}
-                    onClick={() => {
-                      setActiveItem(item.id);
-                      setIsOpen(false);
-                    }}
-                    className={`block px-4 py-3 rounded-lg text-lg font-medium transition-colors
-                      ${
-                        item.id === activeItem
-                          ? 'bg-accent-white/10 text-accent-primary'
-                          : 'text-gray-700 hover:bg-white'
-                      }`}
+                    
+                   href={`${item.id}`}
                   >
                     {item.item}
                   </Link>
@@ -188,7 +189,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState(
-    pathname === '/home' ? 'home' : pathname.split('/')[1] || 'home'
+    pathname === '/' ? '/' : pathname.split('/')[1]
   );
 
   useEffect(() => {
@@ -201,7 +202,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    setActiveItem(pathname === '/home' ? 'home' : pathname.split('/')[1] || 'home');
+    setActiveItem(pathname === '/' ? '/' : pathname.split('/')[1]);
   }, [pathname]);
 
   useEffect(() => {
