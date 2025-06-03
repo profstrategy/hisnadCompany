@@ -1,5 +1,6 @@
 // lib/prisma.ts
 import { PrismaClient } from '@prisma/client'
+// This file is used to create a singleton instance of PrismaClient
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient }
 

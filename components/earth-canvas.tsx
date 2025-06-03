@@ -21,7 +21,7 @@ import { Html } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState } from "react";
 import * as THREE from "three";
-import { latLongToVector3 } from "@/lib/utils";
+import { latLongToVector3 } from "@/_lib/utils";
 
 const LocationMarker: React.FC<{ position: [number, number, number]; name: string }> = ({
   position,

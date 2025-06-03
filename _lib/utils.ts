@@ -1,5 +1,12 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import bcrypt from 'bcryptjs'
+import getServerSession from 'next-auth'
+import { ACCOUNT_TYPE } from "@/constants/generic";
+import { authOptions } from "./auth";
+import { CLIENT_ROUTES } from "./routes";
+import { redirect } from 'next/navigation';
+import { getSession, useSession } from "next-auth/react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -36,3 +43,23 @@ export const removeSearchParamsFromUrl = (
   const searchParams = new URLSearchParams(params);
   return url.split('?')[0];
 };
+
+export const hashedData = (data: string): string => {
+  return bcrypt.hashSync(data, 12)
+}
+
+
+export const checkAuth = ({ pageType }: { pageType: ( typeof ACCOUNT_TYPE )[keyof typeof ACCOUNT_TYPE] }) => {
+const session = useSession()
+
+  if (!session) {
+    redirect(CLIENT_ROUTES.PublicPages.auth.login);
+  }
+
+  if (
+    pageType === 'ADMIN' &&
+    session.data?.accountType !== ACCOUNT_TYPE.ADMIN
+  ) {
+    redirect(CLIENT_ROUTES.PublicPages.auth.login);
+  }
+}

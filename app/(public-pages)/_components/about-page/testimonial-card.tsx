@@ -149,9 +149,6 @@ const TestimonialCard = ({ theme = 'light', testimony }: TestimonialProps) => {
                                 className="rounded-full border-4 border-white/90 shadow-2xl transform hover:scale-105 transition-all duration-500 object-cover"
                                 fill
                                 alt={`${name}-image`}
-                                onError={(e) => {
-                                    e.currentTarget.src = '/placeholder-user.png';
-                                }}
                             />
                             <motion.div
                                 className="absolute inset-0 rounded-full border-4 border-transparent"

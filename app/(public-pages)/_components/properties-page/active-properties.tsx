@@ -1,8 +1,9 @@
 import PropertiesCarousel from "./properties-carousel";
-import { getActiveProperties } from "@/api";
 import { ActivePropertyPreview } from "@/constants/types";
 import { Suspense } from "react";
 import { CarouselSkeleton } from "./properties-skeleton";
+import { getActiveProperties } from "@/_lib/prisma-data-service";
+
 
 
 const ActiveProperties: React.FC = async () => {

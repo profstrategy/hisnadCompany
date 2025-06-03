@@ -1,6 +1,6 @@
 'use client';
 import { ActivePropertyPagePreview, SegregatedProperties } from '@/constants/types';
-import { CLIENT_ROUTES } from '@/lib/routes';
+import { CLIENT_ROUTES } from '@/_lib/routes';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';

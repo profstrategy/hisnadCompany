@@ -1,11 +1,15 @@
 import AboutHisnad from "../_components/about-page/about-hisnad";
-import Testimonal from "../_components/about-page/testimonial";
+import TeamPage from "../_components/about-page/team-page";
+import Testimonial from "../_components/about-page/testimonial";
 
-export default function AboutPublicPage () {
-    return(
-        <div className="">
+export default function AboutPublicPage() {
+    console.log({ AboutHisnad, Testimonial, TeamPage });
+
+    return (
+        <div>
             <AboutHisnad />
-            <Testimonal />
+            <Testimonial />
+            <TeamPage />
         </div>
-    )
+    );
 }

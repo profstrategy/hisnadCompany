@@ -5,6 +5,7 @@ import NextTopLoader from "nextjs-toploader";
 import Navbar from "@/components/reusables/navbar";
 import Footer from "@/components/reusables/footer";
 import WhatsaapChat from "@/components/reusables/whatsaap-chat";
+import { NextAuthProvider } from "@/providers/session-provider";
 
 
 const roboto = Roboto_Serif({
@@ -28,18 +29,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-      <link rel="icon" href={metadata?.icons as string} />
+        <link rel="icon" href={metadata?.icons as string} />
       </head>
       <body
         className={` antialiased ${roboto.variable}`}
       >
+
         <NextTopLoader showSpinner={false} color="#0f68d8" />
         <Navbar />
-        <div className="max-w-screen-2xl mx-auto suppressHydrationWarning={true}">
-        {children}
-        <Footer />
-        <WhatsaapChat />
-        </div>
+        <NextAuthProvider>
+          <div className="max-w-screen-2xl mx-auto suppressHydrationWarning={true}">
+            {children}
+            <Footer />
+            <WhatsaapChat />
+          </div>
+        </NextAuthProvider>
       </body>
     </html>
   );

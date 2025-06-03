@@ -25,6 +25,8 @@ import testimonial_1 from './testimonial-1.jpg'
 import testimonial_2 from './testimonial-2.jpg'
 import testimonial_3 from './testimonial-3.jpg'
 import testimonial_4 from './testimonial-4.jpeg'
+import adeniji from './adeniji.jpg'
+import muftau from './muftau.jpg'
 
 
-export { logo, license_1, license_3, license_2, estate, invest, ustimes, vanguard,deguardian, nairametrics, tribune, invests, mark , trust, vicinity, bgImage, image1, image2, image3, hisnad_1, hisnad_2, hisnad_3, houses, testimonial_1, testimonial_2, testimonial_3, testimonial_4}
+export { logo, license_1, license_3, license_2, estate, invest, ustimes, adeniji, muftau,  vanguard,deguardian, nairametrics, tribune, invests, mark , trust, vicinity, bgImage, image1, image2, image3, hisnad_1, hisnad_2, hisnad_3, houses, testimonial_1, testimonial_2, testimonial_3, testimonial_4}

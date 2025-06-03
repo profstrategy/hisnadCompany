@@ -7,8 +7,11 @@ import { FaArrowRightLong } from 'react-icons/fa6'
 import { motion } from 'framer-motion'
 import AppButton from '@/components/reusables/app-button'
 import { IoIosArrowForward } from 'react-icons/io'
-import { splitPhoneNumber } from '@/lib/utils'
+import { splitPhoneNumber } from '@/_lib/utils'
 import Features from './features'
+import { useRouter } from 'next/navigation'
+import { CLIENT_ROUTES } from '@/_lib/routes'
+import Link from 'next/link'
 
 const DynamicWords_1 = () => {
   const words_2 = ['Invest', 'Buy', 'Save'];
@@ -59,6 +62,7 @@ const DynamicWords = () => {
 };
 
 const HeroSection = () => {
+  const router = useRouter()
   return (
     <section className="w-full py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       {/* Announcement Banner */}
@@ -187,17 +191,20 @@ const HeroSection = () => {
           <AppButton 
             variant='primary' 
             className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium rounded-lg bg-primary-600 hover:bg-primary-700 text-white shadow-sm hover:shadow-md transition-all flex items-center gap-2"
+            onClick={() => router.push(CLIENT_ROUTES.PublicPages.properties.index)}
           >
             Explore curated properties
             <IoIosArrowForward className="w-5 h-5" />
           </AppButton>
           
+          <Link href={'tel:+234 810 444 1104'}>
           <AppButton 
             variant='primary'
             className="px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 shadow-sm hover:shadow-md transition-all"
           >
             Call +234 {splitPhoneNumber('8104441104')}
           </AppButton>
+          </Link>
         </motion.div>
         
       </div>

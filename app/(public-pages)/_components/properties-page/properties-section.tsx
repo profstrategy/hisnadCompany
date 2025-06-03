@@ -3,7 +3,7 @@ import React from 'react';
 import { AppHeading } from '@/components/reusables/app-heading';
 import { FaSearch } from 'react-icons/fa';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { addSearchParamsToUrl } from '@/lib/utils';
+import { addSearchParamsToUrl } from '@/_lib/utils';
 import { PROPERTY_TYPES } from '@/constants/generic';
 import { PropertiesEmptyState } from '@/components/reusables/empty-states';
 import { Properties } from './properties';
@@ -105,7 +105,7 @@ const PropertiesSection = ({ allActiveProperties }:PropertySectionProps) => {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        {value === PROPERTY_TYPES.HISNAD ? 'Hisnad Estate' : 'CrestWood Farmland'}
+                                        {value === PROPERTY_TYPES.HISNAD ? 'Hisnad Estate' : 'Featured Farmland'}
                                         {activeTab === value && (
                                             <motion.span
                                                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500"

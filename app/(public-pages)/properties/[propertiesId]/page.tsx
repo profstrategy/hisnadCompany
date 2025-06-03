@@ -1,8 +1,8 @@
-import { getSingularProperty } from '@/api'
 import { PropertyEmptyState } from '@/components/reusables/empty-states'
 import { Suspense } from 'react'
 import SingularPropertySkeleton from '../../_components/properties-page/singular-property-skeleton'
 import SingularProperty from '../../_components/properties-page/singular-property'
+import { getSingularProperty } from '@/_lib/prisma-data-service'
 
 export default async function SingularPropertiesPage({
   params,

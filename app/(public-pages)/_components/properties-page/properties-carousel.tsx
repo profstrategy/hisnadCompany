@@ -5,7 +5,7 @@ import useSlider from '@/hooks/use-slider';
 import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useRouter } from 'next/navigation';
-import { CLIENT_ROUTES } from '@/lib/routes';
+import { CLIENT_ROUTES } from '@/_lib/routes';
 
 interface PropertiesCarouselProps {
     segregatedproperties: ActivePropertyPreview[]

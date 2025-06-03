@@ -1,10 +1,11 @@
 
-import { testimonial_1, testimonial_2, testimonial_3, testimonial_4 } from "@/public";
+import { adeniji, muftau, testimonial_1, testimonial_2, testimonial_3, testimonial_4 } from "@/public";
 import {
   AboutHusnad,
   Faqs,
   NavItems,
   OfficeAddress,
+  TeamTypes,
   Testimonial,
 } from "./types";
 
@@ -103,3 +104,28 @@ export const testimonials:Testimonial[] = [
     rating: 5
   }
 ];
+
+export const teamContents:TeamTypes[] = [
+  {
+    id: 'principal_technical_head',
+    name: 'Arc. BABATUNDE ADEBOWALE W. ADENIJI ( MPM,CIPM,MNIA,FAAPM,AIA,MNES)',
+    role: 'Principal technical head',
+    phone: '07062305224',
+    mail: 'adeniji.architecture@gmail.com',
+    image: adeniji,
+    pre_desc: 'Babatunde Adeniji has a Bachelor’s degree in Architecture from The Prestigious Obafemi Awolowo University, ile ife Osun state...',
+
+    description: 'Babatunde Adeniji has a Bachelor’s degree in Architecture from The Prestigious Obafemi Awolowo University, ile ife Osun state . He also holds a Masters of Science in Architecture from Obafemi Awolowo University, ile-ife Osun state both in Nigeria. He has been fit and recognized as a licensed and registered member Of Architect Registration Council of Nigeria and the Nigeria Institute of Architect(ARCON and NIA),the highest Architectural regulatory body in Nigeria, also recognized by AIA (AMERICAN INSTITUTE OF ARCHITECT) and the Nigeria Environmental Society in Nigeria to support the architecture profession and improve its public image, Likewise as a Certified International project Manager, Masters Project Manager and a fellow of the American Academy of Project Management, with and hand-on experience in Project management and Business Analysis both in UK and Nigeria standard,with an affiliated program on executive diploma in international human resource and international law. A Chartered and Licensed Architect, currently undergoing his M.Phil/Phd Program in Landscape Architecture.'
+  },
+
+  {
+    id: 'chief_surveyor',
+    name: ' Salman Olabode Miftau',
+    role: 'Chief Surveyor',
+    phone: '08023462549',
+    mail: 'adeniji.architecture@gmail.com',
+    image: muftau,
+    pre_desc: 'Salman Olabode Miftau is a graduate of OAU Ile Ife with B.Sc in nuclear science. A member of Poultry association of Nigeria, Ogun state chapter...',
+    description: 'Salman Olabode Miftau is a graduate of OAU Ile Ife with B.Sc in nuclear science. A member of Poultry association of Nigeria, Ogun state chapter. A retired teacher who has been practicing rearing and cropping all along teaching with passion.He is now fully into agriculture as a farmer and farm manager for Hisnad home and property agricultural section based on experience.'
+  }
+]

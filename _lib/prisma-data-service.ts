@@ -1,6 +1,5 @@
 import { ActivePropertyPagePreview, ActivePropertyPreview, SingularPropertyPreview } from "@/constants/types";
-import { prisma } from "@/lib/prisma"
-import { TURBO_TRACE_DEFAULT_MEMORY_LIMIT } from "next/dist/shared/lib/constants";
+import { prisma } from "@/_lib/prisma"
 
 export const getActiveProperties = async ():Promise<ActivePropertyPreview[]> => {
     const activeProperties = await prisma.segregatedProperties.findMany({

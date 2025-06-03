@@ -11,6 +11,7 @@ import { IoMdArrowRoundForward } from 'react-icons/io';
 import { LiaTimesSolid } from 'react-icons/lia';
 import { FaBarsStaggered } from 'react-icons/fa6';
 import { navItems } from '@/constants/contents';
+import { CLIENT_ROUTES } from '@/_lib/routes';
 
 export const Logo = () => {
   return (
@@ -73,7 +74,7 @@ const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinks
             variant="primary"
             className="px-6 text-white"
             icon={<IoMdArrowRoundForward className="w-5 h-5" />}
-            onClick={() => router.push("/properties")}
+            onClick={() => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
           >
             Get Started
           </AppButton>
@@ -171,7 +172,7 @@ const MobileNavMenu = ({
                   variant="primary"
                   className="w-full py-3 text-lg text-white"
                   icon={<IoMdArrowRoundForward className="w-5 h-5" />}
-                  onClick={() => router.push("/properties")}
+                  onClick={() => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
                 >
                   Get Started
                 </AppButton>

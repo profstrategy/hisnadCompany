@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/_lib/utils";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({

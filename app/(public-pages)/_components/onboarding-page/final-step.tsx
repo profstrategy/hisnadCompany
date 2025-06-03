@@ -3,13 +3,91 @@ import AppButton from '@/components/reusables/app-button'
 import { AppHeading } from '@/components/reusables/app-heading'
 import AppTextInput from '@/components/reusables/app-text-input'
 import { Logo } from '@/components/reusables/navbar'
-import { CLIENT_ROUTES } from '@/lib/routes'
+import { CLIENT_ROUTES } from '@/_lib/routes'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import React from 'react'
+import { useForm } from 'react-hook-form'
+import { authZodValidator, finalStepTypeSchema } from '@/schemas/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useOnboardingValidation } from '@/hooks/useOnboardingValidation'
 
-const OnboardingFinalStep = () => {
+interface OnboardingCompleteTypes {
+    firstName?: string;
+    lastName?: string;
+    password?: string;
+    address?: string;
+    phoneNumber?: string;
+    nextOfKinName?: string;
+    nextOfKinPhoneNumber?: string;
+    nextOfKinAddress?: string;
+    accountType: 'USER' | 'ADMIN'
+    status: 'onboarded' | 'pending'
+}
+
+const OnboardingFinalStep = ({ userId }: { userId: string }) => {
+    const defaultValues = {
+        firstName: '',
+        lastName: '',
+        password: '',
+        address: '',
+        phoneNumber: '',
+        nextOfKinName: '',
+        nextOfKinPhoneNumber: '',
+        nextOfKinAddress: ''
+    }
     const router = useRouter()
+    const { completeOnboarding, isLoading, message, status, clearMessage } = useOnboardingValidation()
+
+    const { handleSubmit, formState: { errors }, register, reset } = useForm<OnboardingCompleteTypes>({
+        resolver: zodResolver(authZodValidator('finalStep')),
+        reValidateMode: 'onChange',
+        mode: 'onChange',
+        defaultValues: defaultValues
+    })
+
+    const handleOnboardingCompletion = async (formData: OnboardingCompleteTypes) => {
+    clearMessage();
+
+    try {
+        
+        if (!userId) {
+            console.error('User ID not found');
+            return;
+        }
+
+        // Step 2: complete onboarding process
+        const completedResult = await completeOnboarding(formData, userId);
+
+        if (!completedResult) {
+            // Completion failed - message is already set by the hook
+            return;
+        }
+
+        console.log('user:', completedResult.user?.userId)
+
+        if (completedResult.success) {
+            // Success! Appdialog will be set here for the next action
+            console.log('Onboarding completed successfully');
+            console.log(userId, "onboarding user completed");
+            reset(defaultValues); 
+        }
+    } catch (error) {
+        console.error('Completion error:', error);
+        // Error is already handled by the hook
+    }
+};
+
+    const getMessageStyles = () => {
+        switch (status) {
+            case 'success':
+                return 'text-green-600 bg-green-50 border border-green-200'
+            case 'error':
+                return 'text-red-600 bg-red-50 border border-red-200'
+            default:
+                return 'text-gray-600 bg-gray-50 border border-gray-200'
+        }
+    }
 
     return (
         <motion.div
@@ -50,9 +128,21 @@ const OnboardingFinalStep = () => {
 
                     </div>
 
-                    <form className='space-y-4'>
+                    {/* Message Display */}
+                    {message && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className={`p-3 rounded-lg text-sm ${getMessageStyles()}`}
+                        >
+                            {message}
+                        </motion.div>
+                    )}
+                    <form className='space-y-4' onSubmit={handleSubmit(handleOnboardingCompletion)}>
                         <AppTextInput
-                            name='firstName'
+                            label='First Name'
+                            {...register('firstName')}
+                            error={errors.firstName?.message}
                             placeholder="First Name"
                             required
                             type="text"
@@ -61,7 +151,9 @@ const OnboardingFinalStep = () => {
                         />
 
                         <AppTextInput
-                            name='lastName'
+                            label='Last Name'
+                            {...register('lastName')}
+                            error={errors.lastName?.message}
                             placeholder="Last Name"
                             required
                             type="text"
@@ -70,7 +162,21 @@ const OnboardingFinalStep = () => {
                         />
 
                         <AppTextInput
-                            name='address'
+                            label='Password'
+                            {...register('password')}
+                            error={errors.password?.message}
+                            placeholder="Create your password"
+                            required
+                            type="password"
+                            className='w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500'
+
+                        />
+
+
+                        <AppTextInput
+                            label='Address'
+                            {...register('address')}
+                            error={errors.address?.message}
                             placeholder="Full Address"
                             required
                             type="text"
@@ -79,7 +185,9 @@ const OnboardingFinalStep = () => {
                         />
 
                         <AppTextInput
-                            name='phoneNumber'
+                            label='Phone Number'
+                            {...register('phoneNumber')}
+                            error={errors.phoneNumber?.message}
                             placeholder="Phone Number"
                             required
                             type="number"
@@ -89,7 +197,9 @@ const OnboardingFinalStep = () => {
 
 
                         <AppTextInput
-                            name='nextOfKinName'
+                            label='Next of Kin Name'
+                            {...register('nextOfKinName')}
+                            error={errors.nextOfKinName?.message}
                             placeholder="Next of Kin Name"
                             required
                             type="text"
@@ -98,7 +208,9 @@ const OnboardingFinalStep = () => {
                         />
 
                         <AppTextInput
-                            name="nextOfKinPhoneNumber"
+                            label='Next of Kin Phone Number'
+                            {...register('nextOfKinPhoneNumber')}
+                            error={errors.nextOfKinPhoneNumber?.message}
                             placeholder="Next of Kin Phone Number"
                             required
                             type="text"
@@ -107,20 +219,29 @@ const OnboardingFinalStep = () => {
                         />
 
                         <AppTextInput
-                            name="nextOfKinAddress"
+                            label='Next of Kin Address'
                             placeholder="Next of Kin Address"
                             required
                             type="text"
                             className='w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500'
-
+                            {...register('nextOfKinAddress')}
+                            error={errors.nextOfKinAddress?.message}
                         />
 
                         <AppButton
+                            type='submit'
                             variant='primary'
                             className="w-full h-11 font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors"
-                  
+
                         >
-                            Continue
+                            {isLoading ? (
+                                <div className="flex items-center justify-center space-x-2">
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <span>Completing...</span>
+                                </div>
+                            ) : (
+                                'Complete Onboarding'
+                            )}
                         </AppButton>
                     </form>
                 </div>
@@ -134,7 +255,7 @@ const OnboardingFinalStep = () => {
                 transition={{ delay: 0.5 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="fixed top-8 left-8 w-12 h-12 rounded-full border-2 border-primary-600 flex items-center justify-center bg-white shadow-md cursor-pointer"
+                className="fixed top-28 left-8 w-12 h-12 rounded-full border-2 border-primary-600 flex items-center justify-center bg-white shadow-md cursor-pointer"
                 aria-label="Go back"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

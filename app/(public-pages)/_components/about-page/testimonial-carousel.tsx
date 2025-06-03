@@ -18,8 +18,8 @@ const TestimonialCarousel = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="bg-white border-[1px] border-[#333333] z-10 ml-8" />
-        <CarouselNext className="bg-white border-[1px] border-[#333333] z-10 mr-8" />
+        <CarouselPrevious className="bg-white border-[1px] border-[#333333] z-10 ml-10" />
+        <CarouselNext className="bg-white border-[1px] border-[#333333] z-10 mr-10" />
       </Carousel>
       <div className="flex justify-center items-center gap-4">
         {testimonials.map((testimony, idx) => (

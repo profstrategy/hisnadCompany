@@ -1,4 +1,6 @@
-import { StaticImageData, StaticImport } from "next/dist/shared/lib/get-img-props";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
  export interface NavItems {
     id: string,
@@ -93,7 +95,7 @@ export interface MobileNavMenuProps {
     tier: 'Residential' | 'Farmland';
     status: 'Available' | 'Sold';
     title: string,
-    type: 'Hisnad' | 'Crestwood';
+    type: 'Hisnad' | 'Featured';
     mainImage: string[],
     location: string,
     price: string[],
@@ -124,3 +126,48 @@ export interface MobileNavMenuProps {
     image: StaticImport;
     property: string;
   }
+
+  export interface TeamTypes {
+    id: string;
+    name: string;
+    role: string;
+    phone: string;
+    pre_desc: string
+    description: string;
+    mail: string;
+    image: StaticImport;
+  }
+
+  
+  export interface CustomUser {
+    id: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    accountType?: string;
+    status?: string;
+    accessToken: string;
+    refreshToken: string;
+    sessionId: string;
+  }
+  
+  export interface CustomToken extends JWT {
+    userId: string;
+    accessToken: string;
+    refreshToken: string;
+    sessionId: string;
+    firstName?: string;
+    lastName?: string;
+    accountType?: string;
+    status?: string;
+    tokenExpires: number;
+  }
+  
+  export interface CustomSession extends Session {
+    userId: string;
+    accessToken: string;
+    sessionId: string;
+    accountType?: string;
+    status?: string;
+  }
+  

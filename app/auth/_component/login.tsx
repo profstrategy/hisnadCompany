@@ -7,12 +7,87 @@ import { motion } from 'framer-motion'
 import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5';
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React from 'react'
-import { CLIENT_ROUTES } from '@/lib/routes'
+import React, { useEffect } from 'react'
+import { CLIENT_ROUTES } from '@/_lib/routes'
+import { signIn, useSession } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
+import { authZodValidator, loginTypeSchema } from '@/schemas/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ACCOUNT_TYPE } from '@/constants/generic'
 
 const Login = () => {
+    const defaultValues = {
+        email: '',
+        password: ''
+    }
+
+    const { status, data: session } = useSession()
     const router = useRouter()
     const [showPassword, setShowPassword] = React.useState(false);
+    const [isloading, setIsloading] = React.useState(false)
+    const [message, setMessage] = React.useState<string | null>(null)
+    const [statusMsg, setStatusMsg] = React.useState<'idle' | 'error' | 'success'>()
+    const { handleSubmit, formState: { errors }, reset, register } = useForm<loginTypeSchema>({
+        mode: 'onChange',
+        resolver: zodResolver(authZodValidator('login')),
+        reValidateMode: 'onChange',
+        defaultValues: defaultValues
+    })
+
+    useEffect(() => {
+        if (status === 'authenticated' && session?.user.accountType) {
+            handleLoginUser()
+        }
+    }, [status, session])
+
+    const handleRedirectUser = () => {
+        if (!session?.accessToken) return
+        if (session?.user?.accountType === ACCOUNT_TYPE.USER) {
+            router.push(CLIENT_ROUTES.PrivatePages.clientDashboard.overview)
+        } else {
+            router.push(CLIENT_ROUTES.PrivatePages.adminDashboard.overview)
+        }
+    }
+    const handleLoginUser = async () => {
+        try {
+            setIsloading(true)
+            setStatusMsg('idle')
+
+            const result = await signIn('credentials', {
+                email: defaultValues.email,
+                password: defaultValues.password,
+                redirect: false
+            })
+
+            if (result?.error) {
+                setStatusMsg('error')
+                setMessage(result.error)
+            }
+
+            if (result.ok) {
+                setStatusMsg('success')
+                handleRedirectUser()
+                router.refresh()
+            }
+        } catch (err) {
+            setStatusMsg('error')
+            setMessage('An unexpected error occurred. Please try again.');
+        } finally {
+            setStatusMsg('idle')
+            setIsloading(false);
+        }
+    }
+
+    const getMessageStyles = () => {
+        switch (statusMsg) {
+            case 'success':
+                return 'text-green-600 bg-green-50 border border-green-200'
+            case 'error':
+                return 'text-red-600 bg-red-50 border border-red-200'
+            default:
+                return 'text-gray-600 bg-gray-50 border border-gray-200'
+        }
+    }
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -27,7 +102,7 @@ const Login = () => {
                 className='bg-white rounded-xl w-full max-w-md md:max-w-lg flex flex-col items-center justify-center py-8 px-6 sm:px-10 md:px-12 shadow-lg'
             >
                 {/* Branding Section */}
-                <motion.div 
+                <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.4 }}
@@ -42,11 +117,11 @@ const Login = () => {
                     </p>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: "100%" }}
                     transition={{ delay: 0.6 }}
-                    className='border-b border-gray-200 w-full mb-6' 
+                    className='border-b border-gray-200 w-full mb-6'
                 />
 
                 {/* Login Form Section */}
@@ -63,82 +138,90 @@ const Login = () => {
                         </p>
                     </motion.div>
 
-                    <motion.form
+                    {/* <motion.form
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1 }}
                         className='flex flex-col gap-4 w-full'
-                    >
-                        <AppTextInput
-                            label='Email Address'
-                            placeholder="Enter your email"
-                            required
-                            type="email"
-                            className='w-full py-3 px-4 rounded-lg border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
-                        />
-
-                        <AppTextInput
-                            label='Password'
-                            placeholder="Enter your password"
-                            required
-                            type={showPassword ? `text` : `password`}
-                            className='w-full py-3 px-4 rounded-lg border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
-                            icon={
-                                showPassword ? (
-                                  <IoEyeOffOutline onClick={() => setShowPassword(false)} />
-                                ) : (
-                                  <IoEyeOutline onClick={() => setShowPassword(true)} />
-                                )
-                              }
-                        />
-
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1.2 }}
-                            className='flex items-center justify-between text-sm mb-2'
-                        >
-                            <label className='flex items-center'>
-                                <input
-                                    type="checkbox"
-                                    className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
-                                />
-                                <span className='ml-2 text-gray-600'>Remember me</span>
-                            </label>
-                            <p onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.auth.forgotPassword}`)} className='text-primary-600 hover:text-primary-800 font-medium'>
-                                Forgot password?
-                            </p>
-                        </motion.div>
-
-                        <motion.div
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                        >
-                            <AppButton
-                                variant='primary'
-                                className="w-full h-12 text-white font-medium rounded-lg bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 shadow-md hover:shadow-lg transition-all duration-200"
+                    > */}
+                        {/* Message Display */}
+                        {message && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={`p-3 rounded-lg text-sm ${getMessageStyles()}`}
                             >
-                                Sign In
-                            </AppButton>
-                        </motion.div>
-                    </motion.form>
+                                {message}
+                            </motion.div>
+                        )}
+                        <form onSubmit={handleSubmit(handleLoginUser)}>
+                            <AppTextInput
+                                label='Email Address'
+                                placeholder="Enter your email"
+                                required
+                                type="email"
+                                className='w-full py-3 px-4 rounded-lg border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
+                                {...register('email')}
+                                error={errors.email?.message}
+                            />
 
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.4 }}
-                        className='mt-6 text-center text-sm text-gray-500'
-                    >
-                        Don't have an account?{' '}
-                        <motion.span
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            <AppTextInput
+                                label='Password'
+                                placeholder="Enter your password"
+                                required
+                                type={showPassword ? `text` : `password`}
+                                className='w-full py-3 px-4 rounded-lg border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
+                                {...register('password')}
+                                error={errors.password?.message}
+                                icon={
+                                    showPassword ? (
+                                        <IoEyeOffOutline onClick={() => setShowPassword(false)} />
+                                    ) : (
+                                        <IoEyeOutline onClick={() => setShowPassword(true)} />
+                                    )
+                                }
+                            />
+
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1.2 }}
+                                className='flex items-center justify-between text-sm mb-2'
+                            >
+                                <label className='flex items-center'>
+                                    <input
+                                        type="checkbox"
+                                        className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                                    />
+                                    <span className='ml-2 text-gray-600'>Remember me</span>
+                                </label>
+                                <p className='text-primary-600 hover:text-primary-800 font-medium'>
+                                    Forgot password?
+                                </p>
+                            </motion.div>
+
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                 <AppButton
+                            type='submit'
+                            variant='primary'
+                            className="w-full h-11 font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+
                         >
-                            <Link href="" className='text-primary-600 hover:text-primary-800 font-medium'>
-                                Create one
-                            </Link>
-                        </motion.span>
-                    </motion.div>
+                            {isloading ? (
+                                <div className="flex items-center justify-center space-x-2">
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <span>Processing...</span>
+                                </div>
+                            ) : (
+                                'Sign In'
+                            )}
+                        </AppButton>
+                            </motion.div>
+                        </form>
+                    {/* </motion.form> */}
                 </div>
             </motion.div>
 

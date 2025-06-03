@@ -10,7 +10,7 @@ import useSlider from '@/hooks/use-slider';
 import AppButton from '@/components/reusables/app-button';
 import Link from 'next/link';
 import { FiPhoneCall } from 'react-icons/fi';
-import { CLIENT_ROUTES } from '@/lib/routes';
+import { CLIENT_ROUTES } from '@/_lib/routes';
 import { SingularPropertyPreview } from '@/constants/types';
 
 type SingularPropertyProp = {
@@ -185,7 +185,7 @@ const SingularProperty = ({ property }: SingularPropertyProp) => {
                                     Pay Now
                                 </AppButton>
                                 <a
-                                    href="https://wa.me/2348104441104"
+                                    href="tel:+234 810 444 1104"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
@@ -285,7 +285,7 @@ const SingularProperty = ({ property }: SingularPropertyProp) => {
                                         <AppButton variant="primary" className="w-full text-white" onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.parallel}`)}>
                                             Book Inspection
                                         </AppButton>
-                                        <Link href="https://wa.me/2348104441104"
+                                        <Link href="tel:+234 810 444 1104"
                                             target="_blank"
                                             rel="noopener noreferrer">
                                             <AppButton variant="secondary" className="w-full text-white">
