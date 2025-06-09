@@ -12,12 +12,14 @@ import Link from 'next/link';
 import { FiPhoneCall } from 'react-icons/fi';
 import { CLIENT_ROUTES } from '@/_lib/routes';
 import { SingularPropertyPreview } from '@/constants/types';
+import { useGlobalStore } from '@/providers/store-provider';
 
 type SingularPropertyProp = {
     property: SingularPropertyPreview[]
+    userId?: string | null
 }
 
-const SingularProperty = ({ property }: SingularPropertyProp) => {
+const SingularProperty = ({ property, userId }: SingularPropertyProp) => {
     const labels = ['Plot', 'Acre', 'Hectare'];
     const fadeInUp = {
         initial: { opacity: 0, y: 20 },
@@ -62,7 +64,7 @@ const SingularProperty = ({ property }: SingularPropertyProp) => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => router.push('./')}
+                            onClick={() => router.push('/properties')}
                             className="flex items-center gap-2 bg-accent-primary text-white rounded-full px-4 py-2 mb-8 md:mb-12 hover:bg-accent-primary/90 transition-colors duration-300 shadow-md hover:shadow-lg"
                         >
                             <FaArrowLeft className="text-lg" />
@@ -118,7 +120,7 @@ const SingularProperty = ({ property }: SingularPropertyProp) => {
                                                 </span>
                                             ))}
                                         </p>
-                                        <AppButton className="w-full mt-3 text-white">
+                                        <AppButton className="w-full mt-3 text-white" onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.make_payment( userId ?? '')}`)}>
                                             Pay Now
                                         </AppButton>
                                     </div>

@@ -9,10 +9,8 @@ import { verifyOnboardingToken } from "@/_lib/tokens/onboarding-token";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('onboarding body', body)
     
     const { userId: onboardingToken, userData } = body;
-console.log('direct user:', onboardingToken)
     if (!onboardingToken) {
       return NextResponse.json({
         message: "Onboarding token is required",
@@ -22,7 +20,6 @@ console.log('direct user:', onboardingToken)
     
    // Verify and extract userId from token
     const tokenData = verifyOnboardingToken(onboardingToken);
-    console.log("onboard user:", tokenData?.userId)
 
     if (!tokenData) {
       return NextResponse.json({
@@ -41,8 +38,6 @@ console.log('direct user:', onboardingToken)
     }
 
     const onboardingUser = await getUserById(userId)
-
-    console.log('onboarding:', onboardingUser?.id)
 
     // If user is not found or not in pending status, return a 404 response
     if (!onboardingUser || onboardingUser.status !== "pending") {
@@ -108,6 +103,7 @@ console.log('direct user:', onboardingToken)
           lastName: updatedUser.lastName,
           status: updatedUser.status,
           accountType: updatedUser.accountType,
+          userstatus: updatedUser.status
         }
       },
       { status: 200 }

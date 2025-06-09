@@ -1,11 +1,11 @@
 
-export function CarouselSkeleton() {
+export function PropertySkeleton() {
   return (
     <div className="relative w-full flex overflow-hidden items-center justify-center">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-100/30 to-transparent animate-shimmer" />
       <div className="w-full h-[20rem] sm:h-[22rem] md:h-[25rem] relative">
         <div className="flex w-full space-x-4 px-2 animate-pulse">
-          {[...Array(3)].map((_, i) => (
+          {[...Array(1)].map((_, i) => (
             <div
               key={i}
               className="relative w-full h-[20rem] sm:h-[22rem] md:h-[25rem] basis-3/4"

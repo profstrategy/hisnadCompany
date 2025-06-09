@@ -1,8 +1,8 @@
 import PropertiesCarousel from "./properties-carousel";
 import { ActivePropertyPreview } from "@/constants/types";
 import { Suspense } from "react";
-import { CarouselSkeleton } from "./properties-skeleton";
 import { getActiveProperties } from "@/_lib/prisma-data-service";
+import { PropertySkeleton } from "./properties-skeleton";
 
 
 
@@ -16,7 +16,7 @@ const ActiveProperties: React.FC = async () => {
             </div>
 
             <div className='max-w-4xl md:w-11/12 w-full mx-auto'>
-            <Suspense fallback={<CarouselSkeleton />}>
+            <Suspense fallback={<PropertySkeleton />}>
             <PropertiesCarousel segregatedproperties={activeProperties} />
             </Suspense>
             </div>

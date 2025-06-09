@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate new access token
-    const newAccessToken = await generateTokens(session.user);
+    const newAccessToken =  generateTokens(session.user);
 
     // Optionally generate new refresh token for rotation
     let newRefreshToken = refreshToken;
@@ -93,8 +93,8 @@ export async function POST(request: NextRequest) {
 
     // Implement refresh token rotation for better security
     if (process.env.REFRESH_TOKEN_ROTATION === "true") {
-      newRefreshToken = await generateTokens(session.user);
-      newTokenHash = await bcrypt.hash(newRefreshToken, 10);
+      newRefreshToken = generateTokens(session.user);
+      newTokenHash = await bcrypt.hash(newRefreshToken, 12);
 
       // Update session with new refresh token hash
       await prisma.session.update({

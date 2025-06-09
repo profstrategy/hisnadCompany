@@ -24,6 +24,7 @@ interface AppDialogBoxProps {
   onConfirm?: () => void;
   onCancel?: () => void;
   children?: React.ReactNode;
+  isLoading?: boolean
 }
 
 const AppDialogBox = ({
@@ -37,6 +38,7 @@ const AppDialogBox = ({
   open,
   onOpenChange,
   children,
+  isLoading
 }: AppDialogBoxProps) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -60,6 +62,7 @@ const AppDialogBox = ({
           <AlertDialogCancel
             className="border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors focus:ring-0 focus:ring-offset-0"
             onClick={onCancel}
+            disabled={isLoading}
             style={{
               backgroundColor: 'white',
               borderColor: 'white',
@@ -70,7 +73,7 @@ const AppDialogBox = ({
           </AlertDialogCancel>
           <AlertDialogAction
             className="bg-gray-900 text-white hover:bg-gray-800 transition-colors focus:ring-0 focus:ring-offset-0"
-            style={{ backgroundColor: 'var(--brand-color)', color: 'white' }}
+            style={{ backgroundColor: 'var(--global-color-primary)', color: 'white' }}
             onClick={onConfirm}
           >
             {confirmText}

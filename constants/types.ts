@@ -1,6 +1,7 @@
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { ACCOUNT_TYPE } from "./generic";
 
  export interface NavItems {
     id: string,
@@ -93,7 +94,7 @@ export interface MobileNavMenuProps {
   export type ActivePropertyPagePreview = {
     id: number,
     tier: 'Residential' | 'Farmland';
-    status: 'Available' | 'Sold';
+    status: 'Available' | 'Sold' | 'Discontinued';
     title: string,
     type: 'Hisnad' | 'Featured';
     mainImage: string[],
@@ -110,7 +111,7 @@ export interface MobileNavMenuProps {
     category?: string;
     benefit?: string[];
     mainImage: string[],
-    status: 'Available' | 'Sold';
+    status: 'Available' | 'Sold' | 'Discontinued';
     price: string[],
     payment?: string[];
     created_at: Date;
@@ -170,4 +171,44 @@ export interface MobileNavMenuProps {
     accountType?: string;
     status?: string;
   }
+
+  export interface RegisterEmailApiResponse {
+  success: boolean;
+  message: string;
+  email?: string;
+  registeredEmail?: string;
+  userId?: string;
+  status?: string;
+  isReturningUser?: boolean;
+  isReturningPendingUser?: boolean;
+  shouldRedirectToProperties?: boolean;
+  statusCode?: number;
+}
+
+export interface CompleteOnboardingApiResponse {
+  success?: boolean;
+  message?: string;
+  user?: {
+    userId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    status: string;
+    accountType: ACCOUNT_TYPE;
+  };
+}
+
+export interface UserDataType {
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  address?: string;
+  phoneNumber?: string;
+  nextOfKinName?: string;
+  nextOfKinPhoneNumber?: string;
+  nextOfKinAddress?: string;
+  accountType?: "USER" | "ADMIN";
+  status?: "onboarded" | "pending";
+}
+
   

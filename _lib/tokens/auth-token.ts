@@ -23,7 +23,8 @@ interface User {
   status: string;
 }
 
-export const generateTokens = (user: User) => {
+export const generateTokens = (user: User | null
+) => {
   if (!user?.id || !user?.email) {
     throw new Error("Invalid user data for token generation");
   }
@@ -169,10 +170,8 @@ export const storeRefreshToken = async (
 
 export async function refreshAccessToken(token: CustomToken): Promise<CustomToken | null> {
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL || 'http://localhost:3000';
-    const refreshUrl = `${baseUrl}/api/create-user/refresh`;
     
-    const response = await fetch(refreshUrl, {
+    const response = await fetch('api/create-user/refresh', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

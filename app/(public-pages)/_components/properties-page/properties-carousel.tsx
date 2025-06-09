@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useRouter } from 'next/navigation';
 import { CLIENT_ROUTES } from '@/_lib/routes';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 
 interface PropertiesCarouselProps {
     segregatedproperties: ActivePropertyPreview[]
@@ -13,6 +14,7 @@ interface PropertiesCarouselProps {
 
 const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) => {
     const { setApi, count, current } = useSlider();
+    const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID);
     const [hovered, setHovered] = React.useState<number | null>(null);
     const [angleMap, setAngleMap] = React.useState<{ [key: number]: number }>({});
     const router = useRouter()
@@ -67,7 +69,7 @@ const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) =>
                                                     transform: getButtonTransform(angleMap[property.id as unknown as number] || 0),
                                                     transition: 'transform 0.1s linear',
                                                 }}
-                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.details(property.slug)}`)}
+                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.onboarded(property.slug, userId)}`)}
                                             >
                                                 View property details &gt;
                                             </button>
@@ -79,7 +81,7 @@ const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) =>
                                                     transition: 'transform 0.1s linear',
                                                 }}
 
-                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.details(property.slug)}`)}
+                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.onboarded(property.slug, userId)}`)}
                                             >
                                                 View property details &gt;
                                             </button>

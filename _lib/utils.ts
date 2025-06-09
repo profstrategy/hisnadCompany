@@ -1,12 +1,10 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import bcrypt from 'bcryptjs'
-import getServerSession from 'next-auth'
 import { ACCOUNT_TYPE } from "@/constants/generic";
-import { authOptions } from "./auth";
 import { CLIENT_ROUTES } from "./routes";
 import { redirect } from 'next/navigation';
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -30,7 +28,7 @@ export const splitPhoneNumber = (str: string) => {
 
 export const addSearchParamsToUrl = (
   url: string,
-  params: Record<string, string>
+  params: Record<string, string>,
 ) => {
   const searchParams = new URLSearchParams(params);
   return `${url}?${searchParams.toString()}`;
@@ -58,8 +56,22 @@ const session = useSession()
 
   if (
     pageType === 'ADMIN' &&
-    session.data?.accountType !== ACCOUNT_TYPE.ADMIN
+    session.data?.user.accountType !== ACCOUNT_TYPE.ADMIN
   ) {
     redirect(CLIENT_ROUTES.PublicPages.auth.login);
   }
 }
+
+export const extractUserIdFromToken = (token: string): string | null => {
+  try {
+    if (!token || typeof token !== 'string') {
+      return null;
+    }
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || null;
+  } catch (error) {
+   
+    console.error('Error extracting userId from token:', error);
+    return null;
+  }
+};

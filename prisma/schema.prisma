@@ -17,7 +17,7 @@ model User {
   firstName            String?
   lastName             String?
   address              String?
-  phoneNumber          String ?     @unique
+  phoneNumber          String ?     
   nextOfKinName        String?
   nextOfKinPhoneNumber String?
   nextOfKinAddress     String?

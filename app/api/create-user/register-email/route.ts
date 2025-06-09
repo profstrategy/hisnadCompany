@@ -22,40 +22,60 @@ export async function POST(request: NextRequest) {
 
     // Check if email exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: email },
+      where: { email: cleanEmail },
     });
 
-    // if email exist and is on pending return a message and generate a new token
     if (existingUser) {
-      // if email exists and is onboarded, return a message
-      if (existingUser.status !== "pending") {
+      const completedStatuses = ['onboarded', 'paid', 'active'];
+      
+    if (completedStatuses.includes(existingUser.status)) {
+  return NextResponse.json(
+    {
+      message: "You have completed onboarding process, Redirecting to properties page...",
+      registeredEmail: existingUser.email,
+      status: existingUser.status,
+      success: true,
+      shouldRedirectToProperties: true,
+      action: 'redirect' 
+    },
+    { status: 200 }
+  );
+}
+
+      // If user is pending, generate token and return success
+      if (existingUser.status === 'pending') {
+        const onboardingToken = generateOnboardingToken(existingUser.id);
+        console.log("Generated onboarding token for existing pending user:", onboardingToken);
+
         return NextResponse.json(
           {
-            message:
-              "You have completed onboarding process, please select a property to continue",
-            registeredEmail: existingUser.email,
+            userId: onboardingToken,
+            message: `Welcome back! We found your email ${existingUser.email} in our database. Continue your onboarding process.`,
+            email: existingUser.email,
             status: existingUser.status,
-            success: false,
-            shouldRedirectToProperties: true,
+            success: true,
+            isReturningPendingUser: true,
+            shouldRedirectToProperties: false,
           },
-          { status: 409 }
+          { status: 200 }
         );
       }
-      // Return conflict response if user already exists
+
+      // Handle any other status (fallback)
       return NextResponse.json(
         {
-          message: `We found your email ${existingUser.email} in our database`,
+          message: `We found your email ${existingUser.email} with status: ${existingUser.status}`,
           email: existingUser.email,
           status: existingUser.status,
           success: false,
           isReturningPendingUser: true,
           shouldRedirectToProperties: false,
         },
-        { status: 409 }
+        { status: 200 }
       );
     }
 
-    // create a pending user
+    // Create a new pending user
     const pendingUser = await prisma.user.create({
       data: {
         email: cleanEmail,
@@ -64,20 +84,22 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Generate secure token
-    const onboardingToken =  generateOnboardingToken(pendingUser.id);
-    console.log("Generated onboarding token:", onboardingToken);
+    // Generate secure token for new user
+    const onboardingToken = generateOnboardingToken(pendingUser.id);
+    console.log("Generated onboarding token for new user:", onboardingToken);
 
     // Return successful response
     return NextResponse.json(
       {
         userId: onboardingToken,
         status: pendingUser.status,
-        message: "Email Registered successfully",
+        message: "Email registered successfully",
         success: true,
+        isReturningPendingUser: false,
       },
-      { status: 200 }
+      { status: 201 }
     );
+
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(

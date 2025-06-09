@@ -6,6 +6,7 @@ import Navbar from "@/components/reusables/navbar";
 import Footer from "@/components/reusables/footer";
 import WhatsaapChat from "@/components/reusables/whatsaap-chat";
 import { NextAuthProvider } from "@/providers/session-provider";
+import { GlobalStoreProvider } from "@/providers/store-provider";
 
 
 const roboto = Roboto_Serif({
@@ -36,14 +37,16 @@ export default function RootLayout({
       >
 
         <NextTopLoader showSpinner={false} color="#0f68d8" />
-        <Navbar />
-        <NextAuthProvider>
-          <div className="max-w-screen-2xl mx-auto suppressHydrationWarning={true}">
-            {children}
-            <Footer />
+        <GlobalStoreProvider>
+          <NextAuthProvider>
+            <Navbar />
             <WhatsaapChat />
-          </div>
-        </NextAuthProvider>
+            <div className="max-w-screen-2xl mx-auto suppressHydrationWarning={true}">
+              {children}
+            </div>
+            <Footer />
+          </NextAuthProvider>
+        </GlobalStoreProvider>
       </body>
     </html>
   );

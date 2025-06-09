@@ -1,10 +1,12 @@
 'use client';
-import { ActivePropertyPagePreview, SegregatedProperties } from '@/constants/types';
+import { ActivePropertyPagePreview } from '@/constants/types';
 import { CLIENT_ROUTES } from '@/_lib/routes';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useGlobalStore } from '@/providers/store-provider';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 
 interface PropertiesProps {
     pkg: ActivePropertyPagePreview;
@@ -46,12 +48,22 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
 
     const styles = themeStyles[theme];
 
-    const singlePackageLink = CLIENT_ROUTES.PublicPages.properties.details(
-        pkg?.slug ?? ''
-    );
-
     const handleClick = () => {
-        router.push(singlePackageLink);
+        const onboardingId = localStorage.getItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID)
+        // Check if user is onboarded
+        if (onboardingId) {
+
+            // For onboarded users, include userId in the route
+            const onboardedUserLink = CLIENT_ROUTES.PublicPages.properties.onboarded(
+                pkg?.slug ?? '',
+                onboardingId
+            );
+            return router.push(onboardedUserLink);
+        } else {
+            // For non-authenticated users, use basic route
+            const basicLink = CLIENT_ROUTES.PublicPages.properties.onboarded(pkg?.slug ?? '');
+            return router.push(basicLink);
+        }
     };
 
     const cardVariants = {
@@ -79,7 +91,7 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
     const renderImage = () => {
         if (!pkg.mainImage || pkg.mainImage.length === 0 || !pkg.mainImage[0]) {
             return (
-                <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-gray-300 dark:bg-gray-700 flex items-center justify-center">
+                <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden bg-gray-300 dark:bg-gray-700 flex items-center justify-center" key={pkg.id}>
                     <span className="text-gray-500 dark:text-gray-400">No image available</span>
                 </div>
             );
@@ -90,6 +102,7 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
                 className="relative h-48 w-full mb-4 rounded-lg overflow-hidden"
                 variants={imageVariants}
                 transition={{ duration: 0.3 }}
+                key={pkg.id}
             >
                 <Image
                     src={pkg.mainImage[0]}
@@ -111,6 +124,7 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
             variants={cardVariants}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
+            key={pkg.id}
         >
             {/* Floating badge for status */}
             {pkg.status === 'Available' && (
@@ -139,7 +153,7 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
                 </motion.div>
             )}
 
-            <div className="flex-1">
+            <div className="flex-1" key={pkg.id}>
                 <div className="flex items-center gap-2 mb-4">
                     <div
                         className={`w-8 h-8 rounded-full ${styles.iconBg} flex items-center justify-center`}
@@ -183,14 +197,14 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
 
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                     {pkg.price?.map((price, i) => (
-                        <>
-                            <p
-                                className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}
-                                key={price}
-                            >
-                                {i === 0 ? `${price} per Plot` : `${price} per Acre`}
-                            </p>
-                        </>
+
+                        <p
+                            className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}
+                            key={price}
+                        >
+                            {i === 0 ? `${price} per Plot` : `${price} per Acre`}
+                        </p>
+
                     ))}
                 </div>
             </div>

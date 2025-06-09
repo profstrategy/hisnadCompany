@@ -48,7 +48,7 @@ const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinks
       {navItems?.map((item) => (
         <li key={item.id} className="relative">
           <Link 
-            href={`${item.id === '/' ? '/' : item.id}`}
+            href={item.id}
             onClick={() => setActiveItem(item.id)}
             className={`px-3 py-2 rounded-md transition-all md:text-[0.95rem] lg:text-[1rem] font-medium relative
               ${
@@ -91,6 +91,12 @@ const MobileNavMenu = ({
   setIsOpen,
 }: MobileNavMenuProps) => {
   const router = useRouter();
+
+  const handleGetStarted = () => {
+    setIsOpen(false);
+    router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep);
+    
+  }
   
   return (
     <AnimatePresence>
@@ -172,7 +178,7 @@ const MobileNavMenu = ({
                   variant="primary"
                   className="w-full py-3 text-lg text-white"
                   icon={<IoMdArrowRoundForward className="w-5 h-5" />}
-                  onClick={() => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
+                  onClick={handleGetStarted}
                 >
                   Get Started
                 </AppButton>
@@ -189,9 +195,12 @@ const Navbar = () => {
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const [activeItem, setActiveItem] = useState(
-    pathname === '/' ? '/' : pathname.split('/')[1]
-  );
+
+  const getTopLevelRoute = (path:string) => {
+  if (path === '/') return '/';
+  return `/${path.split('/')[1]}`;
+};
+ const [activeItem, setActiveItem] = useState(() => getTopLevelRoute(pathname));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -203,7 +212,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    setActiveItem(pathname === '/' ? '/' : pathname.split('/')[1]);
+    setActiveItem(getTopLevelRoute(pathname));
   }, [pathname]);
 
   useEffect(() => {

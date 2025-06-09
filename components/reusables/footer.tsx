@@ -29,7 +29,7 @@ const Footer = () => {
           <AppHeading className='text-black' variant='h4'>Navigation</AppHeading>
           <ul className='space-y-2'>
             {navItems.map((itm) => (
-              <Link href={`/${itm.id}`}><li key={itm.id} className='text-gray-700 text-sm cursor-pointer hover:text-black'>{itm.item}</li></Link>
+              <Link href={`/${itm.id}`} key={itm.id}><li key={itm.id} className='text-gray-700 text-sm cursor-pointer hover:text-black'>{itm.item}</li></Link>
             ))}
           </ul>
         </div>
@@ -47,7 +47,7 @@ const Footer = () => {
         <div className='flex flex-col gap-4'>
           <AppHeading variant='h4'>Licensed by:</AppHeading>
           <div className='flex gap-4 items-center'>
-            <Image src={license_3} width={80} height={80} alt='redan' />
+            <Image src={license_3} width={80} height={80} alt='redan' className='h-auto w-auto' />
             <Image src={license_1} width={40} height={40} alt='efcc' />
             <Image src={license_2} width={50} height={50} alt='estate' />
           </div>

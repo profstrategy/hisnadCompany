@@ -19,9 +19,9 @@ export const address: OfficeAddress[] = [
 
 export const navItems: NavItems[] = [
   { id: "/", item: "Home" },
-  { id: "properties", item: "Our-Properties" },
-  { id: "about", item: "About" },
-  // { id: "contact", item: "Contact" },
+  { id: "/properties", item: "Our-Properties" },
+  { id: "/about", item: "About" },
+
 ];
 
 export const abouthisnad: AboutHusnad[] = [

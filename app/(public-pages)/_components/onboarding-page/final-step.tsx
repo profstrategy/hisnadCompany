@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import AppButton from '@/components/reusables/app-button'
 import { AppHeading } from '@/components/reusables/app-heading'
 import AppTextInput from '@/components/reusables/app-text-input'
@@ -6,11 +7,13 @@ import { Logo } from '@/components/reusables/navbar'
 import { CLIENT_ROUTES } from '@/_lib/routes'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
-import React from 'react'
 import { useForm } from 'react-hook-form'
-import { authZodValidator, finalStepTypeSchema } from '@/schemas/auth.schema'
+import { authZodValidator } from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useOnboardingValidation } from '@/hooks/useOnboardingValidation'
+import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5'
+import { AppPhoneInputController } from '@/components/reusables/app-phone-input'
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys'
 
 interface OnboardingCompleteTypes {
     firstName?: string;
@@ -25,7 +28,7 @@ interface OnboardingCompleteTypes {
     status: 'onboarded' | 'pending'
 }
 
-const OnboardingFinalStep = ({ userId }: { userId: string }) => {
+const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
     const defaultValues = {
         firstName: '',
         lastName: '',
@@ -38,8 +41,9 @@ const OnboardingFinalStep = ({ userId }: { userId: string }) => {
     }
     const router = useRouter()
     const { completeOnboarding, isLoading, message, status, clearMessage } = useOnboardingValidation()
+    const [showPassword, setShowPassword] = React.useState(false)
 
-    const { handleSubmit, formState: { errors }, register, reset } = useForm<OnboardingCompleteTypes>({
+    const { handleSubmit, formState: { errors }, register, reset, control } = useForm<OnboardingCompleteTypes>({
         resolver: zodResolver(authZodValidator('finalStep')),
         reValidateMode: 'onChange',
         mode: 'onChange',
@@ -47,36 +51,38 @@ const OnboardingFinalStep = ({ userId }: { userId: string }) => {
     })
 
     const handleOnboardingCompletion = async (formData: OnboardingCompleteTypes) => {
-    clearMessage();
+        clearMessage();
 
-    try {
-        
-        if (!userId) {
-            console.error('User ID not found');
-            return;
+        try {
+
+            if (!onboardingId) {
+                return;
+            }
+
+            // Step 2: complete onboarding process
+            const completedResult = await completeOnboarding(formData, onboardingId);
+
+            if (!completedResult) {
+                // Completion failed - message is already set by the hook
+                return;
+            }
+
+            if (completedResult.success) {
+                reset(defaultValues);
+
+                setTimeout(() => {
+                    router.push(CLIENT_ROUTES.PublicPages.properties.index)
+                }, 1000)
+            }
+
+            localStorage.setItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID, completedResult.user?.userId || '');
+            localStorage.setItem(LOCAL_STORAGE_KEYS.STATUS, completedResult.user?.status || 'pending');
+            localStorage.setItem(LOCAL_STORAGE_KEYS.ONBOARDING_EMAIL, completedResult.user?.email || '');
+        } catch (error) {
+            console.error('Completion error:', error);
+            // Error is already handled by the hook
         }
-
-        // Step 2: complete onboarding process
-        const completedResult = await completeOnboarding(formData, userId);
-
-        if (!completedResult) {
-            // Completion failed - message is already set by the hook
-            return;
-        }
-
-        console.log('user:', completedResult.user?.userId)
-
-        if (completedResult.success) {
-            // Success! Appdialog will be set here for the next action
-            console.log('Onboarding completed successfully');
-            console.log(userId, "onboarding user completed");
-            reset(defaultValues); 
-        }
-    } catch (error) {
-        console.error('Completion error:', error);
-        // Error is already handled by the hook
-    }
-};
+    };
 
     const getMessageStyles = () => {
         switch (status) {
@@ -147,7 +153,6 @@ const OnboardingFinalStep = ({ userId }: { userId: string }) => {
                             required
                             type="text"
                             className='w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500'
-
                         />
 
                         <AppTextInput
@@ -167,9 +172,16 @@ const OnboardingFinalStep = ({ userId }: { userId: string }) => {
                             error={errors.password?.message}
                             placeholder="Create your password"
                             required
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             className='w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500'
 
+                            icon={
+                                showPassword ? (
+                                    <IoEyeOffOutline onClick={() => setShowPassword(false)} />
+                                ) : (
+                                    <IoEyeOutline onClick={() => setShowPassword(true)} />
+                                )
+                            }
                         />
 
 
@@ -184,17 +196,13 @@ const OnboardingFinalStep = ({ userId }: { userId: string }) => {
 
                         />
 
-                        <AppTextInput
-                            label='Phone Number'
-                            {...register('phoneNumber')}
-                            error={errors.phoneNumber?.message}
+                        <AppPhoneInputController
+                            name="phoneNumber"
+                            control={control}
+                            label="Phone Number"
                             placeholder="Phone Number"
-                            required
-                            type="number"
-                            className='w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500'
-
+                            className="w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         />
-
 
                         <AppTextInput
                             label='Next of Kin Name'
@@ -207,17 +215,13 @@ const OnboardingFinalStep = ({ userId }: { userId: string }) => {
 
                         />
 
-                        <AppTextInput
-                            label='Next of Kin Phone Number'
-                            {...register('nextOfKinPhoneNumber')}
-                            error={errors.nextOfKinPhoneNumber?.message}
-                            placeholder="Next of Kin Phone Number"
-                            required
-                            type="text"
-                            className='w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500'
-
+                        <AppPhoneInputController
+                            name="nextOfKinPhoneNumber"
+                            control={control}
+                            label="Next Of Kin Phone Number"
+                            placeholder="Your Next Of Kin Phone Number"
+                            className="w-full py-3 px-4 border-gray-300 focus:ring-primary-500 focus:border-primary-500"
                         />
-
                         <AppTextInput
                             label='Next of Kin Address'
                             placeholder="Next of Kin Address"

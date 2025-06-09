@@ -32,19 +32,24 @@ export const finalStepSchema = z
       })
       .regex(/\d/, { message: "Password must include at least one number." })
       .regex(/[^a-zA-Z0-9]/, {
-        message: "Password must include at least one special character {@#$%&*+^!?><}.",
+        message:
+          "Password must include at least one special character {@#$%&*+^!?><}.",
       }),
+
+    phoneNumber: z
+      .string()
+      .min(1, "Phone number is required")
+      .min(10, "Phone number must be at least 10 digits")
+      .max(15, "Phone number must not exceed 15 digits")
+      .regex(/^\d+$/, "Phone number should contain only digits")
+      .refine((val) => {
+        return val.length >= 10 && val.length <= 15;
+      }, "Please enter a valid phone number"),
 
     address: z
       .string({ required_error: " Your permanent home address is required." })
       .trim()
       .min(3, { message: "Address must be at least three character long." }),
-
-    phoneNumber: z
-      .string({ required_error: "Your active phone number is required." })
-      .min(11, {
-        message: "Phone Number must be at least eleven character long.",
-      }),
 
     nextOfKinName: z
       .string({ required_error: "Next of kin name is required." })
@@ -54,12 +59,14 @@ export const finalStepSchema = z
       }),
 
     nextOfKinPhoneNumber: z
-      .string({
-        required_error: "Next of kin active phone number is required.",
-      })
-      .min(11, {
-        message: "Phone Number must be at least eleven character long.",
-      }),
+      .string()
+      .min(1, "Phone number is required")
+      .min(10, "Phone number must be at least 10 digits")
+      .max(15, "Phone number must not exceed 15 digits")
+      .regex(/^\d+$/, "Phone number should contain only digits")
+      .refine((val) => {
+        return val.length >= 10 && val.length <= 15;
+      }, "Please enter a valid phone number"),
 
     nextOfKinAddress: z
       .string({ required_error: "Next of kin address is required." })
