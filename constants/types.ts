@@ -1,178 +1,174 @@
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import { ACCOUNT_TYPE } from "./generic";
+import { ACCOUNT_TYPE, STATUS } from "./generic";
+import { Type } from "@prisma/client";
 
- export interface NavItems {
-    id: string,
-    item: string
+export interface NavItems {
+  id: string;
+  item: string;
 }
 
 export interface DesktopNavLinksProps {
-    navItems: NavItems[];
-    activeItem: string;
-    setActiveItem: (id: string) => void;
-  }
+  navItems: NavItems[];
+  activeItem: string;
+  setActiveItem: (id: string) => void;
+}
 
 export interface MobileNavMenuProps {
-    isOpen: boolean;
-    navItems: NavItems[];
-    activeItem: string;
-    setActiveItem: (id: string) => void;
-    setIsOpen: (isOpen: boolean) => void;
-  }
+  isOpen: boolean;
+  navItems: NavItems[];
+  activeItem: string;
+  setActiveItem: (id: string) => void;
+  setIsOpen: (isOpen: boolean) => void;
+}
 
-  export interface OfficeAddress {
-    id: string,
-    content: string
-  }
+export interface OfficeAddress {
+  id: string;
+  content: string;
+}
 
-  export interface AboutHusnad {
-    id: string,
-    content: string
-  }
+export interface AboutHusnad {
+  id: string;
+  content: string;
+}
 
-  export interface features {
-    id: string;
-    content?: string;
-    image: StaticImport;
-  }
+export interface features {
+  id: string;
+  content?: string;
+  image: StaticImport;
+}
 
-  export interface Properties {
-    id: number;
-    image: StaticImport; 
-    alt: string;
-    title: string;
-    location: string;
-  }
+export interface Properties {
+  id: number;
+  image: StaticImport;
+  alt: string;
+  title: string;
+  location: string;
+}
 
-  export interface Faqs {
-    question?: string;
-    answer?: string;
-    [key: `answer_${number}`]: string | undefined;
-  }
+export interface Faqs {
+  question?: string;
+  answer?: string;
+  [key: `answer_${number}`]: string | undefined;
+}
 
-  interface Price {
-    id: string;
-    price:  string;
-  }
+interface Price {
+  id: string;
+  price: string;
+}
 
-  interface Payment {
-    id: string;
-    payment: string
-  }
+export type SegregatedProperties = {
+  id?: string;
+  type: "Hisnad_Estate" | "Featured_Farmland";
+  mainImage?: string[];
+  // alt: string;
+  tier?: "Residential" | "Farmland";
+  status?: "Available" | "Sold";
+  featured_farmland_amount_plot: number | null;
+  featured_farmland_amount_acre: number | null;
+  hisnad_estate_amount_plot: number | null;
+  hisnad_estate_amount_acre: number | null;
+  title?: string;
+  slug?: string;
+  location?: string;
+  features?: string[];
+  description?: string | null;
+  category?: string;
+  benefit?: string[];
+  documents?: string[];
+  payment?: string[];
+  created_at?: Date;
+  updated_at?: Date;
+};
 
-  export type SegregatedProperties = {
-    id: number;
-    type: 'Hisnad' | 'Crestwood';
-    mainImage?: string[] 
-    // alt: string;
-    tier: 'Residential' | 'Farmland';
-    status: 'Available' | 'Sold';
-    price: Price[];
-    title: string;
-    slug: string;
-    location: string;
-    features?: string[];
-    description?: string;
-    category?: string;
-    benefit?: string[];
-    documents?: string[];
-    payment?: string[];
-    created_at?: string;
-    updated_at?: string;
-  };
+export interface GetPropertyById {
+  id: string;
+  property_id: string | null;
+  slug: string;
+  title: string;
+  location: string;
+  status: "Available" | "Sold";
+  type: Type;
+  category: string;
+  payment: string[];
+  featured_farmland_amount_plot: number | null;
+  featured_farmland_amount_acre: number | null;
+  hisnad_estate_amount_plot: number | null;
+  hisnad_estate_amount_acre: number | null;
+}
 
-  export type ActivePropertyPreview = {
-    mainImage?: string[]
-    id: number,
-    slug: string,
-    title: string;
-    location: string;
-  };
+export interface GetActiveProperties {
+  id: string;
+  slug: string;
+  mainImage: string[];
+  title: string;
+  location: string;
+  type: string;
+}
+export interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  rating: number;
+  testimonial: string;
+  image: StaticImport;
+  property: string;
+}
 
-  export type ActivePropertyPagePreview = {
-    id: number,
-    tier: 'Residential' | 'Farmland';
-    status: 'Available' | 'Sold' | 'Discontinued';
-    title: string,
-    type: 'Hisnad' | 'Featured';
-    mainImage: string[],
-    location: string,
-    price: string[],
-    slug: string
-  }
+export interface TeamTypes {
+  id: string;
+  name: string;
+  role: string;
+  phone: string;
+  pre_desc: string;
+  description: string;
+  mail: string;
+  image: StaticImport;
+}
 
-  export type SingularPropertyPreview = {
-    title?: string
-    location: string;
-    features?: string[];
-    description: string | null;
-    category?: string;
-    benefit?: string[];
-    mainImage: string[],
-    status: 'Available' | 'Sold' | 'Discontinued';
-    price: string[],
-    payment?: string[];
-    created_at: Date;
-    updated_at: Date;
-  }
+export interface CustomUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  accountType?: string;
+  status?: string;
+  accessToken: string;
+  refreshToken: string;
+  sessionId: string;
+}
 
-  export interface Testimonial {
-    id: number;
-    name: string;
-    role: string;
-    rating: number
-    testimonial: string;
-    image: StaticImport;
-    property: string;
-  }
+export interface OnboardUser {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  status: string | null;
+  selected_product_id: string | null;
+}
 
-  export interface TeamTypes {
-    id: string;
-    name: string;
-    role: string;
-    phone: string;
-    pre_desc: string
-    description: string;
-    mail: string;
-    image: StaticImport;
-  }
+export interface CustomToken extends JWT {
+  userId: string;
+  accessToken: string;
+  refreshToken: string;
+  sessionId: string;
+  firstName?: string;
+  lastName?: string;
+  accountType?: string;
+  status?: string;
+  tokenExpires: number;
+}
 
-  
-  export interface CustomUser {
-    id: string;
-    email: string;
-    firstName?: string;
-    lastName?: string;
-    accountType?: string;
-    status?: string;
-    accessToken: string;
-    refreshToken: string;
-    sessionId: string;
-  }
-  
-  export interface CustomToken extends JWT {
-    userId: string;
-    accessToken: string;
-    refreshToken: string;
-    sessionId: string;
-    firstName?: string;
-    lastName?: string;
-    accountType?: string;
-    status?: string;
-    tokenExpires: number;
-  }
-  
-  export interface CustomSession extends Session {
-    userId: string;
-    accessToken: string;
-    sessionId: string;
-    accountType?: string;
-    status?: string;
-  }
+export interface CustomSession extends Session {
+  userId: string;
+  accessToken: string;
+  sessionId: string;
+  accountType?: string;
+  status?: string;
+}
 
-  export interface RegisterEmailApiResponse {
+export interface RegisterEmailApiResponse {
   success: boolean;
   message: string;
   email?: string;
@@ -211,4 +207,36 @@ export interface UserDataType {
   status?: "onboarded" | "pending";
 }
 
-  
+export interface Subscriptions {
+  id: string;
+  property_type: "Hisnad_Estate" | "Featured_Farmland" | null;
+  property_select?: string;
+  payment_plan?: "Full" | "Installment" | null;
+  user_id?: string;
+  fullName?: string;
+  email?: string;
+  product_id: string;
+  size: string;
+  status?: "idle" | "initialized" | "incomplete" | "completed";
+  payment_intent_id?: string | null;
+  amount?: number;
+  initialized_payment_id: string;
+}
+
+export interface PaymentInitializationResponse {
+  success: boolean;
+  amount?: string | null;
+  property_type: string;
+  property_select?: string;
+  redirectToPaymentPage: boolean;
+  message: string;
+  isCompletePaymentModal: boolean;
+  isForcePropertyPurchase:boolean;
+  isExeedLimit:boolean
+  redirectToRegister: boolean;
+  isReturning: boolean
+  isActivateAccount:boolean
+  property_id: string;
+  initialized_payment_id: string;
+  description: string
+}

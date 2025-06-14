@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-   output   = "../node_modules/.prisma/client"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -11,13 +11,12 @@ datasource db {
   url      = env("DIRECT_URL")
 }
 
-
 model User {
   id                   String      @id @default(cuid())
   firstName            String?
   lastName             String?
   address              String?
-  phoneNumber          String ?     
+  phoneNumber          String?
   nextOfKinName        String?
   nextOfKinPhoneNumber String?
   nextOfKinAddress     String?
@@ -25,16 +24,16 @@ model User {
   password_hash        String?
   accountType          AccountType @default(USER)
   status               UserStatus  @default(pending)
-  selected_product_id  Int?        
+  selected_product_id  String?
   created_at           DateTime    @default(now())
   updated_at           DateTime    @updatedAt
-  
+
   // Relations
-  refreshTokens   RefreshToken[] @relation("UserRefreshToken")
+  refreshTokens   RefreshToken[]        @relation("UserRefreshToken")
   sessions        Session[]
-  subscriptions   Subscription[]
+  subscriptions   Subscription[] @relation("UserSubscriptions")
   selectedProduct SegregatedProperties? @relation("UserSelectedProduct", fields: [selected_product_id], references: [id])
-  
+
   @@index([id])
   @@index([email])
   @@index([phoneNumber])
@@ -45,24 +44,24 @@ model User {
 model RefreshToken {
   id         String   @id @default(cuid())
   token      String   @unique
-  user_id    String  
-  isActive  Boolean  @default(true)
+  user_id    String
+  isActive   Boolean  @default(true)
   expires_at DateTime
   created_at DateTime @default(now())
 
   // Relations
-  user User @relation("UserRefreshToken",fields: [user_id], references: [id], onDelete: Cascade)
+  user User @relation("UserRefreshToken", fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
   @@index([token])
-  @@index([expires_at]) 
+  @@index([expires_at])
   @@map("refresh_tokens")
 }
 
 model Session {
   id           String   @id @default(cuid())
-  token        String   @unique 
-  user_id      String  
+  token        String   @unique
+  user_id      String
   expires_at   DateTime
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
@@ -77,57 +76,64 @@ model Session {
   @@index([user_id])
   @@index([token])
   @@index([expires_at])
-  @@index([isActive]) 
+  @@index([isActive])
   @@map("sessions")
 }
 
 model Subscription {
-  id                String            @id @default(cuid())
-  user_id           String           
-  product_id        Int         
-  status            SubscriptionStatus @default(active)
+  id                String             @id @default(cuid())
+  property_type     Type?
+  property_select   String
+  payment_plan      SubscriptionPlan?
+  initialized_payment_id String @unique 
+  user_id           String
+  fullName          String
+  email             String
+  product_id        String
+  size              String
+  status            SubscriptionStatus @default(idle)
   payment_intent_id String?
-  amount            Float?            
-  currency          String?           @default("NGN")
-  created_at        DateTime          @default(now())
-  updated_at        DateTime          @updatedAt
+  amount            Float
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
 
   // Relations
-  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user    User                 @relation("UserSubscriptions",fields: [user_id], references: [id], onDelete: Cascade)
   product SegregatedProperties @relation("ProductSubscriptions", fields: [product_id], references: [id])
 
+@@unique([user_id, product_id, size], name: "unique_user_property_size")
   @@index([user_id])
   @@index([product_id])
   @@index([status])
   @@map("subscriptions")
 }
 
-
-
 model SegregatedProperties {
-  id          Int           @id @default(autoincrement())
-  type        Type
-  mainImage   String[]
-  tier        Tier
-  status      ProductStatus @default(Available)
-  price       String[]
-  title       String
-  slug        String
-  location    String
-  category    String
-  features    String[]
-  description String?
-  benefit     String[]
-  documents   String[]
-  payment     String[]
-  property_id String?        
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
+  id                            String        @id @default(cuid())
+  type                          Type
+  mainImage                     String[]
+  tier                          Tier
+  status                        ProductStatus @default(Available)
+  featured_farmland_amount_plot Float?
+  featured_farmland_amount_acre Float?
+  hisnad_estate_amount_plot     Float?
+  hisnad_estate_amount_acre     Float?
+  title                         String
+  slug                          String
+  location                      String
+  category                      String
+  features                      String[]
+  description                   String?
+  benefit                       String[]
+  documents                     String[]
+  payment                       String[]
+  property_id                   String?
+  created_at                    DateTime      @default(now())
+  updated_at                    DateTime      @updatedAt
 
+  subscriptions   Subscription[] @relation("ProductSubscriptions")
+  selectedByUsers User[]         @relation("UserSelectedProduct")
 
-  subscriptions    Subscription[] @relation("ProductSubscriptions")
-  selectedByUsers  User[]         @relation("UserSelectedProduct")
-  
   @@index([property_id])
   @@index([status])
   @@index([category])
@@ -137,22 +143,21 @@ model SegregatedProperties {
 
 enum UserStatus {
   pending
-  onboarded  
+  onboarded
   paid
   active
 }
 
 enum SubscriptionStatus {
-  active
-  cancelled
-  expired
-  pending
+  idle
+  initialized
+  incomplete
+  completed
 }
 
 enum ProductStatus {
   Available
   Sold
-  Discontinued
 }
 
 enum AccountType {
@@ -161,11 +166,21 @@ enum AccountType {
 }
 
 enum Type {
-  Hisnad
-  Featured
+  Hisnad_Estate
+  Featured_Farmland
 }
 
 enum Tier {
   Residential
   Farmland
+}
+
+enum SubscriptionPlan {
+  Full
+  Installment
+}
+
+enum Size {
+  Plot
+  Acre
 }

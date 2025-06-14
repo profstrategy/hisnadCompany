@@ -1,4 +1,4 @@
-// app/properties/[propertyId]/page.tsx
+// app/properties/[slug]/page.tsx
 import { getSingularProperty } from "@/_lib/prisma-data-service";
 import SingularProperty from "@/app/(public-pages)/_components/properties-page/singular-property";
 import SingularPropertySkeleton from "@/app/(public-pages)/_components/properties-page/singular-property-skeleton";
@@ -6,7 +6,7 @@ import { PropertyEmptyState } from "@/components/reusables/empty-states";
 import { Suspense } from "react";
 
 interface Params {
-  propertyId: string;
+  slug: string;
 }
 
 export default async function BasePropertiesPage({
@@ -15,24 +15,24 @@ export default async function BasePropertiesPage({
   params: Promise<Params>
 }) {
   const awaitedParams = await params;
-  const { propertyId } = awaitedParams;
+  const { slug } = awaitedParams;
   
 
   // validate the params
-  if (!propertyId) {
-    return <PropertyEmptyState message={'Missing property ID'} key={propertyId} />
+  if (!slug) {
+    return <PropertyEmptyState message={'Missing property ID'} key={slug} />
   }
 
   // this is to get the slug from array of property properties
-  const property = await getSingularProperty(propertyId);
+  const property = await getSingularProperty(slug);
 
   if (!property) {
-    return <PropertyEmptyState message={'Property not found'} key={propertyId} />
+    return <PropertyEmptyState message={'Property not found'} key={slug} />
   }
 
   return (
-    <Suspense fallback={<SingularPropertySkeleton />} key={propertyId}>
-      <SingularProperty property={property} key={propertyId} />
+    <Suspense fallback={<SingularPropertySkeleton />} key={slug}>
+      <SingularProperty property={property} key={slug} />
     </Suspense>
   )
 }

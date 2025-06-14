@@ -7,6 +7,7 @@ import Footer from "@/components/reusables/footer";
 import WhatsaapChat from "@/components/reusables/whatsaap-chat";
 import { NextAuthProvider } from "@/providers/session-provider";
 import { GlobalStoreProvider } from "@/providers/store-provider";
+import { Toaster } from "sonner";
 
 
 const roboto = Roboto_Serif({
@@ -38,6 +39,7 @@ export default function RootLayout({
 
         <NextTopLoader showSpinner={false} color="#0f68d8" />
         <GlobalStoreProvider>
+          <Toaster position="bottom-left" />
           <NextAuthProvider>
             <Navbar />
             <WhatsaapChat />

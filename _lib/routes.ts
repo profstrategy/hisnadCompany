@@ -9,9 +9,9 @@ export const CLIENT_ROUTES = {
     properties: {
       index: `/properties`,
       onboarded: (slug: string, userId?: string | null) => {
-        const baseUrl = `/properties/${slug}`
+        const baseUrl = `/properties/${encodeURIComponent(slug)}`;
         if (userId) {
-          return `${baseUrl}/${userId}`;
+          return `${baseUrl}/${encodeURIComponent(userId)}`;
         } else {
           return baseUrl;
         }
@@ -32,7 +32,7 @@ export const CLIENT_ROUTES = {
       },
     },
 
-    make_payment: (paymentId: string) => `/make-payment/${paymentId}`,
+    make_payment: (initializPaymentId: string, size:string | null, plan:string | null) => `/make-payment/${initializPaymentId}?size=${size}?plan=${plan}`,
   },
   PrivatePages: {
     clientDashboard: {

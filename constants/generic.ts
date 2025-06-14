@@ -1,7 +1,17 @@
 export const PROPERTY_TYPES = {
-  HISNAD: "HISNAD",
-  CRESTWOOD: "FEATURED",
+  HISNAD: "HISNAD_ESTATE",
+  FEATURED: "FEATURED_FARMLAND",
 };
+
+export const Payment_plan = {
+  FULL_PAYMENT : 'full_payment',
+  INSTALLMENT: 'installment'
+}
+
+export const sizeOptions = {
+  ACRE: "acre", 
+  PLOT: "plot"
+}
 
 export enum  ACCOUNT_TYPE {
   USER = "USER",
