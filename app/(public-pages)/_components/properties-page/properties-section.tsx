@@ -8,10 +8,10 @@ import { PROPERTY_TYPES } from '@/constants/generic';
 import { PropertiesEmptyState } from '@/components/reusables/empty-states';
 import { Properties } from './properties';
 import { motion } from 'framer-motion';
-import { ActivePropertyPagePreview } from '@/constants/types';
+import { SegregatedProperties } from '@/constants/types';
 
 interface PropertySectionProps {
-    allActiveProperties: ActivePropertyPagePreview[]
+    allActiveProperties: SegregatedProperties[]
 }
 
 const PropertiesSection = ({ allActiveProperties }:PropertySectionProps) => {

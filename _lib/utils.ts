@@ -5,6 +5,8 @@ import { ACCOUNT_TYPE } from "@/constants/generic";
 import { CLIENT_ROUTES } from "./routes";
 import { redirect } from 'next/navigation';
 import { useSession } from "next-auth/react";
+import { PaymentInitializationResponse } from "@/constants/types";
+import { AppErrorToast } from "@/components/reusables/app-toast";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -74,4 +76,181 @@ export const extractUserIdFromToken = (token: string): string | null => {
     console.error('Error extracting userId from token:', error);
     return null;
   }
+};
+
+export const removeNoneAlphanumericEntity = (str: string) => {
+  return str.replace(/[^a-z0-9]/gi, ' ');
+};
+
+export const handleHttpError = (status: number, data: PaymentInitializationResponse): void => {
+  switch (status) {
+    case 400:
+      AppErrorToast({ 
+        message: data.message || "Invalid request",
+        description: "Please check your input and try again"
+      });
+      break;
+    
+    case 401:
+      AppErrorToast({ 
+        message: "Authentication required",
+        description: "Please log in and try again"
+      });
+     
+      window.location.href = '/auth/login';
+      break;
+    
+    case 403:
+      AppErrorToast({ 
+        message: data.message || "Access denied",
+        description: "You don't have permission to perform this action"
+      });
+      break;
+    
+    case 404:
+      AppErrorToast({ 
+        message: data.message || "Resource not found",
+        description: "The requested property or user was not found"
+      });
+      break;
+    
+    case 409:
+      AppErrorToast({ 
+        message: data.message || "Conflict detected",
+        description: "You may already have a subscription for this property"
+      });
+      break;
+    
+    case 500:
+    case 502:
+    case 503:
+    case 504:
+      AppErrorToast({ 
+        message: "Server error",
+        description: "Our servers are experiencing issues. Please try again later"
+      });
+      break;
+    
+    default:
+      AppErrorToast({ 
+        message: data.message || "An error occurred",
+        description: `Status: ${status}. Please try again or contact support`
+      });
+  }
+};
+
+
+/**
+ * Format numbers into readable formats with K, M, B suffixes
+ * @param value - The number to format
+ * @param options - Formatting options
+ * @returns Formatted string
+ */
+interface FormatNumberOptions {
+  decimals?: number;
+  currency?: string;
+  locale?: string;
+  showFullNumber?: boolean;
+}
+
+export const formatNumber = (
+  value: number | string | null | undefined,
+  options: FormatNumberOptions = {}
+): string => {
+  const {
+    decimals = 1,
+    currency,
+    locale = 'en-US',
+    showFullNumber = false
+  } = options;
+
+  // Handle null, undefined, or invalid values
+  if (value === null || value === undefined || value === '') {
+    return '0';
+  }
+
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+  // Handle invalid numbers
+  if (isNaN(numValue)) {
+    return '0';
+  }
+
+  // If showFullNumber is true, return the full formatted number
+  if (showFullNumber) {
+    return currency 
+      ? new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: currency,
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(numValue)
+      : new Intl.NumberFormat(locale).format(numValue);
+  }
+
+  const absValue = Math.abs(numValue);
+  const sign = numValue < 0 ? '-' : '';
+
+  let formattedValue: string;
+  let suffix: string;
+
+  if (absValue >= 1_000_000_000) {
+    // Billions
+    formattedValue = (absValue / 1_000_000_000).toFixed(decimals);
+    suffix = 'B';
+  } else if (absValue >= 1_000_000) {
+    // Millions
+    formattedValue = (absValue / 1_000_000).toFixed(decimals);
+    suffix = 'M';
+  } else if (absValue >= 1_000) {
+    // Thousands
+    formattedValue = (absValue / 1_000).toFixed(decimals);
+    suffix = 'K';
+  } else {
+    // Less than 1000
+    formattedValue = absValue.toString();
+    suffix = '';
+  }
+
+  // Remove trailing zeros after decimal point
+  if (suffix && formattedValue.includes('.')) {
+    formattedValue = parseFloat(formattedValue).toString();
+  }
+
+  const result = `${sign}${formattedValue}${suffix}`;
+
+  // Add currency symbol if provided
+  if (currency) {
+    return `${currency}${result}`;
+  }
+
+  return result;
+};
+
+/**
+ * Format currency specifically for Nigerian Naira
+ * @param value - The number to format
+ * @param options - Formatting options
+ * @returns Formatted currency string
+ */
+export const formatNaira = (
+  value: number | string | null | undefined,
+  options: Omit<FormatNumberOptions, 'currency'> = {}
+): string => {
+  return formatNumber(value, { ...options, currency: '₦' });
+};
+
+/**
+ * Get the full formatted number without abbreviations
+ * @param value - The number to format
+ * @param currency - Currency symbol (optional)
+ * @param locale - Locale for formatting
+ * @returns Fully formatted number string
+ */
+export const formatFullNumber = (
+  value: number | string | null | undefined,
+  currency?: string,
+  locale: string = 'en-US'
+): string => {
+  return formatNumber(value, { showFullNumber: true, currency, locale });
 };

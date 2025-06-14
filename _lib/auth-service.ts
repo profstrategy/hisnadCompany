@@ -1,6 +1,5 @@
-// lib/auth-service.ts
 import { prisma } from "@/_lib/prisma";
-import bcrypt from "bcryptjs"; // or whatever password library you're using
+import bcrypt from "bcryptjs";
 import { generateTokens } from "./tokens/auth-token";
 
 export async function authenticateUser(email: string, password: string) {

@@ -1,15 +1,15 @@
 'use client';
-import { ActivePropertyPagePreview } from '@/constants/types';
 import { CLIENT_ROUTES } from '@/_lib/routes';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useGlobalStore } from '@/providers/store-provider';
 import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import { SegregatedProperties } from '@/constants/types';
+import { formatFullNumber } from '@/_lib/utils';
 
 interface PropertiesProps {
-    pkg: ActivePropertyPagePreview;
+    pkg: SegregatedProperties;
     theme?: 'light' | 'dark';
 }
 
@@ -196,16 +196,27 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    {pkg.price?.map((price, i) => (
-
-                        <p
-                            className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}
-                            key={price}
-                        >
-                            {i === 0 ? `${price} per Plot` : `${price} per Acre`}
-                        </p>
-
-                    ))}
+                    {pkg.type === 'Featured_Farmland' ? (
+                        <div className='flex flex-col gap-1'>
+                            {pkg.featured_farmland_amount_acre && <p
+                                className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}
+                            >
+                                {`₦${formatFullNumber(pkg.featured_farmland_amount_acre)}`} per acre
+                            </p>}
+                            {pkg.featured_farmland_amount_plot && <p
+                                className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}
+                            >
+                                {`₦${formatFullNumber(pkg.featured_farmland_amount_plot)}`} per plot
+                            </p>}
+                        </div>) : (
+                        <>
+                            {pkg.hisnad_estate_amount_plot && <p
+                                className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}>{`₦${formatFullNumber(pkg.hisnad_estate_amount_plot)}`} Per plot</p>}
+                            {pkg.hisnad_estate_amount_acre && <p
+                                className={`text-2xl font-extrabold ${styles.text.primary} mb-1`}>{`₦${formatFullNumber(pkg.hisnad_estate_amount_acre)}`} Per acre</p>
+                            }
+                        </>)
+                    }
                 </div>
             </div>
 
