@@ -13,6 +13,14 @@ export const sizeOptions = {
   PLOT: "plot"
 }
 
+export const paymentStatus = {
+  IDLE: 'idle',
+  INITIALIZED: 'initialized',
+  INCOMPLETE: 'incomplete',
+  COMPLETED: 'completed',
+  ACTIVE: 'active'
+}
+
 export enum  ACCOUNT_TYPE {
   USER = "USER",
   ADMIN = "ADMIN",

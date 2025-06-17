@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 
+
 interface AppToast {
   message: string; 
   duration?: number;

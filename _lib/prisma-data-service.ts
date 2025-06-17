@@ -79,6 +79,7 @@ export const getAllProperties = async (): Promise<SegregatedProperties[]> => {
       hisnad_estate_amount_acre: true,
       hisnad_estate_amount_plot: true,
       slug: true,
+      size:true
     },
   });
 
@@ -107,6 +108,7 @@ export const getSingularProperty = async (
         mainImage: true,
         benefit: true,
         type: true,
+        size:true,
         tier: true,
         featured_farmland_amount_acre: true,
         featured_farmland_amount_plot: true,

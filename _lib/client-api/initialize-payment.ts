@@ -1,9 +1,9 @@
+'use client'
+
 import { AppErrorToast, AppLoadingToast, AppSuccessToast } from "@/components/reusables/app-toast";
 import { PaymentInitializationResponse } from "@/constants/types";
 import { toast } from "sonner";
 import { handleHttpError } from "../utils";
-
-
 
 class PaymentInitializationError extends Error {
   constructor(
@@ -26,11 +26,10 @@ const validateInputs = (userId: string, propertyId: string): void => {
   }
 };
 
-
 export const PaymentInitialization = async (
   userId: string,
   propertyId: string,
-  selectedSize:string
+  selectedSize: string
 ): Promise<PaymentInitializationResponse | null> => {
   // Show loading toast
   const loadingToastId = AppLoadingToast("Initializing payment...");
@@ -64,15 +63,21 @@ export const PaymentInitialization = async (
       toast.dismiss(loadingToastId);
     }
 
-
     if (response.ok) {
       // Success case - return the data
       if (data.success) {
-        if(data.isReturning){
-           AppSuccessToast({message:data.message, description: data.description, duration: 6000})
+        if (data.isReturning) {
+          AppSuccessToast({
+            message: data.message, 
+            description: data.description, 
+            duration: 6000
+          });
+        } else {
+          AppSuccessToast({
+            message: data.message, 
+            description: data.description
+          });
         }
-        AppSuccessToast({message:data.message, description: data.description})
-        console.log(data)
         return data;
       } else {
         // API returned 200 but indicated failure in response body
@@ -84,7 +89,7 @@ export const PaymentInitialization = async (
       }
     } else {
       // HTTP error status codes
-      handleHttpError(response.status, data);
+      handleHttpError( data, response.status);
       return null;
     }
 
@@ -94,14 +99,12 @@ export const PaymentInitialization = async (
       toast.dismiss(loadingToastId);
     }
 
-    AppErrorToast({message:`Error initializing payment`});
-    
     // Handle different types of errors
     if (error instanceof PaymentInitializationError) {
       AppErrorToast({ message: error.message });
     } else if (error instanceof TypeError && error.message.includes('fetch')) {
       // Network error
-      AppErrorToast({message: 'Network error, try again!!!'})
+      AppErrorToast({ message: 'Network error, try again!!!' });
     } else {
       // Generic error
       AppErrorToast({

@@ -25,7 +25,7 @@ const OnboardingInitialStep = () => {
         userId: string;
         status: string;
     } | null>(null)
-
+    const [isLoading, setIsloading] = React.useState(false)
 
     // Get localStorage values
     const onboardingId = localStorage.getItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID)
@@ -58,11 +58,7 @@ const OnboardingInitialStep = () => {
     const {
         registerEmail,
         deleteIncompleteRegistration,
-        clearMessage,
         getOnboardingStatus,
-        isLoading,
-        message,
-        status
     } = useOnboardingValidation()
 
     const { handleSubmit, formState: { errors }, register, reset } = useForm<initialStepTypeSchema>({
@@ -74,6 +70,7 @@ const OnboardingInitialStep = () => {
 
     // Function to handle 409 conflict by fetching server data
     const handleEmailConflict = async (email: string) => {
+        setIsloading(true)
         try {
             // Fetch onboarding status from server
             const onboardingData = await getOnboardingStatus(email)
@@ -107,8 +104,7 @@ const OnboardingInitialStep = () => {
     }
 
     const handleRegisterEmail = async (formData: initialStepTypeSchema) => {
-        clearMessage()
-
+        setIsloading(true)
         setIsActiveRegistration(true)
         try {
             const registerEmailResult = await registerEmail(formData.email)
@@ -131,7 +127,7 @@ const OnboardingInitialStep = () => {
                 if (typeof userId === 'string') {
                     setTimeout(() => {
                         router.push(CLIENT_ROUTES.PublicPages.onboarding.finalStep(userId));
-                    },3000)
+                    }, 3000)
 
 
                 }
@@ -191,17 +187,6 @@ const OnboardingInitialStep = () => {
         setPendingOnboardingData(null)
     }
 
-    const getMessageStyles = () => {
-        switch (status) {
-            case 'success':
-                return 'text-green-600 bg-green-50 border border-green-200'
-            case 'error':
-                return 'text-red-600 bg-red-50 border border-red-200'
-            default:
-                return 'text-gray-600 bg-gray-50 border border-gray-200'
-        }
-    }
-
     return (
         <motion.div>
             <AppDialogBox
@@ -257,16 +242,6 @@ const OnboardingInitialStep = () => {
                             </p>
                         </div>
 
-                        {/* Message Display */}
-                        {message && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className={`p-3 rounded-lg text-sm ${getMessageStyles()}`}
-                            >
-                                {message}
-                            </motion.div>
-                        )}
 
                         <form className='space-y-4' onSubmit={handleSubmit(handleRegisterEmail)}>
                             <AppTextInput

@@ -71,6 +71,7 @@ export type SegregatedProperties = {
   hisnad_estate_amount_acre: number | null;
   title?: string;
   slug?: string;
+  size: string;
   location?: string;
   features?: string[];
   description?: string | null;
@@ -211,13 +212,13 @@ export interface Subscriptions {
   id: string;
   property_type: "Hisnad_Estate" | "Featured_Farmland" | null;
   property_select?: string;
-  payment_plan?: "Full" | "Installment" | null;
+  payment_plan?: "full_payment" | "installment" | null;
   user_id?: string;
   fullName?: string;
   email?: string;
   product_id: string;
   size: string;
-  status?: "idle" | "initialized" | "incomplete" | "completed";
+  status?: "idle" | "initialized" | "incomplete" | "completed" | "active";
   payment_intent_id?: string | null;
   amount?: number;
   initialized_payment_id: string;
@@ -231,12 +232,32 @@ export interface PaymentInitializationResponse {
   redirectToPaymentPage: boolean;
   message: string;
   isCompletePaymentModal: boolean;
-  isForcePropertyPurchase:boolean;
-  isExeedLimit:boolean
+  isForcePropertyPurchase: boolean;
+  isExeedLimit: boolean;
   redirectToRegister: boolean;
-  isReturning: boolean
-  isActivateAccount:boolean
+  isReturning: boolean;
+  isActivateAccount: boolean;
   property_id: string;
   initialized_payment_id: string;
-  description: string
+  description: string;
+  size: string;
+  plan: string;
+  userId: string;
+  status: number;
+  paymentStatus: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+  error?: string;
+  status?: number;
+  userId: string;
+  success?: boolean;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+  description: string;
+  redirectToLogin: string;
+  success?: boolean;
 }

@@ -12,6 +12,11 @@ import { LiaTimesSolid } from 'react-icons/lia';
 import { FaBarsStaggered } from 'react-icons/fa6';
 import { navItems } from '@/constants/contents';
 import { CLIENT_ROUTES } from '@/_lib/routes';
+import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import { STATUS } from '@/constants/generic';
+import { useSession } from 'next-auth/react';
+
+const userStatus = localStorage.getItem(LOCAL_STORAGE_KEYS.STATUS)
 
 export const Logo = () => {
   return (
@@ -42,6 +47,7 @@ export const Logo = () => {
 };
 
 const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinksProps) => {
+  const session = useSession()
   const router = useRouter();
   return (
     <ul className="md:flex items-center justify-center lg:gap-8 md:gap-6 hidden">
@@ -74,9 +80,9 @@ const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinks
             variant="primary"
             className="px-6 text-white"
             icon={<IoMdArrowRoundForward className="w-5 h-5" />}
-            onClick={() => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
+            onClick={() => userStatus === STATUS.ONBOARDED ? router.push(CLIENT_ROUTES.PublicPages.properties.index) : session.data?.user.email ? router.push(CLIENT_ROUTES.PublicPages.auth.login) : router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
           >
-            Get Started
+            { userStatus === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
           </AppButton>
         </div>
     </ul>
@@ -91,11 +97,12 @@ const MobileNavMenu = ({
   setIsOpen,
 }: MobileNavMenuProps) => {
   const router = useRouter();
-
+const session = useSession()
   const handleGetStarted = () => {
     setIsOpen(false);
-    router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep);
-    
+    if(session.data?.user.email) return router.push(CLIENT_ROUTES.PublicPages.auth.login)
+    if(userStatus === STATUS.ONBOARDED) return router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep);
+    if(userStatus === STATUS.PENDING) return router.push(CLIENT_ROUTES.PublicPages.properties.index)
   }
   
   return (
@@ -180,7 +187,7 @@ const MobileNavMenu = ({
                   icon={<IoMdArrowRoundForward className="w-5 h-5" />}
                   onClick={handleGetStarted}
                 >
-                  Get Started
+                  { userStatus === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
                 </AppButton>
               </motion.li>
             </motion.ul>

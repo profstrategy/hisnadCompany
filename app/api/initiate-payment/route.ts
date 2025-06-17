@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
         {
           message: "Property not found",
           success: false,
+          status: 404,
         },
         { status: 404 }
       );
@@ -135,24 +136,29 @@ export async function POST(req: NextRequest) {
       if (existingSubscription.status === "incomplete") {
         return NextResponse.json(
           {
-            message: `Your ${selectedSize} payment for this property wasn't successful. Do you want to try again?`,
+            message: `Your ${selectedSize.toLowerCase()} plan payment for ${selectedProperty.slug.toLowerCase()} initially wasn't successful`,
+            description: "Do you want to try again?",
             success: true,
             isCompletePaymentModal: true,
             subscriptionId: existingSubscription.id,
             property_id: selectedProperty.id,
+            userId: existingSubscription.user_id,
             amount: calculateAmount(selectedProperty, selectedSize),
             property_type: selectedProperty.type,
             property_select: selectedProperty.slug || "",
             initialized_payment_id:
               existingSubscription.initialized_payment_id || "",
+            status: 409,
+            plan: existingSubscription.payment_plan,
+            size: existingSubscription.size,
+             paymentStatus: existingSubscription.status,
           },
           { status: 409 }
         );
       }
 
       if (
-        existingSubscription.status === "initialized" ||
-        existingSubscription.size === selectedSize
+        existingSubscription.status === "initialized" 
       ) {
         return NextResponse.json(
           {
@@ -168,6 +174,10 @@ export async function POST(req: NextRequest) {
             property_select: selectedProperty.slug || "",
             initialized_payment_id:
               existingSubscription.initialized_payment_id || "",
+            status: 200,
+            plan: existingSubscription.payment_plan,
+            size: existingSubscription.size,
+             paymentStatus: existingSubscription.status,
           },
           { status: 200 }
         );
@@ -177,14 +187,18 @@ export async function POST(req: NextRequest) {
       if (["completed"].includes(existingSubscription.status || "")) {
         return NextResponse.json(
           {
-            message: `You already have an inactive ${selectedSize} subscription for this property`,
-            description: `Please activate your subscription by a one time login to your dashboard inorder to purchase new property of the same ${selectedSize}`,
+            message: `Your payment was sucessful for ${existingSubscription.property_select?.toLowerCase()} ${selectedSize} subscription`,
+            description: `Please activate your subscription by a one time login to your dashboard inorder to purchase new ${existingSubscription.property_select?.toLowerCase()} of the same ${selectedSize}`,
             success: false,
             property_id: selectedProperty.id,
-            isActivateAccount:true,
+            isActivateAccount: true,
             isReturning: true,
             property_type: selectedProperty.type,
             initialized_payment_id: "",
+            status: 409,
+            paymentStatus: existingSubscription.status,
+            plan: existingSubscription.payment_plan,
+            size: existingSubscription.size,
           },
           { status: 409 }
         );
@@ -194,7 +208,7 @@ export async function POST(req: NextRequest) {
       if (["active"].includes(existingSubscription?.status || "")) {
         return NextResponse.json(
           {
-            message: `You already have an active ${selectedSize} subscription for this property`,
+            message: `You already have an active ${selectedSize} subscription for ${existingSubscription.property_select}`,
             description: `Dear ${existingSubscription.fullName}, do you want to buy this property again?`,
             success: false,
             property_id: selectedProperty.id,
@@ -202,6 +216,10 @@ export async function POST(req: NextRequest) {
             isReturning: true,
             property_type: selectedProperty.type,
             initialized_payment_id: "",
+            status: 409,
+            plan: existingSubscription.payment_plan,
+            size: existingSubscription.size,
+             paymentStatus: existingSubscription.status,
           },
           { status: 409 }
         );
@@ -225,6 +243,7 @@ export async function POST(req: NextRequest) {
           isExeedLimit: true,
           // limit_user_id
           initialized_payment_id: "",
+          status: 409,
         },
         { status: 409 }
       );
@@ -243,6 +262,7 @@ export async function POST(req: NextRequest) {
           property_type: selectedProperty.type,
           property_id: selectedProperty.id,
           initialized_payment_id: "",
+          status: 409,
         },
         { status: 400 }
       );
@@ -283,7 +303,7 @@ export async function POST(req: NextRequest) {
     // Success response
     return NextResponse.json(
       {
-        message: `${selectedSize} payment initialized successfully`,
+        message: `${selectedSize.toLowerCase()} payment for ${selectedProperty.slug.toLowerCase()} initialized successfully`,
         description: "You can proceed to checkout your payment",
         success: true,
         amount: amount,
@@ -293,6 +313,8 @@ export async function POST(req: NextRequest) {
         property_id: selectedProperty.id,
         subscriptionId: result.newSubscription.id,
         initialized_payment_id: generatedInitializedPaymentId,
+        size: result.newSubscription.size,
+        plan: result.newSubscription.payment_plan,
       },
       { status: 201 }
     );
@@ -309,6 +331,7 @@ export async function POST(req: NextRequest) {
         property_type: "",
         property_id: "",
         initialized_payment_id: "",
+        status: 500,
         ...(isDevelopment && {
           error: error instanceof Error ? error.message : "Unknown error",
         }),

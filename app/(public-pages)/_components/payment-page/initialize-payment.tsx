@@ -6,7 +6,7 @@ import { Logo } from '@/components/reusables/navbar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppButton from '@/components/reusables/app-button';
-import { Subscriptions } from '@/constants/types';
+import { PaymentInitializationResponse, Subscriptions } from '@/constants/types';
 import { addSearchParamsToUrl, formatFullNumber, formatNumber, removeNoneAlphanumericEntity } from '@/_lib/utils';
 import { CLIENT_ROUTES } from '@/_lib/routes';
 import { Payment_plan } from '@/constants/generic';
@@ -19,8 +19,11 @@ const InitializePaymentPage = ({ initialized_sub }: InitializePaymentPageProps) 
   const router = useRouter();
   const [isInstallment, setIsInstallment] = React.useState<boolean>(false)
   const [installment, setInstallment] = React.useState<string>()
+
+// update URL as amount changes
   useSearchParams().get('plan') as (typeof Payment_plan[keyof typeof Payment_plan]) || Payment_plan.FULL_PAYMENT
 
+  // calculate installment and full paymenty
   let amount: number = Number(initialized_sub.amount)
   const installmentAmount = formatFullNumber(amount * 0.5, 'NGN', 'en-NG')
   const fullAmount = formatFullNumber(amount, 'NGN', 'en-NG')

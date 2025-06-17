@@ -1,15 +1,16 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import bcrypt from 'bcryptjs'
-import { ACCOUNT_TYPE } from "@/constants/generic";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import bcrypt from "bcryptjs";
+import { ACCOUNT_TYPE, paymentStatus } from "@/constants/generic";
 import { CLIENT_ROUTES } from "./routes";
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { PaymentInitializationResponse } from "@/constants/types";
 import { AppErrorToast } from "@/components/reusables/app-toast";
+import { PaymentInitialization } from "./client-api/initialize-payment";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function latLongToVector3(lat: number, lon: number, radius = 2.5) {
@@ -24,13 +25,16 @@ export function latLongToVector3(lat: number, lon: number, radius = 2.5) {
 }
 
 export const splitPhoneNumber = (str: string) => {
-  const formatNumber = str.split('').join('');
-  return `${formatNumber.substring(0, 4)} ${formatNumber.substring(4, 7)} ${formatNumber.substring(7, 10)} ${formatNumber.substring(10)}`;
+  const formatNumber = str.split("").join("");
+  return `${formatNumber.substring(0, 4)} ${formatNumber.substring(
+    4,
+    7
+  )} ${formatNumber.substring(7, 10)} ${formatNumber.substring(10)}`;
 };
 
 export const addSearchParamsToUrl = (
   url: string,
-  params: Record<string, string>,
+  params: Record<string, string>
 ) => {
   const searchParams = new URLSearchParams(params);
   return `${url}?${searchParams.toString()}`;
@@ -41,104 +45,138 @@ export const removeSearchParamsFromUrl = (
   params: Record<string, string>
 ) => {
   const searchParams = new URLSearchParams(params);
-  return url.split('?')[0];
+  return url.split("?")[0];
 };
 
 export const hashedData = (data: string): string => {
-  return bcrypt.hashSync(data, 12)
-}
+  return bcrypt.hashSync(data, 12);
+};
 
-
-export const checkAuth = ({ pageType }: { pageType: ( typeof ACCOUNT_TYPE )[keyof typeof ACCOUNT_TYPE] }) => {
-const session = useSession()
+export const checkAuth = ({
+  pageType,
+}: {
+  pageType: (typeof ACCOUNT_TYPE)[keyof typeof ACCOUNT_TYPE];
+}) => {
+  const session = useSession();
 
   if (!session) {
     redirect(CLIENT_ROUTES.PublicPages.auth.login);
   }
 
   if (
-    pageType === 'ADMIN' &&
+    pageType === "ADMIN" &&
     session.data?.user.accountType !== ACCOUNT_TYPE.ADMIN
   ) {
     redirect(CLIENT_ROUTES.PublicPages.auth.login);
   }
-}
+};
 
 export const extractUserIdFromToken = (token: string): string | null => {
   try {
-    if (!token || typeof token !== 'string') {
+    if (!token || typeof token !== "string") {
       return null;
     }
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     return payload.userId || null;
   } catch (error) {
-   
-    console.error('Error extracting userId from token:', error);
+    console.error("Error extracting userId from token:", error);
     return null;
   }
 };
 
 export const removeNoneAlphanumericEntity = (str: string) => {
-  return str.replace(/[^a-z0-9]/gi, ' ');
+  return str.replace(/[^a-z0-9]/gi, " ");
 };
 
-export const handleHttpError = (status: number, data: PaymentInitializationResponse): void => {
+export const handleHttpError = async (
+  data?: PaymentInitializationResponse | null,
+  status?: number
+): Promise<void> => {
+  console.log(data);
   switch (status) {
     case 400:
-      AppErrorToast({ 
-        message: data.message || "Invalid request",
-        description: "Please check your input and try again"
+      AppErrorToast({
+        message: data?.message || "Invalid request",
+        description: `Please check your input and try again, ${data?.status} status`,
+        duration: 8000,
       });
       break;
-    
+
     case 401:
-      AppErrorToast({ 
+      AppErrorToast({
         message: "Authentication required",
-        description: "Please log in and try again"
+        description: `Please log in and try again ${data?.status} status`,
+        action: {
+          label: "Login",
+          onClick: () => (window.location.href = "/auth/login"),
+        },
+        duration: 8000,
       });
-     
-      window.location.href = '/auth/login';
+
       break;
-    
+
     case 403:
-      AppErrorToast({ 
-        message: data.message || "Access denied",
-        description: "You don't have permission to perform this action"
+      AppErrorToast({
+        message: data?.message || "Access denied",
+        description: `You don't have permission to perform this action, ${data?.status} status`,
+        duration: 8000,
       });
       break;
-    
+
     case 404:
-      AppErrorToast({ 
-        message: data.message || "Resource not found",
-        description: "The requested property or user was not found"
+      AppErrorToast({
+        message: data?.message || "Resource not found",
+        description: `The requested property or user was not found, ${data?.status} status`,
       });
       break;
-    
+
     case 409:
-      AppErrorToast({ 
-        message: data.message || "Conflict detected",
-        description: "You may already have a subscription for this property"
+      AppErrorToast({
+        message: data?.message || "Subscription already exists",
+        description: `${data?.paymentStatus === paymentStatus.INCOMPLETE ? `Click continue to continue with payment, ${data?.status} status` : data?.paymentStatus === paymentStatus.COMPLETED ? data.description : data?.paymentStatus === paymentStatus.ACTIVE ? data.description : ''}`,
+        action: {
+          label: `${
+            data?.paymentStatus === paymentStatus.INCOMPLETE || paymentStatus.ACTIVE
+              ? "Continue Payment"
+              : data?.paymentStatus === paymentStatus.COMPLETED
+              ? "Send me a link"
+              : ""
+          }`,
+          onClick: () => {
+            data?.paymentStatus === paymentStatus.INCOMPLETE || paymentStatus.ACTIVE
+              ? redirect(
+                  CLIENT_ROUTES.PublicPages.make_payment(
+                    data?.initialized_payment_id ?? "",
+                    data?.size ?? "",
+                    data?.plan ?? ""
+                  )
+                )
+              : data?.paymentStatus === paymentStatus.COMPLETED
+              ? ""
+              : "";
+          },
+        },
       });
       break;
-    
+
     case 500:
     case 502:
     case 503:
     case 504:
-      AppErrorToast({ 
+      AppErrorToast({
         message: "Server error",
-        description: "Our servers are experiencing issues. Please try again later"
+        description:
+          "Our servers are experiencing issues. Please try again later",
       });
       break;
-    
+
     default:
-      AppErrorToast({ 
-        message: data.message || "An error occurred",
-        description: `Status: ${status}. Please try again or contact support`
+      AppErrorToast({
+        message: data?.message || "An error occurred",
+        description: ` Please try again or contact support`,
       });
   }
 };
-
 
 /**
  * Format numbers into readable formats with K, M, B suffixes
@@ -160,36 +198,36 @@ export const formatNumber = (
   const {
     decimals = 1,
     currency,
-    locale = 'en-US',
-    showFullNumber = false
+    locale = "en-US",
+    showFullNumber = false,
   } = options;
 
   // Handle null, undefined, or invalid values
-  if (value === null || value === undefined || value === '') {
-    return '0';
+  if (value === null || value === undefined || value === "") {
+    return "0";
   }
 
-  const numValue = typeof value === 'string' ? parseFloat(value) : value;
-  
+  const numValue = typeof value === "string" ? parseFloat(value) : value;
+
   // Handle invalid numbers
   if (isNaN(numValue)) {
-    return '0';
+    return "0";
   }
 
   // If showFullNumber is true, return the full formatted number
   if (showFullNumber) {
-    return currency 
+    return currency
       ? new Intl.NumberFormat(locale, {
-          style: 'currency',
+          style: "currency",
           currency: currency,
           minimumFractionDigits: 0,
-          maximumFractionDigits: 0
+          maximumFractionDigits: 0,
         }).format(numValue)
       : new Intl.NumberFormat(locale).format(numValue);
   }
 
   const absValue = Math.abs(numValue);
-  const sign = numValue < 0 ? '-' : '';
+  const sign = numValue < 0 ? "-" : "";
 
   let formattedValue: string;
   let suffix: string;
@@ -197,23 +235,23 @@ export const formatNumber = (
   if (absValue >= 1_000_000_000) {
     // Billions
     formattedValue = (absValue / 1_000_000_000).toFixed(decimals);
-    suffix = 'B';
+    suffix = "B";
   } else if (absValue >= 1_000_000) {
     // Millions
     formattedValue = (absValue / 1_000_000).toFixed(decimals);
-    suffix = 'M';
+    suffix = "M";
   } else if (absValue >= 1_000) {
     // Thousands
     formattedValue = (absValue / 1_000).toFixed(decimals);
-    suffix = 'K';
+    suffix = "K";
   } else {
     // Less than 1000
     formattedValue = absValue.toString();
-    suffix = '';
+    suffix = "";
   }
 
   // Remove trailing zeros after decimal point
-  if (suffix && formattedValue.includes('.')) {
+  if (suffix && formattedValue.includes(".")) {
     formattedValue = parseFloat(formattedValue).toString();
   }
 
@@ -235,9 +273,9 @@ export const formatNumber = (
  */
 export const formatNaira = (
   value: number | string | null | undefined,
-  options: Omit<FormatNumberOptions, 'currency'> = {}
+  options: Omit<FormatNumberOptions, "currency"> = {}
 ): string => {
-  return formatNumber(value, { ...options, currency: '₦' });
+  return formatNumber(value, { ...options, currency: "₦" });
 };
 
 /**
@@ -250,7 +288,7 @@ export const formatNaira = (
 export const formatFullNumber = (
   value: number | string | null | undefined,
   currency?: string,
-  locale: string = 'en-US'
+  locale: string = "en-US"
 ): string => {
   return formatNumber(value, { showFullNumber: true, currency, locale });
 };

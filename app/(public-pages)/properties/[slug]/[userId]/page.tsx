@@ -1,55 +1,53 @@
-import { getPropertyById, getSingularProperty, getUserOnboardingStatus } from "@/_lib/prisma-data-service";
+import { getSingularProperty, getUserById } from "@/_lib/prisma-data-service";
+import { handleHttpError } from "@/_lib/utils";
 import SingularProperty from "@/app/(public-pages)/_components/properties-page/singular-property";
-import SingularPropertySkeleton from "@/app/(public-pages)/_components/properties-page/singular-property-skeleton";
-import { PropertyEmptyState } from "@/components/reusables/empty-states";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
 
-interface Params {
-  slug: string;
-  userId: string;
-}
+type Params = {
+    slug: string;
+    userId: string;
+};
 
-export default async function AuthenticatedPropertiesPage({
-  params
-}: {
-  params: Promise<Params>
-}) {
+export default async function AuthenticatedPropertiesPage({ params }: { params: Promise<Params> }) {
   const awaitedParams = await params;
-  const { slug, userId } = awaitedParams;
+  const { slug, userId } = awaitedParams
 
-  const userStatus = await getUserOnboardingStatus(userId)
+  try {
+    
+    const [property, user] = await Promise.all([
+      getSingularProperty(slug),
+      getUserById(userId)
+    ]);
 
-  console.log('User Status:', userStatus?.id);
-  
-  // Security check: ensure the userId in URL matches the session user
-  if (!userStatus?.id || userStatus.id !== userId || userStatus.status === 'pending') {
-    // Redirect to the non-authenticated version
-    redirect(`/properties/${slug}`);
-  }
-  
-  // First validate the params
-  if (!slug) {
-    console.log('Missing property ID');
-    return <PropertyEmptyState message={'Missing property ID'} key={slug} />
-  }
+    if (!property) {
+      return (
+        <div className="text-center text-gray-600 p-8 bg-red-50 rounded-lg shadow-sm max-w-md mx-auto my-16">
+          Property not found
+        </div>
+      );
+    }
 
-  // Then fetch the data
-   const property = await getSingularProperty(slug);
-
-  if (!property) {
-    return <PropertyEmptyState message={'Property not found'} key={slug} />
-  }
-
-  
-  // This page handles authenticated users with proper onboarding
-  return (
-    <Suspense fallback={<SingularPropertySkeleton />} key={slug}>
-      <SingularProperty 
-        property={property} 
-        userId={userStatus.id}
-        key={slug} 
+    if (!user) {
+      return (
+        <div className="text-center text-gray-600 p-8 bg-red-50 rounded-lg shadow-sm max-w-md mx-auto my-16">
+          User not found
+        </div>
+      );
+    }
+    return (
+      <SingularProperty
+        property={property}
+        userId={userId}
+        paymentInitializationResponse={null} 
       />
-    </Suspense>
-  )
+    );
+  } catch (error) {
+    console.error('Error loading property page:', error);
+    
+    return (
+      <div className="text-center text-gray-600 p-8 bg-red-50 rounded-lg shadow-sm max-w-md mx-auto my-16">
+        <h2 className="text-xl font-semibold mb-2">Error Loading Property</h2>
+        <p>Please try again later or contact support if the problem persists.</p>
+      </div>
+    );
+  }
 }
