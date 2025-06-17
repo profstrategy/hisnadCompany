@@ -26,10 +26,7 @@ export const CLIENT_ROUTES = {
     auth: {
       login: "/auth/login",
       forgotPassword: "/auth/forgot-password",
-      password: {
-        stepOne: "/password/step-one",
-        stepTwo: "/password/step-two",
-      },
+      resetPassword: '/auth/reset-password'
     },
 
     make_payment: (initializPaymentId: string, size:string | null, plan:string | null) => `/make-payment/${initializPaymentId}?size=${size}?plan=${plan}`,

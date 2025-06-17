@@ -49,14 +49,14 @@ const Login = () => {
         }
     }
 
-    
+
     const handleLoginUser = async (formData: loginTypeSchema) => {
         try {
             setIsloading(true)
             setStatusMsg('idle')
-            setMessage(null) 
+            setMessage(null)
 
-            
+
             const { error, ok, status } = await signIn('credentials', {
                 email: formData.email,
                 password: formData.password,
@@ -66,7 +66,7 @@ const Login = () => {
             if (error) {
                 setStatusMsg('error')
                 setMessage('Invalid email or password!!')
-                return 
+                return
             }
 
             if (ok) {
@@ -199,8 +199,8 @@ const Login = () => {
                                 />
                                 <span className='ml-2 text-gray-600'>Remember me</span>
                             </label>
-                            <p className='text-primary-600 hover:text-primary-800 font-medium cursor-pointer'>
-                                Forgot password?
+                            <p className='text-primary-600 hover:text-primary-800 font-medium cursor-pointer' onClick={() => router.push(CLIENT_ROUTES.PublicPages.auth.forgotPassword)}>
+                                Forgot password
                             </p>
                         </motion.div>
 
@@ -223,6 +223,11 @@ const Login = () => {
                                     'Sign In'
                                 )}
                             </AppButton>
+                            <div className='mt-4 flex justify-between'>
+                                <p>Don't have an account? </p>
+                                <a onClick={() => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)} className='cursor-pointer'>Sign up</a>
+                            </div>
+
                         </motion.div>
                     </form>
                 </div>

@@ -71,6 +71,7 @@ export type SegregatedProperties = {
   hisnad_estate_amount_acre: number | null;
   title?: string;
   slug?: string;
+  size: string;
   location?: string;
   features?: string[];
   description?: string | null;
@@ -211,13 +212,13 @@ export interface Subscriptions {
   id: string;
   property_type: "Hisnad_Estate" | "Featured_Farmland" | null;
   property_select?: string;
-  payment_plan?: "Full" | "Installment" | null;
+  payment_plan?: "full_payment" | "installment" | null;
   user_id?: string;
   fullName?: string;
   email?: string;
   product_id: string;
   size: string;
-  status?: "idle" | "initialized" | "incomplete" | "completed";
+  status?: "idle" | "initialized" | "incomplete" | "completed" | "active";
   payment_intent_id?: string | null;
   amount?: number;
   initialized_payment_id: string;
@@ -239,4 +240,17 @@ export interface PaymentInitializationResponse {
   property_id: string;
   initialized_payment_id: string;
   description: string
+  size: string
+  plan:string
+  userId:string
+  status:number
+  paymentStatus: string
+}
+
+export interface PasswordResetStepOneResponse  {
+  message:string,
+  error?: string,
+  status?: number,
+  userId: string,
+  success?: boolean
 }

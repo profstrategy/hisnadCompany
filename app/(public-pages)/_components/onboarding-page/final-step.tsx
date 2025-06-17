@@ -40,8 +40,9 @@ const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
         nextOfKinAddress: ''
     }
     const router = useRouter()
-    const { completeOnboarding, isLoading, message, status, clearMessage } = useOnboardingValidation()
+    const { completeOnboarding } = useOnboardingValidation()
     const [showPassword, setShowPassword] = React.useState(false)
+    const [isLoading, setIsloading] = React.useState(false)
 
     const { handleSubmit, formState: { errors }, register, reset, control } = useForm<OnboardingCompleteTypes>({
         resolver: zodResolver(authZodValidator('finalStep')),
@@ -51,8 +52,7 @@ const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
     })
 
     const handleOnboardingCompletion = async (formData: OnboardingCompleteTypes) => {
-        clearMessage();
-
+        setIsloading(true)
         try {
 
             if (!onboardingId) {
@@ -134,16 +134,6 @@ const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
 
                     </div>
 
-                    {/* Message Display */}
-                    {message && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`p-3 rounded-lg text-sm ${getMessageStyles()}`}
-                        >
-                            {message}
-                        </motion.div>
-                    )}
                     <form className='space-y-4' onSubmit={handleSubmit(handleOnboardingCompletion)}>
                         <AppTextInput
                             label='First Name'
