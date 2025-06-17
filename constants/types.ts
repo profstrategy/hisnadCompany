@@ -232,25 +232,32 @@ export interface PaymentInitializationResponse {
   redirectToPaymentPage: boolean;
   message: string;
   isCompletePaymentModal: boolean;
-  isForcePropertyPurchase:boolean;
-  isExeedLimit:boolean
+  isForcePropertyPurchase: boolean;
+  isExeedLimit: boolean;
   redirectToRegister: boolean;
-  isReturning: boolean
-  isActivateAccount:boolean
+  isReturning: boolean;
+  isActivateAccount: boolean;
   property_id: string;
   initialized_payment_id: string;
-  description: string
-  size: string
-  plan:string
-  userId:string
-  status:number
-  paymentStatus: string
+  description: string;
+  size: string;
+  plan: string;
+  userId: string;
+  status: number;
+  paymentStatus: string;
 }
 
-export interface PasswordResetStepOneResponse  {
-  message:string,
-  error?: string,
-  status?: number,
-  userId: string,
-  success?: boolean
+export interface ForgotPasswordResponse {
+  message: string;
+  error?: string;
+  status?: number;
+  userId: string;
+  success?: boolean;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+  description: string;
+  redirectToLogin: string;
+  success?: boolean;
 }

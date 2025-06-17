@@ -4,7 +4,7 @@ import {
   AppLoadingToast,
   AppSuccessToast,
 } from "@/components/reusables/app-toast";
-import { PasswordResetStepOneResponse } from "@/constants/types";
+import { ForgotPasswordResponse } from "@/constants/types";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -20,7 +20,7 @@ class PasswordResetStepOneError extends Error {
 
 export const forgotPassword = async (
   email: string
-): Promise<PasswordResetStepOneResponse | null> => {
+): Promise<ForgotPasswordResponse | null> => {
   const schema = z.string().email();
   let loadingToastId: string | number | undefined;
 
@@ -43,7 +43,7 @@ export const forgotPassword = async (
       toast.dismiss(loadingToastId);
     }
 
-    let data: PasswordResetStepOneResponse;
+    let data: ForgotPasswordResponse;
     
     try {
       data = await response.json();

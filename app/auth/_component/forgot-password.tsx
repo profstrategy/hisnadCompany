@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { CLIENT_ROUTES } from '@/_lib/routes'
 import { forgotPassword } from '@/_lib/client-api/forgot-password'
+import { Logo } from '@/components/reusables/navbar'
 
 export default function ForgotPasswordPage() {
     interface FormData {
@@ -60,6 +61,23 @@ export default function ForgotPasswordPage() {
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className='bg-white rounded-xl w-full max-w-md md:max-w-lg flex flex-col items-center justify-center py-8 px-6 sm:px-10 md:px-12 shadow-lg'
             >
+                {/* Branding Section */}
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className='flex flex-col items-center justify-center gap-3 mb-6 w-full'
+                >
+                    <Logo />
+                    <h1 className="font-bold text-xl sm:text-2xl md:text-3xl tracking-tight bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                        Hisnad Home & Properties
+                    </h1>
+                    <p className='text-center text-xs sm:text-sm text-gray-500 mt-1'>
+                        Your trusted real estate partner
+                    </p>
+                </motion.div>
+
+
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: "100%" }}

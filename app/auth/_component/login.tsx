@@ -5,7 +5,6 @@ import AppTextInput from '@/components/reusables/app-text-input'
 import { Logo } from '@/components/reusables/navbar'
 import { motion } from 'framer-motion'
 import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5';
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { CLIENT_ROUTES } from '@/_lib/routes'
@@ -14,6 +13,8 @@ import { useForm } from 'react-hook-form'
 import { authZodValidator, loginTypeSchema } from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ACCOUNT_TYPE } from '@/constants/generic'
+import { AppErrorToast, AppLoadingToast, AppSuccessToast } from '@/components/reusables/app-toast'
+import { toast } from 'sonner'
 
 const Login = () => {
     const defaultValues = {
@@ -25,8 +26,6 @@ const Login = () => {
     const router = useRouter()
     const [showPassword, setShowPassword] = React.useState(false);
     const [isloading, setIsloading] = React.useState(false)
-    const [message, setMessage] = React.useState<string | null>(null)
-    const [statusMsg, setStatusMsg] = React.useState<'idle' | 'error' | 'success'>()
     const { handleSubmit, formState: { errors }, reset, register } = useForm<loginTypeSchema>({
         mode: 'onChange',
         resolver: zodResolver(authZodValidator('login')),
@@ -51,10 +50,9 @@ const Login = () => {
 
 
     const handleLoginUser = async (formData: loginTypeSchema) => {
+        setIsloading(true)
         try {
-            setIsloading(true)
-            setStatusMsg('idle')
-            setMessage(null)
+            const loadingToastId = AppLoadingToast('Validating Your Credentials, please wait...')
 
 
             const { error, ok, status } = await signIn('credentials', {
@@ -63,37 +61,27 @@ const Login = () => {
                 redirect: false
             })
 
+            if (loadingToastId) {
+                toast.dismiss(loadingToastId)
+            }
+
             if (error) {
-                setStatusMsg('error')
-                setMessage('Invalid email or password!!')
+                AppErrorToast({ message: 'Invalid email or password!!', description: 'Are you sure you have an account??' })
                 return
             }
 
             if (ok) {
-                setStatusMsg('success')
-                setMessage('Login successful! Start tracking your payment...')
+                AppSuccessToast({ message: 'Login successful! Start tracking your payment...', description: 'Thanks for your patronage' })
+                reset()
                 setTimeout(() => {
                     handleRedirectUser()
                     router.refresh()
                 }, 1000)
             }
         } catch (err) {
-            setStatusMsg('error')
-            setMessage('An unexpected error occurred. Please try again.');
-            console.error('Login error:', err)
+            AppSuccessToast({ message: 'An unexpected error occurred. Please try again.', description: 'Bad Network' });
         } finally {
             setIsloading(false);
-        }
-    }
-
-    const getMessageStyles = () => {
-        switch (statusMsg) {
-            case 'success':
-                return 'text-green-600 bg-green-50 border border-green-200'
-            case 'error':
-                return 'text-red-600 bg-red-50 border border-red-200'
-            default:
-                return 'text-gray-600 bg-gray-50 border border-gray-200'
         }
     }
 
@@ -146,17 +134,6 @@ const Login = () => {
                             Sign in to manage your properties and transactions
                         </p>
                     </motion.div>
-
-                    {/* Message Display */}
-                    {message && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`p-3 rounded-lg text-sm mb-4 ${getMessageStyles()}`}
-                        >
-                            {message}
-                        </motion.div>
-                    )}
 
                     <form onSubmit={handleSubmit(handleLoginUser)} className='flex flex-col gap-4'>
                         <AppTextInput
