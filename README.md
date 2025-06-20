@@ -1,4 +1,4 @@
-# Hajj/Umrah Management System
+# Real Estate/Agriculture Management System
 
 A web application for managing Real Estate and Agriculture services.
 
