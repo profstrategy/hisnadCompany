@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Roboto_Serif } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
-import Navbar from "@/components/reusables/navbar";
-import Footer from "@/components/reusables/footer";
-import WhatsaapChat from "@/components/reusables/whatsaap-chat";
 import { NextAuthProvider } from "@/providers/session-provider";
 import { GlobalStoreProvider } from "@/providers/store-provider";
 import { Toaster } from "sonner";
@@ -41,12 +38,9 @@ export default function RootLayout({
         <GlobalStoreProvider>
           <Toaster position="bottom-left" />
           <NextAuthProvider>
-            <Navbar />
-            <WhatsaapChat />
             <div className="max-w-screen-2xl mx-auto suppressHydrationWarning={true}">
               {children}
             </div>
-            <Footer />
           </NextAuthProvider>
         </GlobalStoreProvider>
       </body>

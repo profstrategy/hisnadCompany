@@ -33,8 +33,10 @@ export const CLIENT_ROUTES = {
   },
   PrivatePages: {
     clientDashboard: {
-      viewPackage: (id: string) => `/dashboard/packages/${id}`,
       overview: "/client-dashboard/overview",
+      payments: "/client-dashboard/view-payments",
+      properties: "/client-dashboard/view-properties",
+      profile: '/client-dashboard/view-profile'
     },
     adminDashboard: {
       overview: "/admin-dashboard/overview",

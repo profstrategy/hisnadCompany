@@ -6,7 +6,7 @@ import { PaymentInitializationResponse, SegregatedProperties } from '@/constants
 import { Payment_plan, sizeOptions } from '@/constants/generic';
 import { addSearchParamsToUrl } from '@/_lib/utils';
 import { CLIENT_ROUTES } from '@/_lib/routes';
-import { PaymentInitialization } from '@/_lib/client-api/initialize-payment';
+import { PaymentInitialization } from '@/api/client-api/initialize-payment';
 
 type UsePropertyPaymentHandlerProps = {
   property: SegregatedProperties | null;

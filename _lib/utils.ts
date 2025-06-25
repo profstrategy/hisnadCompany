@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { PaymentInitializationResponse } from "@/constants/types";
 import { AppErrorToast } from "@/components/reusables/app-toast";
-import { PaymentInitialization } from "./client-api/initialize-payment";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -292,3 +291,8 @@ export const formatFullNumber = (
 ): string => {
   return formatNumber(value, { showFullNumber: true, currency, locale });
 };
+
+
+export const extractInitials = (name:string) => {
+return name.split(' ').map((itm) => itm.charAt(0)).join('')
+}

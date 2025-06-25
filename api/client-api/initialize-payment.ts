@@ -3,7 +3,7 @@
 import { AppErrorToast, AppLoadingToast, AppSuccessToast } from "@/components/reusables/app-toast";
 import { PaymentInitializationResponse } from "@/constants/types";
 import { toast } from "sonner";
-import { handleHttpError } from "../utils";
+import { handleHttpError } from "../../_lib/utils";
 
 class PaymentInitializationError extends Error {
   constructor(

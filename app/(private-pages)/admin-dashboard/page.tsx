@@ -1,8 +1,9 @@
-import React from 'react'
+import { CLIENT_ROUTES } from '@/_lib/routes'
+import { redirect } from 'next/navigation'
 
 const AdminDashboardPage = () => {
   return (
-    <div>AdminDashboardPage</div>
+   redirect(CLIENT_ROUTES.PrivatePages.adminDashboard.overview)
   )
 }
 

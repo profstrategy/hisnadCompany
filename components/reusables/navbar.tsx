@@ -18,9 +18,9 @@ import { useSession } from 'next-auth/react';
 
 const userStatus = localStorage.getItem(LOCAL_STORAGE_KEYS.STATUS)
 
-export const Logo = () => {
+export const Logo = ({ to }:{ to?:string }) => {
   return (
-    <Link href="/" className="group" aria-label="Hisnad Home">
+    <Link href={to ?? ''} className="group" aria-label="Hisnad Home">
       <div className="flex items-center gap-2 sm:gap-3 cursor-pointer transition-all duration-300 hover:-translate-y-0.5">
         <div className="relative">
           <Image
@@ -238,7 +238,7 @@ const Navbar = () => {
       hasScrolled ? 'shadow-md' : 'shadow-sm'
     }`}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
-        <Logo />
+        <Logo to='/' />
 
         <DesktopNavMenu
           navItems={navItems}
