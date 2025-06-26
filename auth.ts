@@ -35,6 +35,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             firstName: authResult.user.firstName,
             lastName: authResult.user.lastName,
             accountType: authResult.user.accountType,
+            property_type: authResult.user.property_type,
+            property_size: authResult.user.property_size,
             accessToken: authResult.accessToken,
             refreshToken: authResult.refreshToken,
             sessionId: authResult.sessionId,

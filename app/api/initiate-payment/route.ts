@@ -63,7 +63,6 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    console.log("Received request body:", body);
 
     // Validate request body
     if (!validateRequest(body)) {

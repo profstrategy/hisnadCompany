@@ -142,6 +142,7 @@ export const getPropertyById = async (id: string): Promise<GetPropertyById> => {
       location: true,
       payment: true,
       title: true,
+      size:true,
       status: true,
       hisnad_estate_amount_acre: true,
       hisnad_estate_amount_plot: true,

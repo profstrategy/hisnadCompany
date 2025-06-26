@@ -14,12 +14,10 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar"
 import { clientNavbarItems } from "@/constants/contents";
 import { logo } from "@/public";
 import { useSession } from 'next-auth/react'
-import { Logo } from "../reusables/navbar";
 import { CLIENT_ROUTES } from "@/_lib/routes";
 import { extractInitials } from "@/_lib/utils";
 import { ChevronsUpDown, LogOut } from "lucide-react";
@@ -112,11 +110,11 @@ export function AppSidebarClient({ children }: { children: React.ReactNode }) {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     size="lg"
-                    className="hover:bg-blue-100 data-[state=open]:bg-[#337ab7] data-[state=open]:text-white rounded-lg p-3 transition-all duration-200"
+                    className="hover:bg-blue-100 data-[state=open]:bg-[#337ab7] data-[state=open]:text-white rounded-lg p-3 transition-all duration-200 flex items-center"
                   >
-                    <Avatar className="h-9 w-9 rounded-lg">
-                      <AvatarFallback className="rounded-lg bg-[#337ab7] text-white font-semibold text-sm">
-                        {extractInitials(session?.data?.user.firstName ?? '' + session.data?.user.lastName ?? '')}
+                    <Avatar className="">
+                      <AvatarFallback className=" bg-[#337ab7] text-white font-semibold text-sm w-8 h-8 rounded-full p-1">
+                        {extractInitials(session?.data?.user.firstName ?? '')}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight ml-3">
@@ -131,21 +129,21 @@ export function AppSidebarClient({ children }: { children: React.ReactNode }) {
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl bg-white border border-blue-100 shadow-lg"
+                  className="w-32 min-w-56 rounded-xl bg-white border border-blue-100 shadow-lg"
                   side="bottom"
                   align="end"
                   sideOffset={4}
                 >
                   <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-3 px-4 py-3 text-left text-sm border-b border-blue-50">
-                      <Avatar className="h-9 w-9 rounded-lg">
-                        <AvatarFallback className="rounded-lg bg-[#337ab7] text-white font-semibold">
-                          {extractInitials(session.data?.user.firstName ?? '' + session.data?.user.lastName ?? '')}
+                    <div className="flex items-center gap-3 px-2 py-3 text-left text-sm border-b border-blue-50">
+                      <Avatar className=" ">
+                        <AvatarFallback className="bg-[#337ab7] text-white font-semibold text-sm w-8 h-8 rounded-full p-1">
+                          {extractInitials(session.data?.user.firstName ?? '')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-semibold text-gray-900">
-                          {session?.data?.user.firstName ?? '' + session.data?.user.lastName ?? ''}
+                          {session?.data?.user.firstName ?? ''}
                         </span>
                         <span className="truncate text-xs text-gray-500">
                           {session?.data?.user.email ?? ''}

@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 import PageContainer from '@/components/layout/page-container';
 import {
   Card,
@@ -13,10 +14,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PROPERTY_TYPES } from '@/constants/generic';
 import { RecentSales } from './recent-sales';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { removeNoneAlphanumericEntity } from '@/_lib/utils';
 
 export default function OverViewPage() {
   const { data: session } = useSession();
+  const [ mounted, setMounted ] = React.useState('')
   const router = useRouter();
+
+  React.useEffect(() => {
+  setMounted(removeNoneAlphanumericEntity(session?.user.property_type ?? ''))
+  console.log(mounted)
+    
+  },[session?.user.property_type ?? ''])
 
   const renderCardSkeleton = () => (
     <Card>
@@ -47,23 +56,23 @@ export default function OverViewPage() {
             👋
           </h2>
         </div>
-        <Tabs defaultValue="hajj" className="space-y-4">
+        <Tabs defaultValue={mounted || 'HISNAD ESTATE'} onValueChange={setMounted} className="space-y-4">
           <TabsList>
             <TabsTrigger
-              value="real-estate"
+              value={`${removeNoneAlphanumericEntity(PROPERTY_TYPES.HISNAD)}`}
               className="data-[state=active]:bg-white"
             >
-              Real Estate
+              {`${removeNoneAlphanumericEntity(PROPERTY_TYPES.HISNAD)}`}
             </TabsTrigger>
             <TabsTrigger
-              value="agriculture"
+              value={`${removeNoneAlphanumericEntity(PROPERTY_TYPES.FEATURED)}`}
               className="data-[state=active]:bg-white"
             >
-              Agriculture
+              {`${removeNoneAlphanumericEntity(PROPERTY_TYPES.FEATURED)}`}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="real-estate" className="space-y-4">
+          <TabsContent value={`${removeNoneAlphanumericEntity(PROPERTY_TYPES.HISNAD) ?? ''}`} className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {/* one */}
                 <Card>
@@ -196,13 +205,13 @@ export default function OverViewPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <RecentSales type={PROPERTY_TYPES.HISNAD} />
-                </CardContent>
+                  <RecentSales type={removeNoneAlphanumericEntity(PROPERTY_TYPES.HISNAD)} />
+       )         </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="agriculture" className="space-y-4">
+          <TabsContent value={removeNoneAlphanumericEntity(PROPERTY_TYPES.FEATURED)} className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -328,8 +337,8 @@ export default function OverViewPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <RecentSales type={PROPERTY_TYPES.FEATURED} />
-                </CardContent>
+                  <RecentSales type={removeNoneAlphanumericEntity(PROPERTY_TYPES.FEATURED)} />
+     )           </CardContent>
               </Card>
             </div>
           </TabsContent>

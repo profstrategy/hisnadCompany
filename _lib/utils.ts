@@ -132,17 +132,19 @@ export const handleHttpError = async (
     case 409:
       AppErrorToast({
         message: data?.message || "Subscription already exists",
-        description: `${data?.paymentStatus === paymentStatus.INCOMPLETE ? `Click continue to continue with payment, ${data?.status} status` : data?.paymentStatus === paymentStatus.COMPLETED ? data.description : data?.paymentStatus === paymentStatus.ACTIVE ? data.description : ''}`,
+        description: `${data?.paymentStatus === paymentStatus.INCOMPLETE ? `Click continue to continue with payment, ${data?.status} status` : data?.paymentStatus === paymentStatus.COMPLETED ? data.description : data?.paymentStatus === paymentStatus.ACTIVE ? data.description : ""}`,
         action: {
           label: `${
-            data?.paymentStatus === paymentStatus.INCOMPLETE || paymentStatus.ACTIVE
+            data?.paymentStatus === paymentStatus.INCOMPLETE ||
+            paymentStatus.ACTIVE
               ? "Continue Payment"
               : data?.paymentStatus === paymentStatus.COMPLETED
-              ? "Send me a link"
-              : ""
+                ? "Send me a link"
+                : ""
           }`,
           onClick: () => {
-            data?.paymentStatus === paymentStatus.INCOMPLETE || paymentStatus.ACTIVE
+            data?.paymentStatus === paymentStatus.INCOMPLETE ||
+            paymentStatus.ACTIVE
               ? redirect(
                   CLIENT_ROUTES.PublicPages.make_payment(
                     data?.initialized_payment_id ?? "",
@@ -151,8 +153,8 @@ export const handleHttpError = async (
                   )
                 )
               : data?.paymentStatus === paymentStatus.COMPLETED
-              ? ""
-              : "";
+                ? ""
+                : "";
           },
         },
       });
@@ -292,7 +294,10 @@ export const formatFullNumber = (
   return formatNumber(value, { showFullNumber: true, currency, locale });
 };
 
+export const extractInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((itm) => itm.charAt(0) + itm.charAt(itm.length - 1).toUpperCase())
+    .join("");
+};
 
-export const extractInitials = (name:string) => {
-return name.split(' ').map((itm) => itm.charAt(0)).join('')
-}

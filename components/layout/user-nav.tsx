@@ -37,7 +37,7 @@ export function UserNav() {
       </DropdownMenuTrigger>
       
       <DropdownMenuContent 
-        className="w-64 bg-white border border-blue-100 shadow-lg rounded-xl" 
+        className="w-full bg-white border border-blue-100 shadow-lg rounded-xl" 
         align="end" 
         forceMount
         sideOffset={8}

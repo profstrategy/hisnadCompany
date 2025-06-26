@@ -1,6 +1,7 @@
 import { prisma } from "@/_lib/prisma";
 import bcrypt from "bcryptjs";
 import { generateTokens } from "./tokens/auth-token";
+import { getPropertyById } from "./prisma-data-service";
 
 export async function authenticateUser(email: string, password: string) {
   try {
@@ -8,6 +9,8 @@ export async function authenticateUser(email: string, password: string) {
     const user = await prisma.user.findUnique({
       where: { email },
     });
+
+    const property = await getPropertyById(user?.selected_product_id ?? '')
 
     if (!user) {
       return { success: false, message: "Invalid credentials" };
@@ -36,7 +39,9 @@ export async function authenticateUser(email: string, password: string) {
         firstName: user.firstName,
         lastName: user.lastName,
         accountType: user.accountType,
-        status: user.status
+        status: user.status,
+        property_type: property.type,
+        property_size: property.size
       },
       accessToken,
       refreshToken,
