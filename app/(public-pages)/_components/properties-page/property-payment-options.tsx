@@ -6,6 +6,8 @@ import AppButton from '@/components/reusables/app-button';
 import { SegregatedProperties } from '@/constants/types';
 import { Payment_plan, sizeOptions } from '@/constants/generic';
 import { formatNaira } from '@/_lib/utils';
+import { CLIENT_ROUTES } from '@/_lib/routes';
+import { useRouter } from 'next/navigation';
 
 type PropertyPaymentOptionsProps = {
   property: SegregatedProperties;
@@ -14,6 +16,7 @@ type PropertyPaymentOptionsProps = {
     size: typeof sizeOptions[keyof typeof sizeOptions],
     plan: typeof Payment_plan[keyof typeof Payment_plan]
   ) => void;
+  userId?: string
 };
 
 export const fadeInUp = {
@@ -25,8 +28,10 @@ export const fadeInUp = {
 export default function PropertyPaymentOptions({
   property,
   loadingStates,
-  onBtnChange
+  onBtnChange,
+  userId
 }: PropertyPaymentOptionsProps) {
+  const router = useRouter()
   return (
     <motion.div
       variants={fadeInUp}
@@ -53,7 +58,7 @@ export default function PropertyPaymentOptions({
                   </div>
                   <AppButton
                     className="w-full text-white bg-primary hover:bg-primary-dark transition-colors"
-                    onClick={() => onBtnChange(sizeOptions.ACRE, Payment_plan.FULL_PAYMENT)}
+                    onClick={ userId ? () => onBtnChange(sizeOptions.ACRE, Payment_plan.FULL_PAYMENT) : () => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
                     disabled={loadingStates[sizeOptions.ACRE.toLowerCase()]}
                   >
                     {loadingStates[sizeOptions.ACRE] ? 'Processing...' : `Buy ${sizeOptions.ACRE}`}
@@ -74,7 +79,7 @@ export default function PropertyPaymentOptions({
                   </div>
                   <AppButton
                     className="w-full text-white bg-primary hover:bg-primary-dark transition-colors"
-                    onClick={() => onBtnChange(sizeOptions.PLOT, Payment_plan.FULL_PAYMENT)}
+                    onClick={userId ? () => onBtnChange(sizeOptions.PLOT, Payment_plan.FULL_PAYMENT) : () => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
                     disabled={loadingStates[sizeOptions.PLOT.toLowerCase()]}
                   >
                     {loadingStates[sizeOptions.PLOT] ? 'Processing...' : `Buy ${sizeOptions.PLOT}`}
@@ -97,7 +102,7 @@ export default function PropertyPaymentOptions({
                   </div>
                   <AppButton
                     className="w-full text-white bg-primary hover:bg-primary-dark transition-colors"
-                    onClick={() => onBtnChange(sizeOptions.PLOT, Payment_plan.FULL_PAYMENT)}
+                    onClick={userId ? () => onBtnChange(sizeOptions.PLOT, Payment_plan.FULL_PAYMENT) : () => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
                     disabled={loadingStates[sizeOptions.PLOT]}
                   >
                     {loadingStates[sizeOptions.PLOT] ? 'Processing...' : `Buy ${sizeOptions.PLOT}`}
@@ -118,7 +123,7 @@ export default function PropertyPaymentOptions({
                   </div>
                   <AppButton
                     className="w-full text-white bg-primary hover:bg-primary-dark transition-colors"
-                    onClick={() => onBtnChange(sizeOptions.ACRE, Payment_plan.FULL_PAYMENT)}
+                    onClick={userId ? () => onBtnChange(sizeOptions.ACRE, Payment_plan.FULL_PAYMENT) : () => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
                     disabled={loadingStates[sizeOptions.ACRE]}
                   >
                     {loadingStates[sizeOptions.ACRE] ? 'Processing...' : `Buy ${sizeOptions.ACRE}`}

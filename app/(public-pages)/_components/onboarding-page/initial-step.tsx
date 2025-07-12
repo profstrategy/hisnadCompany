@@ -8,57 +8,26 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
-import React from 'react'
+import React, { useState } from 'react'
 import { authZodValidator, initialStepTypeSchema } from '@/schemas/auth.schema'
 import { useOnboardingValidation } from '@/hooks/useOnboardingValidation'
 import AppDialogBox from '@/components/reusables/app-dialog-box'
-import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys'
+import { useGlobalStore } from '@/providers/store-provider'
+import { AppSuccessToast } from '@/components/reusables/app-toast'
 
 
 const OnboardingInitialStep = () => {
-    const [showEmailExistDialogModal, setShowEmailExistDialogModal] = React.useState(false)
-    const [showOnboardingCompletedDialogAlert, setShowOnboardingCompletedDialogAlert] = React.useState(false)
-    const [storedEmail, setStoredEmail] = React.useState('')
-    const [isActiveRegistration, setIsActiveRegistration] = React.useState(false)
-    const [pendingOnboardingData, setPendingOnboardingData] = React.useState<{
-        email: string;
-        userId: string;
-        status: string;
-    } | null>(null)
     const [isLoading, setIsloading] = React.useState(false)
-
-    // Get localStorage values
-    const onboardingId = localStorage.getItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID)
-    const currentStatus = localStorage.getItem(LOCAL_STORAGE_KEYS.STATUS)
-    const email = localStorage.getItem(LOCAL_STORAGE_KEYS.ONBOARDING_EMAIL)
-
-    React.useEffect(() => {
-        if (isActiveRegistration) return
-
-        if (!onboardingId || !email) {
-            return
-        }
-
-        setStoredEmail(email)
-
-        const pendingStatuses = ['pending']
-        const completedStatuses = ['onboarded', 'paid', 'active']
-
-        if (pendingStatuses.includes(currentStatus ?? '')) {
-            setShowEmailExistDialogModal(true)
-            setShowOnboardingCompletedDialogAlert(false)
-        } else if (completedStatuses.includes(currentStatus ?? '')) {
-            setShowOnboardingCompletedDialogAlert(true)
-            setShowEmailExistDialogModal(false)
-        }
-
-    }, [onboardingId, currentStatus, email, isActiveRegistration])
+     const [isLoadingResendEmail, setIsloadingResendEmail] = React.useState(false)
+     const [ successPage, setSuccessPage ] = useState(false)
+     const onboardingData = useGlobalStore(store => store.context.confirmedUserData)
 
     const router = useRouter()
     const {
+        sendEmailModal,
+        setSendEmailModal,
+        resendOnboardingEmail,
         registerEmail,
-        deleteIncompleteRegistration,
-        getOnboardingStatus,
     } = useOnboardingValidation()
 
     const { handleSubmit, formState: { errors }, register, reset } = useForm<initialStepTypeSchema>({
@@ -68,55 +37,12 @@ const OnboardingInitialStep = () => {
         defaultValues: { email: '' },
     })
 
-    // Function to handle 409 conflict by fetching server data
-    const handleEmailConflict = async (email: string) => {
-        setIsloading(true)
-        try {
-            // Fetch onboarding status from server
-            const onboardingData = await getOnboardingStatus(email)
-
-            if (onboardingData) {
-                // Store the data temporarily for modal display
-                setPendingOnboardingData(onboardingData)
-                setStoredEmail(email)
-
-                // Sync with localStorage for future visits on this device
-                localStorage.setItem(LOCAL_STORAGE_KEYS.ONBOARDING_EMAIL, email)
-                localStorage.setItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID, onboardingData.userId)
-                localStorage.setItem(LOCAL_STORAGE_KEYS.STATUS, onboardingData.status)
-
-                // Show appropriate modal based on status
-                const pendingStatuses = ['pending']
-                const completedStatuses = ['onboarded', 'paid', 'active']
-
-                if (pendingStatuses.includes(onboardingData.status)) {
-                    setShowEmailExistDialogModal(true)
-                    setShowOnboardingCompletedDialogAlert(false)
-                } else if (completedStatuses.includes(onboardingData.status)) {
-                    setShowOnboardingCompletedDialogAlert(true)
-                    setShowEmailExistDialogModal(false)
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching onboarding status:', error)
-            throw new Error('Failed to fetch onboarding status, Network error or server issue.')
-        }
-    }
-
     const handleRegisterEmail = async (formData: initialStepTypeSchema) => {
         setIsloading(true)
-        setIsActiveRegistration(true)
         try {
             const registerEmailResult = await registerEmail(formData.email)
 
             if (!registerEmailResult) {
-                return
-            }
-
-
-            if (registerEmailResult.statusCode === 409) {
-                // Handle cross-device scenario
-                await handleEmailConflict(formData.email)
                 return
             }
 
@@ -128,89 +54,36 @@ const OnboardingInitialStep = () => {
                     setTimeout(() => {
                         router.push(CLIENT_ROUTES.PublicPages.onboarding.finalStep(userId));
                     }, 3000)
-
-
                 }
             }
 
         } catch (error: any) {
-            console.error('Onboarding error:', error)
-            setIsActiveRegistration(false)
-
-            // if (error.statusCode === 409 || error.status === 409) {
-            //     await handleEmailConflict(formData.email)
-            // }
-        }
-    }
-    const handleStoredEmailConfirm = () => {
-        setShowEmailExistDialogModal(false)
-
-        // Use pending data if available (cross-device scenario)
-        const userId = pendingOnboardingData?.userId || onboardingId
-
-        if (userId) {
-            setTimeout(() => {
-                router.push(CLIENT_ROUTES.PublicPages.onboarding.finalStep(userId));
-            }, 1000);
+        } finally {
+            setIsloading(false)
         }
     }
 
-    const handleStoredEmailCancel = async () => {
-        try {
-            const emailToDelete = pendingOnboardingData?.email || storedEmail
+    const handleResendOnboardingEmail = async () => {
+        setIsloadingResendEmail(true)
+        try{
+            console.log(onboardingData?.userId)
+            const response = await resendOnboardingEmail(onboardingData?.userId ?? '')
+            if(!response) return
 
-            await deleteIncompleteRegistration(emailToDelete)
-
-            // Clear all data
-            localStorage.removeItem(LOCAL_STORAGE_KEYS.ONBOARDING_EMAIL)
-            localStorage.removeItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID)
-            localStorage.removeItem(LOCAL_STORAGE_KEYS.STATUS)
-
-            setShowEmailExistDialogModal(false)
-            setStoredEmail('')
-            setPendingOnboardingData(null)
-            reset()
-
-            router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)
-        } catch (error) {
-            console.error('Error deleting incomplete registration:', error)
+            if(response.success){
+                AppSuccessToast({ message: response.message ?? '', duration: 6000 })
+                setSuccessPage(true)
+            }
+            return response
+        }catch (error: any) { 
+            // Already set by the hook
+        } finally {
+            setIsloadingResendEmail(false)
         }
-    }
-
-    const handleOnboardingCompletedConfirm = () => {
-        setShowOnboardingCompletedDialogAlert(false)
-        router.push(CLIENT_ROUTES.PublicPages.properties.index)
-    }
-
-    const handleOnboardingCompletedCancel = () => {
-        setShowOnboardingCompletedDialogAlert(false)
-        setPendingOnboardingData(null)
     }
 
     return (
         <motion.div>
-            <AppDialogBox
-                open={showEmailExistDialogModal}
-                onOpenChange={setShowEmailExistDialogModal}
-                title="Continue with saved email?"
-                description={`We found that you have already started the onboarding process as ${storedEmail}. Would you like to continue where you left off?`}
-                confirmText="Yes, continue"
-                cancelText="Start Over"
-                onConfirm={handleStoredEmailConfirm}
-                onCancel={handleStoredEmailCancel}
-                isLoading={isLoading}
-            />
-
-            <AppDialogBox
-                open={showOnboardingCompletedDialogAlert}
-                onOpenChange={setShowOnboardingCompletedDialogAlert}
-                title="Onboarding Completed"
-                description={`You have completed the onboarding process as ${storedEmail}. Please select a property to continue.`}
-                confirmText="Select a Property"
-                cancelText="Cancel"
-                onConfirm={handleOnboardingCompletedConfirm}
-                onCancel={handleOnboardingCompletedCancel}
-            />
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -241,7 +114,6 @@ const OnboardingInitialStep = () => {
                                 Enter your email address to begin your onboarding journey
                             </p>
                         </div>
-
 
                         <form className='space-y-4' onSubmit={handleSubmit(handleRegisterEmail)}>
                             <AppTextInput
@@ -274,8 +146,8 @@ const OnboardingInitialStep = () => {
                 </motion.div>
 
                 {/* Back Button */}
-                {/* <motion.button
-                    onClick={() => router.push('./')}
+                <motion.button
+                    onClick={() => router.push('/')}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
@@ -288,8 +160,30 @@ const OnboardingInitialStep = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                </motion.button> */}
+                </motion.button>
             </motion.div>
+
+            {sendEmailModal && (
+                <AppDialogBox
+                    open={sendEmailModal}
+                    onOpenChange={setSendEmailModal}
+                    title='Verify your previous registration'
+                    description='Check your email to complete your account validation'
+                    confirmText='Send link'
+                    isLoading={isLoadingResendEmail}
+                    onConfirm={handleResendOnboardingEmail}
+                />
+            )}
+
+            {successPage && <AppDialogBox
+                open={successPage}
+                onOpenChange={setSuccessPage}
+                title='Email confirmation link successful'
+                confirmText='Back Home'
+                onCancel={() => router.push('/')}
+                onConfirm={() => router.push('/')}
+                description='Check your email'
+            />}
         </motion.div>
     )
 }

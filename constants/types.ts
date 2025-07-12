@@ -171,19 +171,23 @@ export interface CustomSession extends Session {
 }
 
 export interface RegisterEmailApiResponse {
-  success: boolean;
-  message: string;
+  success?: boolean;
+  message?: string;
   email?: string;
-  registeredEmail?: string;
   userId?: string;
   status?: string;
-  isReturningUser?: boolean;
-  isReturningPendingUser?: boolean;
-  shouldRedirectToProperties?: boolean;
+ resendEmailModal?: boolean
+ isReturningPendingUser?: boolean
   statusCode?: number;
 }
 
+export interface PersistData {
+  email?: string;
+  id?: string;
+}
+
 export interface CompleteOnboardingApiResponse {
+   showSendLinkToEmailModal?: boolean
   success?: boolean;
   message?: string;
   user?: {
@@ -194,6 +198,12 @@ export interface CompleteOnboardingApiResponse {
     status: string;
     accountType: ACCOUNT_TYPE;
   };
+}
+
+export interface ConfirmedUserApiResponse {
+  success?: boolean;
+  message?: string;
+  userId: string
 }
 
 export interface UserDataType {
@@ -300,4 +310,9 @@ export interface ApiResponseUserProperty {
     payment_plan: string;
     amount_remaining: string | number;
   };
+}
+export type VerifyEmailConfirmResponseType = {
+  message: string,
+  success: boolean,
+  userId: string
 }

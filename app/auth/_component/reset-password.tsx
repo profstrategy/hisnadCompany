@@ -30,7 +30,6 @@ const ResetPasswordPage = () => {
     reValidateMode: 'onChange'
   })
 const resetToken = searchParams.get('token')
-console.log(resetToken)
   const handleResetPassword = async (formState: resetPasswordTypeSchema) => {
     setIsSubmitting(true)
     try {
@@ -46,7 +45,6 @@ console.log(resetToken)
         }
       }
     } catch (erorr) {
-      // error handled in the client call funtion
     } finally { setIsSubmitting(false) }
   }
   return (

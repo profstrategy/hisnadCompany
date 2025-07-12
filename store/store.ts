@@ -1,49 +1,56 @@
-import { CompleteOnboardingApiResponse, RegisterEmailApiResponse } from "@/constants/types"
+import { CompleteOnboardingApiResponse, ConfirmedUserApiResponse } from "@/constants/types"
 import { createStore } from 'zustand/vanilla'
+import { persist } from 'zustand/middleware'
 
 type State = {
-    registeredEmailData: RegisterEmailApiResponse | null
+   context: {
+    confirmedUserData: ConfirmedUserApiResponse | null
+    },
+    // save: {
+    //      registeredEmail: string | null
+    // }
     completedOnboardingData: CompleteOnboardingApiResponse | null
-    
-    isRegisteringEmail: boolean
-    isCompletingOnboarding: boolean
-    
-    registerEmailError: string | null
-    completeOnboardingError: string | null
 }
 
 type Action = {
-    setRegisteredEmailData: (data: RegisterEmailApiResponse | null) => void
-    setCompletedOnboardingData: (data: CompleteOnboardingApiResponse | null) => void
-    
-    setRegisteringEmail: (loading: boolean) => void
-    setCompletingOnboarding: (loading: boolean) => void
-
-    setRegisterEmailError: (error: string | null) => void
-    setCompleteOnboardingError: (error: string | null) => void
-    
-    clearRegisteredEmailData: () => void
-    clearCompletedOnboardingData: () => void
+   actions : { 
+    setConfirmedUserData: (data: State['context']['confirmedUserData']) => void,
+    // setRegisteredEmail: (data: State['save']['registeredEmail']) => void
+   },
+   // Non-persisted actions
+   setCompletedOnboardingData: (data: State['completedOnboardingData']) => void
 }
 
 export type Store = State & Action;
 
-export const createExternalStateGlobalStore = () => createStore<Store>()((set) => ({
+export const createExternalStateGlobalStore = () => createStore<Store>()(
+    persist(
+    (set) => ({
     // Initial state
-    registeredEmailData: null,
+    context: {
+        confirmedUserData: null,
+    },
+    save: {
+         registeredEmail: null
+    },
     completedOnboardingData: null,
-    isRegisteringEmail: false,
-    isCompletingOnboarding: false,
-    registerEmailError: null,
-    completeOnboardingError: null,
-    
-    // Actions
-    setRegisteredEmailData: (data) => set({ registeredEmailData: data }),
-    setCompletedOnboardingData: (data) => set({ completedOnboardingData: data }),
-    setRegisteringEmail: (loading) => set({ isRegisteringEmail: loading }),
-    setCompletingOnboarding: (loading) => set({ isCompletingOnboarding: loading }),
-    setRegisterEmailError: (error) => set({ registerEmailError: error }),
-    setCompleteOnboardingError: (error) => set({ completeOnboardingError: error }),
-    clearRegisteredEmailData: () => set({ registeredEmailData: null, registerEmailError: null }),
-    clearCompletedOnboardingData: () => set({ completedOnboardingData: null, completeOnboardingError: null }),
+    actions: {
+        setConfirmedUserData: (confirmedUserData) => set((state) => ({
+            context: { 
+                ...state.context,
+                confirmedUserData 
+            }
+        })),
+        // setRegisteredEmail: (registeredEmail) => set((state) => ({
+        //     save: { 
+        //         ...state.save,
+        //         registeredEmail 
+        //     }
+        // }))
+    },
+    setCompletedOnboardingData: (completedOnboardingData) => set({ completedOnboardingData })
+}), {
+    name: 'email-confirmation-data',
+    partialize: (state) => ({ context: state.context }),
+    version: 1
 }))

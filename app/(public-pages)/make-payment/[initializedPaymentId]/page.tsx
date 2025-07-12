@@ -1,7 +1,6 @@
 import { PropertyEmptyState } from "@/components/reusables/empty-states";
 import InitializePaymentPage from "../../_components/payment-page/initialize-payment";
 import { getSubscriptionByInitializedPaymentId } from "@/_lib/prisma-data-service";
-import { PaymentInitialization } from "@/api/client-api/initialize-payment";
 
 
 export default async function MakePaymentPage({ params }: { params: Promise<{ initializedPaymentId: string }> }) {

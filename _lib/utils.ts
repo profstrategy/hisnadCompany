@@ -301,3 +301,23 @@ export const extractInitials = (name: string) => {
     .join("");
 };
 
+export const hashUserId = async (userId: string): Promise<string> => {
+  try {
+    // Convert string to ArrayBuffer
+    const encoder = new TextEncoder();
+    const data = encoder.encode(userId);
+    
+    // Hash the data using SHA-256
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    
+    // Convert ArrayBuffer to hex string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    return hashHex;
+  } catch (error) {
+    console.error('Error hashing user ID:', error);
+    throw error;
+  }
+};
+

@@ -2,7 +2,7 @@ import { prisma } from "@/_lib/prisma";
 import {
   getPropertyById,
   getSubscriptions,
-  getUserById,
+  getUserByHashedIdFromDB,
 } from "@/_lib/prisma-data-service";
 import { PROPERTY_TYPES, sizeOptions } from "@/constants/generic";
 import { GetPropertyById } from "@/constants/types";
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
     const { userId, propertyId, selectedSize } = body;
 
     // Get user and validate onboarding status
-    const onboardedUser = await getUserById(userId);
+    const onboardedUser = await getUserByHashedIdFromDB(userId);
 
     if (!onboardedUser) {
       return NextResponse.json(
@@ -272,7 +272,7 @@ export async function POST(req: NextRequest) {
     const result = await prisma.$transaction(async (tx) => {
       // Update user's selected property
       const updatedUser = await tx.user.update({
-        where: { id: userId },
+        where: { id: onboardedUser.id },
         data: {
           selected_product_id: selectedProperty.id,
         },

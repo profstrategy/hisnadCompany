@@ -9,8 +9,7 @@ import Faqs from "./_components/landing-page/landing-page/faqs";
 
 export default function PublicPages() {
     return (
-        <div className="min-h-screen grid grid-cols-1 gap-20">
-          
+        <div className="min-h-screen grid grid-cols-1 gap-20"> 
             <HeroSection />
             <ActiveProperties />
             <OurGoals />

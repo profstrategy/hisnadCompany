@@ -49,8 +49,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(getUserByThierEmail.status)
-
     const resetLink = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${reset_password_token}`;
 
     const sendLink = await resend.emails.send({

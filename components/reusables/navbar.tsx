@@ -15,8 +15,7 @@ import { CLIENT_ROUTES } from '@/_lib/routes';
 import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import { STATUS } from '@/constants/generic';
 import { useSession } from 'next-auth/react';
-
-const userStatus = localStorage.getItem(LOCAL_STORAGE_KEYS.STATUS)
+import { useGlobalStore } from '@/providers/store-provider';
 
 export const Logo = ({ to }:{ to?:string }) => {
   return (
@@ -47,6 +46,7 @@ export const Logo = ({ to }:{ to?:string }) => {
 };
 
 const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinksProps) => {
+  const userStatus = useGlobalStore(data => data.completedOnboardingData?.user)
   const session = useSession()
   const router = useRouter();
   return (
@@ -80,9 +80,9 @@ const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinks
             variant="primary"
             className="px-6 text-white"
             icon={<IoMdArrowRoundForward className="w-5 h-5" />}
-            onClick={() => userStatus === STATUS.ONBOARDED ? router.push(CLIENT_ROUTES.PublicPages.properties.index) : session.data?.user.email ? router.push(CLIENT_ROUTES.PublicPages.auth.login) : router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
+            onClick={() => userStatus?.status === STATUS.ONBOARDED ? router.push(CLIENT_ROUTES.PublicPages.properties.index) : session.data?.user.email ? router.push(CLIENT_ROUTES.PublicPages.auth.login) : router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
           >
-            { userStatus === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
+            { userStatus?.status === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
           </AppButton>
         </div>
     </ul>
@@ -96,13 +96,14 @@ const MobileNavMenu = ({
   setActiveItem,
   setIsOpen,
 }: MobileNavMenuProps) => {
+  const userStatus = useGlobalStore(data => data.completedOnboardingData?.user)
   const router = useRouter();
 const session = useSession()
   const handleGetStarted = () => {
     setIsOpen(false);
     if(session.data?.user.email) return router.push(CLIENT_ROUTES.PublicPages.auth.login)
-    if(userStatus === STATUS.ONBOARDED) return router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep);
-    if(userStatus === STATUS.PENDING) return router.push(CLIENT_ROUTES.PublicPages.properties.index)
+    if(userStatus?.status === STATUS.ONBOARDED) return router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep);
+    if(userStatus?.status === STATUS.PENDING) return router.push(CLIENT_ROUTES.PublicPages.properties.index)
   }
   
   return (
@@ -187,7 +188,7 @@ const session = useSession()
                   icon={<IoMdArrowRoundForward className="w-5 h-5" />}
                   onClick={handleGetStarted}
                 >
-                  { userStatus === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
+                  { userStatus?.status === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
                 </AppButton>
               </motion.li>
             </motion.ul>

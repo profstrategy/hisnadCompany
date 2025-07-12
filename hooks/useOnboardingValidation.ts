@@ -10,37 +10,16 @@ import {
   UserDataType,
 } from "@/constants/types";
 import { useGlobalStore } from "@/providers/store-provider";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export const useOnboardingValidation = () => {
-  const router = useRouter();
-
-  // Global store actions
-  const setRegisteredEmailData = useGlobalStore(
-    (store) => store.setRegisteredEmailData
-  );
-  const setCompletedOnboardingData = useGlobalStore(
-    (store) => store.setCompletedOnboardingData
-  );
-  const setRegisteringEmail = useGlobalStore(
-    (store) => store.setRegisteringEmail
-  );
-  const setCompletingOnboarding = useGlobalStore(
-    (store) => store.setCompletingOnboarding
-  );
-  const setRegisterEmailError = useGlobalStore(
-    (store) => store.setRegisterEmailError
-  );
-  const setCompleteOnboardingError = useGlobalStore(
-    (store) => store.setCompleteOnboardingError
-  );
+  const completedOnboardingData = useGlobalStore(data => data.setCompletedOnboardingData)
+  const [sendEmailModal, setSendEmailModal] = useState(false)
 
   const registerEmail = async (
     email: string
   ): Promise<RegisterEmailApiResponse> => {
-    setRegisterEmailError(null);
 
     try {
       const loadingToastId = AppLoadingToast('Validating Email')
@@ -54,21 +33,16 @@ export const useOnboardingValidation = () => {
 
       const data: RegisterEmailApiResponse = await response.json();
 
-      if(loadingToastId){
+      if (loadingToastId) {
         toast.dismiss(loadingToastId)
       }
       if (!response.ok) {
-        AppErrorToast({ message: data.message, description: "Retry again!!" });
-        setRegisterEmailError(data.message || "Failed to validate email");
+        AppErrorToast({ message: data.message ?? '', description: "Retry again!!" });
         return {
           success: false,
           message: data.message || "Failed to validate email",
-          shouldRedirectToProperties: data.shouldRedirectToProperties || false,
         };
       }
-
-      // Store the resolved data in global state
-      setRegisteredEmailData(data);
 
       if (data.success) {
         if (data.isReturningPendingUser) {
@@ -78,47 +52,43 @@ export const useOnboardingValidation = () => {
               "Welcome back! Your email is already registered. Proceeding to next step...",
             description: "Complete your onboarding now!!!",
           });
-        } else {
+        } else if (data.resendEmailModal) {
+          AppSuccessToast({
+            message:
+              data.message ?? '',
+          });
+
+          setSendEmailModal(true)
+        }
+        else {
           AppSuccessToast({
             message:
               data.message ||
               "Email registered successfully! Proceeding to next step...",
-            description: "Check available properties out",
+            description: "You can proceed!!!",
           });
         }
+
       } else {
         AppErrorToast({ message: data.message || "An Error occurred" });
-      }
-
-      if (data.shouldRedirectToProperties) {
-        AppSuccessToast({ message: data.message, description: 'Explore available properties' });
-
-        setTimeout(() => {
-          router.push(CLIENT_ROUTES.PublicPages.properties.index);
-        }, 3000);
       }
       return data;
     } catch (error) {
       const errorMessage =
         "Network error. Please check your connection and try again.";
       AppErrorToast({ message: errorMessage })
-      setRegisterEmailError(errorMessage);
 
       return {
         success: false,
         message: errorMessage,
       };
-    } finally {
-      setRegisteringEmail(false);
     }
   };
 
   const completeOnboarding = async (
+    userId: string,
     userData: UserDataType,
-    userId: string
   ): Promise<CompleteOnboardingApiResponse> => {
-    setCompletingOnboarding(true);
-    setCompleteOnboardingError(null);
 
     try {
       const loadingToastId = AppLoadingToast('Processing, please wait...')
@@ -131,46 +101,79 @@ export const useOnboardingValidation = () => {
           userId: userId,
           userData: {
             ...userData,
-            accountType: userData.accountType || "USER",
-            status: userData.status || "onboarded",
+            accountType: userData?.accountType || "USER",
+            status: userData?.status || "onboarded",
           },
+
         }),
       });
 
       const data = await response.json();
-
-      if(loadingToastId){
+      if (loadingToastId) {
         toast.dismiss(loadingToastId)
       }
 
       if (!response.ok) {
         AppErrorToast({ message: data.message })
-        setCompleteOnboardingError(
-          data.message || "Failed to complete onboarding"
-        );
         return {
           success: false,
           message: data.message || "Failed to complete onboarding",
         };
       }
-
-      // Store the resolved data in global state
-      setCompletedOnboardingData(data);
-AppSuccessToast({ message: data.message || 'Onboarding completed successfully!', description: 'Proceed to properties page' })
+      completedOnboardingData(data)
       return data;
     } catch (error) {
       console.error("Error completing onboarding:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
-      setCompleteOnboardingError(errorMessage);
       AppErrorToast({ message: errorMessage })
 
       return {
         success: false,
         message: "Failed to complete onboarding. Please try again.",
       };
-    } finally {
-      setCompletingOnboarding(false);
+    }
+  };
+
+  const resendOnboardingEmail = async (
+    userId: string,
+  ): Promise<CompleteOnboardingApiResponse> => {
+    try {
+      const loadingToastId = AppLoadingToast('Please wait...')
+      const response = await fetch(`/api/create-user/complete-onboarding`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          resendEmail: true
+          // No userData needed when resending email for already onboarded users
+        }),
+      });
+
+      const data = await response.json();
+      if (loadingToastId) {
+        toast.dismiss(loadingToastId)
+      }
+
+      if (!response.ok) {
+        AppErrorToast({ message: data.message })
+        return {
+          success: false,
+          message: data.message || "Failed to resend email",
+        };
+      }
+      return data;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      AppErrorToast({ message: errorMessage })
+
+      return {
+        success: false,
+        message: "Failed to resend email. Please try again.",
+      };
     }
   };
 
@@ -190,7 +193,7 @@ AppSuccessToast({ message: data.message || 'Onboarding completed successfully!',
     } catch (error) {
       console.error("Error deleting pending user:", error);
       return false;
-    } 
+    }
   };
 
   const getOnboardingStatus = async (email: string) => {
@@ -216,6 +219,9 @@ AppSuccessToast({ message: data.message || 'Onboarding completed successfully!',
   };
 
   return {
+    sendEmailModal,
+    setSendEmailModal,
+    resendOnboardingEmail,
     registerEmail,
     completeOnboarding,
     deleteIncompleteRegistration,
