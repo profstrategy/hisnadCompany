@@ -147,7 +147,7 @@ const OnboardingInitialStep = () => {
 
                 {/* Back Button */}
                 <motion.button
-                    onClick={() => router.push('/')}
+                    onClick={() => router.push(CLIENT_ROUTES.PublicPages.onboarding.confirmAccess)}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}

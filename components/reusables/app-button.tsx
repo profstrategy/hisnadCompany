@@ -70,7 +70,7 @@ const AppButton: React.FC<ButtonProps> = ({
 
   const variantClasses =
     variant === 'secondary'
-      ? `bg-accent-primary text-white border-[0.5px] border-none hover:bg-brand-color-light hover:text-brand-color-main ${disabled ? 'bg-opacity-70' : ''}`
+      ? `bg-[#ffffff] text-black border-[0.5px] border-accent-primary hover:bg-brand-color-light hover:text-brand-color-main ${disabled ? 'bg-opacity-70' : ''}`
       : `bg-accent-primary ${disabled ? 'bg-opacity-70' : ''}`;
 
   const renderContent = () => {

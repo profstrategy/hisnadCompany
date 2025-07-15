@@ -108,11 +108,12 @@ const PropertyCard = ({ pkg, theme = 'light' }: PropertiesProps) => {
             }
 
             const hashedId = await verifyPropertySelectionToken(token ?? '')
-            if (hashedId?.userId || currentOnboardingData) {
+            const onboardedRoute = hashedId?.userId || currentOnboardingData?.userId
+            if (onboardedRoute) {
                 // Route based on userId availability
                 const authenticatedUserLink = CLIENT_ROUTES.PublicPages.properties.onboarded(
                     pkg.slug,
-                    hashedId?.userId
+                    onboardedRoute
                 );
                 router.push(authenticatedUserLink);
             } else {

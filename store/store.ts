@@ -1,6 +1,6 @@
 import { CompleteOnboardingApiResponse, ConfirmedUserApiResponse } from "@/constants/types"
 import { createStore } from 'zustand/vanilla'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 type State = {
    context: {
@@ -52,5 +52,6 @@ export const createExternalStateGlobalStore = () => createStore<Store>()(
 }), {
     name: 'email-confirmation-data',
     partialize: (state) => ({ context: state.context }),
-    version: 1
+    version: 1,
+    storage: createJSONStorage(() => sessionStorage)
 }))
