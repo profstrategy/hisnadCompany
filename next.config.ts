@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.externals = [...config.externals, '@prisma/client']
     return config
+  },
+
+   experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'prisma']
   }
 
 };
