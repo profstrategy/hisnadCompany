@@ -3,7 +3,7 @@ import OnboardingFinalStep from '@/app/(public-pages)/_components/onboarding-pag
 import { PropertyEmptyState } from '@/components/reusables/empty-states'
 import { Metadata } from 'next'
 
-const OnboardingFinalStepPage = async ({ params } : { params:Promise<{ onboardingId: string }>, productSlug:string }) => {
+const OnboardingFinalStepPage = async ({ params } : { params:Promise<{ onboardingId: string }> }) => {
  const awaitedUserId = await params
  const { onboardingId } = awaitedUserId
  if (!onboardingId) {
