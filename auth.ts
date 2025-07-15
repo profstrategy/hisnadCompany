@@ -1,7 +1,5 @@
-// auth.ts (in your project root)
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { authenticateUser } from "./_lib/auth-service"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -12,39 +10,51 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-       
-          console.log('Received credentials:', credentials)
-          if (!credentials?.email || 
-              !credentials?.password || 
-              typeof credentials.email !== 'string' || 
-              typeof credentials.password !== 'string') {
-            throw new Error ("Missing or invalid email/password in credentials")
+        if (!credentials?.email || 
+            !credentials?.password || 
+            typeof credentials.email !== 'string' || 
+            typeof credentials.password !== 'string') {
+          throw new Error("Missing or invalid email/password in credentials")
+        }
 
+        try {
+          const response = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/authenticate`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
+
+          if (!response.ok) {
+            return null;
           }
 
-          // Use your authentication service
-        const authResult = await authenticateUser(credentials.email, credentials.password);
+          const authResult = await response.json();
 
-        if (authResult.success && authResult.user) {
-          console.log('Authentication successful for user:', authResult.user.email);
-          
-          return {
-            id: authResult.user.userId,
-            email: authResult.user.email,
-            name: `${authResult.user.firstName} ${authResult.user.lastName}`,
-            firstName: authResult.user.firstName,
-            lastName: authResult.user.lastName,
-            accountType: authResult.user.accountType,
-            property_type: authResult.user.property_type,
-            property_size: authResult.user.property_size,
-            accessToken: authResult.accessToken,
-            refreshToken: authResult.refreshToken,
-            sessionId: authResult.sessionId,
-            status: authResult.user.status
+          if (authResult.success && authResult.user) {
             
-          };
-        } else {
-          console.log('Authentication failed:', authResult.message);
+            return {
+              id: authResult.user.userId,
+              email: authResult.user.email,
+              name: `${authResult.user.firstName} ${authResult.user.lastName}`,
+              firstName: authResult.user.firstName,
+              lastName: authResult.user.lastName,
+              accountType: authResult.user.accountType,
+              property_type: authResult.user.property_type,
+              property_size: authResult.user.property_size,
+              accessToken: authResult.accessToken,
+              refreshToken: authResult.refreshToken,
+              sessionId: authResult.sessionId,
+              status: authResult.user.status
+            };
+          } else {
+            return null;
+          }
+        } catch (error) {
           return null;
         }
       }
@@ -53,12 +63,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
-    updateAge: 60 * 60, // Update session every hour
+    maxAge: 24 * 60 * 60, 
+    updateAge: 60 * 60,
   },
 
   callbacks: {
-     async jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.accountType = user.accountType;
@@ -72,7 +82,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
 
-async session({ session, token }) {
+    async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
         session.user.accountType = token.accountType as string;
@@ -92,6 +102,5 @@ async session({ session, token }) {
 
   debug: process.env.NODE_ENV === "development",
   
-  // In v5, you can set secret directly or via NEXTAUTH_SECRET env var
   secret: process.env.NEXTAUTH_SECRET,
 })
