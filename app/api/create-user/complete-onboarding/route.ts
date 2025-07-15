@@ -1,7 +1,7 @@
 import { prisma } from "@/_lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { hashedData, splitPhoneNumber } from "@/_lib/utils";
+import { splitPhoneNumber } from "@/_lib/utils";
 import { getUserByHashedIdFromDB } from "@/_lib/prisma-data-service";
 import { Resend } from "resend";
 import { generateNewPropertySelectionToken, generatePropertySelectionToken } from "@/_lib/tokens/select-property-token";

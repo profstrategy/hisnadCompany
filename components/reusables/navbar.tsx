@@ -12,7 +12,6 @@ import { LiaTimesSolid } from 'react-icons/lia';
 import { FaBarsStaggered } from 'react-icons/fa6';
 import { navItems } from '@/constants/contents';
 import { CLIENT_ROUTES } from '@/_lib/routes';
-import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import { STATUS } from '@/constants/generic';
 import { useSession } from 'next-auth/react';
 import { useGlobalStore } from '@/providers/store-provider';
@@ -80,7 +79,7 @@ const DesktopNavMenu = ({ navItems, activeItem, setActiveItem }: DesktopNavLinks
             variant="primary"
             className="px-6 text-white"
             icon={<IoMdArrowRoundForward className="w-5 h-5" />}
-            onClick={() => userStatus?.status === STATUS.ONBOARDED ? router.push(CLIENT_ROUTES.PublicPages.properties.index) : session.data?.user.email ? router.push(CLIENT_ROUTES.PublicPages.auth.login) : router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)}
+            onClick={() => userStatus?.status === STATUS.ONBOARDED ? router.push(CLIENT_ROUTES.PublicPages.properties.index) : session.data?.user.email ? router.push(CLIENT_ROUTES.PublicPages.auth.login) : router.push(CLIENT_ROUTES.PublicPages.onboarding.confirmAccess)}
           >
             { userStatus?.status === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
           </AppButton>
@@ -102,8 +101,8 @@ const session = useSession()
   const handleGetStarted = () => {
     setIsOpen(false);
     if(session.data?.user.email) return router.push(CLIENT_ROUTES.PublicPages.auth.login)
-    if(userStatus?.status === STATUS.ONBOARDED) return router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep);
-    if(userStatus?.status === STATUS.PENDING) return router.push(CLIENT_ROUTES.PublicPages.properties.index)
+    if(userStatus?.status === STATUS.ONBOARDED) return router.push(CLIENT_ROUTES.PublicPages.properties.index);
+    if(userStatus?.status === STATUS.PENDING) return router.push(CLIENT_ROUTES.PublicPages.onboarding.confirmAccess)
   }
   
   return (

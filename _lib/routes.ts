@@ -19,8 +19,9 @@ export const CLIENT_ROUTES = {
       parallel: "/properties#inspection-form",
     },
     onboarding: {
-      initialStep: "/onboarding/initial-step",
-      finalStep: (userId?: string) => `/onboarding/final-step/${userId}`,
+      confirmAccess: '/onboarding/new-user/confirm-access',
+      initialStep: "/onboarding/new-user/initial-step",
+      finalStep: (userId?: string) => `/onboarding/new-user/final-step/${userId}`,
     },
 
     auth: {

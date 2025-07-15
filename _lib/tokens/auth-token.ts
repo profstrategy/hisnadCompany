@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../prisma";
-import crypto from 'crypto'
 import { CustomToken } from "@/constants/types";
+import bcrypt from "bcryptjs";
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET!;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!;
 const ACCESS_EXPIRY_TIME = "15m";
@@ -106,10 +106,7 @@ export const storeRefreshToken = async (
     throw new Error("UserId and refresh token are required");
   }
 
-  const hashedRefreshToken = crypto
-    .createHash("sha256")
-    .update(refreshToken)
-    .digest("hex");
+  const hashedRefreshToken =  bcrypt.hash(refreshToken, 10)
 
   try {
    
