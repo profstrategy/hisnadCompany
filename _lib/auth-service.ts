@@ -48,7 +48,6 @@ export async function authenticateUser(email: string, password: string) {
       sessionId,
     };
   } catch (error) {
-    console.error("Authentication error:", error);
     return { success: false, message: `Authentication failed, ${error}` };
   }
 }
