@@ -1,4 +1,0 @@
-export const PROPERTY_TYPES = {
-  HISNAD: "HISNAD",
-  CRESTWOOD: "CRESTWOOD",
-};

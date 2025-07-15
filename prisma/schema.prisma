@@ -1,0 +1,191 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DIRECT_URL")
+}
+
+model User {
+  id                   String      @id @default(cuid())
+  hashedId  String?  @unique
+  firstName            String?
+  lastName             String?
+  address              String?
+  phoneNumber          String?
+  nextOfKinName        String?
+  nextOfKinPhoneNumber String?
+  nextOfKinAddress     String?
+  email                String      @unique
+  password_hash        String?
+  accountType          AccountType @default(USER)
+  status               UserStatus  @default(pending)
+  selected_product_id  String?
+  reset_password_token String? @unique
+  reset_password_token_expiry DateTime?
+  created_at           DateTime    @default(now())
+  updated_at           DateTime    @updatedAt
+
+  // Relations
+  refreshTokens   RefreshToken[]        @relation("UserRefreshToken")
+  sessions        Session[]
+  subscriptions   Subscription[]        @relation("UserSubscriptions")
+  selectedProduct SegregatedProperties? @relation("UserSelectedProduct", fields: [selected_product_id], references: [id])
+
+  @@index([id])
+  @@index([email])
+  @@index([phoneNumber])
+  @@index([lastName, firstName])
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  user_id    String
+  isActive   Boolean  @default(true)
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  // Relations
+  user User @relation("UserRefreshToken", fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([token])
+  @@index([expires_at])
+  @@map("refresh_tokens")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  token        String   @unique
+  user_id      String
+  expires_at   DateTime
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  last_used_at DateTime @default(now())
+  isActive     Boolean  @default(true)
+  ip_address   String?
+  user_agent   String?
+
+  // Relations
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([token])
+  @@index([expires_at])
+  @@index([isActive])
+  @@map("sessions")
+}
+
+model Subscription {
+  id                     String             @id @default(cuid())
+  property_type          Type?
+  property_select        String
+  payment_plan           SubscriptionPlan?
+  initialized_payment_id String             @unique
+  user_id                String
+  fullName               String
+  email                  String
+  product_id             String
+  size                   String
+  status                 SubscriptionStatus @default(idle)
+  payment_intent_id      String?
+  amount                 Float
+  created_at             DateTime           @default(now())
+  updated_at             DateTime           @updatedAt
+
+  // Relations
+  user    User                 @relation("UserSubscriptions", fields: [user_id], references: [id], onDelete: Cascade)
+  product SegregatedProperties @relation("ProductSubscriptions", fields: [product_id], references: [id])
+
+  @@unique([user_id, product_id, size], name: "unique_user_property_size")
+  @@index([user_id])
+  @@index([product_id])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+model SegregatedProperties {
+  id                            String        @id @default(cuid())
+  type                          Type
+  mainImage                     String[]
+  tier                          Tier
+  status                        ProductStatus @default(Available)
+  featured_farmland_amount_plot Float?
+  featured_farmland_amount_acre Float?
+  hisnad_estate_amount_plot     Float?
+  hisnad_estate_amount_acre     Float?
+  title                         String
+  slug                          String
+  size                          Size
+  location                      String
+  category                      String
+  features                      String[]
+  description                   String?
+  benefit                       String[]
+  documents                     String[]
+  payment                       String[]
+  property_id                   String?
+  created_at                    DateTime      @default(now())
+  updated_at                    DateTime      @updatedAt
+
+  subscriptions   Subscription[] @relation("ProductSubscriptions")
+  selectedByUsers User[]         @relation("UserSelectedProduct")
+
+  @@index([property_id])
+  @@index([status])
+  @@index([category])
+}
+
+// Separated enums for different purposes
+
+enum UserStatus {
+  pending
+  onboarded
+  paid
+  active
+}
+
+enum SubscriptionStatus {
+  idle
+  initialized
+  incomplete
+  completed
+  active
+}
+
+enum ProductStatus {
+  Available
+  Sold
+}
+
+enum AccountType {
+  ADMIN
+  USER
+}
+
+enum Type {
+  Hisnad_Estate
+  Featured_Farmland
+}
+
+enum Tier {
+  Residential
+  Farmland
+}
+
+enum SubscriptionPlan {
+  full_payment
+  installment
+}
+
+enum Size {
+  plot
+  acre
+}

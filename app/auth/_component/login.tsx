@@ -1,0 +1,231 @@
+'use client'
+import AppButton from '@/components/reusables/app-button'
+import { AppHeading } from '@/components/reusables/app-heading'
+import AppTextInput from '@/components/reusables/app-text-input'
+import { Logo } from '@/components/reusables/navbar'
+import { motion } from 'framer-motion'
+import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5';
+import { useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
+import { CLIENT_ROUTES } from '@/_lib/routes'
+import { signIn, useSession } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
+import { authZodValidator, loginTypeSchema } from '@/schemas/auth.schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ACCOUNT_TYPE } from '@/constants/generic'
+import { AppErrorToast, AppLoadingToast, AppSuccessToast } from '@/components/reusables/app-toast'
+import { toast } from 'sonner'
+
+const Login = () => {
+    const defaultValues = {
+        email: '',
+        password: ''
+    }
+
+    const { status, data: session } = useSession()
+    const router = useRouter()
+    const [showPassword, setShowPassword] = React.useState(false);
+    const [isloading, setIsloading] = React.useState(false)
+    const { handleSubmit, formState: { errors }, reset, register } = useForm<loginTypeSchema>({
+        mode: 'onChange',
+        resolver: zodResolver(authZodValidator('login')),
+        reValidateMode: 'onChange',
+        defaultValues: defaultValues
+    })
+
+    useEffect(() => {
+        if (status === 'authenticated' && session?.user.accountType) {
+            handleRedirectUser()
+        }
+    }, [status, session])
+
+    const handleRedirectUser = () => {
+        if (!session?.user.accessToken) return
+        if (session?.user?.accountType === ACCOUNT_TYPE.USER) {
+            router.push(CLIENT_ROUTES.PrivatePages.clientDashboard.overview)
+        } else {
+            router.push(CLIENT_ROUTES.PrivatePages.adminDashboard.overview)
+        }
+    }
+
+
+    const handleLoginUser = async (formData: loginTypeSchema) => {
+        setIsloading(true)
+        try {
+            const loadingToastId = AppLoadingToast('Validating Your Credentials, please wait...')
+
+
+            const { error, ok, status } = await signIn('credentials', {
+                email: formData.email,
+                password: formData.password,
+                redirect: false
+            })
+
+            if (loadingToastId) {
+                toast.dismiss(loadingToastId)
+            }
+
+            if (error) {
+                AppErrorToast({ message: 'Invalid email or password!!', description: 'Are you sure you have an account??' })
+                return
+            }
+
+            if (ok) {
+                AppSuccessToast({ message: 'Login successful! Start tracking your payment...', description: 'Thanks for your patronage' })
+                reset()
+                setTimeout(() => {
+                    handleRedirectUser()
+                    router.refresh()
+                }, 1000)
+            }
+        } catch (err) {
+            AppSuccessToast({ message: 'An unexpected error occurred. Please try again.', description: 'Bad Network' });
+        } finally {
+            setIsloading(false);
+        }
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="min-h-screen flex items-center justify-center bg-gray-50 p-4"
+        >
+            <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className='bg-white rounded-xl w-full max-w-md md:max-w-lg flex flex-col items-center justify-center py-8 px-6 sm:px-10 md:px-12 shadow-lg'
+            >
+                {/* Branding Section */}
+                <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className='flex flex-col items-center justify-center gap-3 mb-6 w-full'
+                >
+                    <Logo />
+                    <h1 className="font-bold text-xl sm:text-2xl md:text-3xl tracking-tight bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent">
+                        Hisnad Home & Properties
+                    </h1>
+                    <p className='text-center text-xs sm:text-sm text-gray-500 mt-1'>
+                        Your trusted real estate partner
+                    </p>
+                </motion.div>
+
+                <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ delay: 0.6 }}
+                    className='border-b border-gray-200 w-full mb-6'
+                />
+
+                {/* Login Form Section */}
+                <div className='w-full'>
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8 }}
+                        className='flex flex-col items-center justify-center gap-1 mb-6'
+                    >
+                        <AppHeading variant='h2'>Welcome back</AppHeading>
+                        <p className='text-center text-sm text-gray-500'>
+                            Sign in to manage your properties and transactions
+                        </p>
+                    </motion.div>
+
+                    <form onSubmit={handleSubmit(handleLoginUser)} className='flex flex-col gap-4'>
+                        <AppTextInput
+                            label='Email Address'
+                            placeholder="Enter your email"
+                            required
+                            type="email"
+                            className='w-full py-3 px-4 rounded-lg border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
+                            {...register('email')}
+                            error={errors.email?.message}
+                        />
+
+                        <AppTextInput
+                            label='Password'
+                            placeholder="Enter your password"
+                            required
+                            type={showPassword ? `text` : `password`}
+                            className='w-full py-3 px-4 rounded-lg border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500'
+                            {...register('password')}
+                            error={errors.password?.message}
+                            icon={
+                                showPassword ? (
+                                    <IoEyeOffOutline onClick={() => setShowPassword(false)} />
+                                ) : (
+                                    <IoEyeOutline onClick={() => setShowPassword(true)} />
+                                )
+                            }
+                        />
+
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1.2 }}
+                            className='flex items-center justify-between text-sm mb-2'
+                        >
+                            <label className='flex items-center'>
+                                <input
+                                    type="checkbox"
+                                    className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                                />
+                                <span className='ml-2 text-gray-600'>Remember me</span>
+                            </label>
+                            <p className='text-primary-600 hover:text-primary-800 font-medium cursor-pointer' onClick={() => router.push(CLIENT_ROUTES.PublicPages.auth.forgotPassword)}>
+                                Forgot password
+                            </p>
+                        </motion.div>
+
+                        <motion.div
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <AppButton
+                                type='submit'
+                                variant='primary'
+                                className="w-full h-11 font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+                                disabled={isloading}
+                            >
+                                {isloading ? (
+                                    <div className="flex items-center justify-center space-x-2">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        <span>Processing...</span>
+                                    </div>
+                                ) : (
+                                    'Sign In'
+                                )}
+                            </AppButton>
+                            <div className='mt-4 flex justify-between'>
+                                <p>Don't have an account? </p>
+                                <a onClick={() => router.push(CLIENT_ROUTES.PublicPages.onboarding.initialStep)} className='cursor-pointer'>Sign up</a>
+                            </div>
+
+                        </motion.div>
+                    </form>
+                </div>
+            </motion.div>
+
+            {/* Floating Back Button */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.6 }}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => router.push('/')}
+                className="fixed top-8 left-8 w-12 h-12 rounded-full border-2 border-primary-600 flex items-center justify-center bg-white shadow-md cursor-pointer"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </motion.div>
+        </motion.div>
+    )
+}
+
+export default Login

@@ -1,10 +1,11 @@
-# Real Estate Management System
-A web application for managing Land and House services.
+# Real Estate/Agriculture Management System
+
+A web application for managing Real Estate and Agriculture services.
 
 ## Features
 
 - Authentication and user management
-- Admin dashboard with analytics
+- Client dashboard with analytics
   - Revenue tracking
   - Performance metrics
   - Data visualization (Area, Bar and Pie charts)
@@ -16,8 +17,8 @@ A web application for managing Land and House services.
 - Package management
   - Active packages listing
   - Package details
- 
-  - ## Tech Stack
+
+## Tech Stack
 
 - Next.js
 - TypeScript
