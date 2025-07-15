@@ -1,4 +1,4 @@
-// api/auth/login/route.ts
+
 import { authenticateUser } from "@/_lib/auth-service";
 import { NextRequest, NextResponse } from "next/server";
 
