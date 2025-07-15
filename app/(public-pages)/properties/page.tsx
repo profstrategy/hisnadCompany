@@ -2,11 +2,11 @@
 import React from 'react';
 import PropertiesSection from '../_components/properties-page/properties-section';
 import Inspection from '../_components/properties-page/inspection';
-import { ActivePropertyPagePreview } from '@/constants/types';
 import { getAllProperties } from '@/_lib/prisma-data-service';
+import { SegregatedProperties } from '@/constants/types';
 
 const page = async () => {
-    const allActiveProperties: ActivePropertyPagePreview[] = await getAllProperties()
+    const allActiveProperties: SegregatedProperties[] = await getAllProperties()
     return (
         <div>
             {/* <Suspense fallback={<PropertiesSkeleton />}> */}

@@ -15,9 +15,22 @@ export const getUser = async (email: string) => {
 
 export const getUserById = async (id: string) => {
   const userId = await prisma.user.findUnique({
-    where: { id: id },
+    where: { id: id }
   });
   return userId;
+};
+
+export const getUserByHashedIdFromDB = async (hashedUserId: string) => {
+  try {
+    return await prisma.user.findFirst({
+      where: {
+        hashedId: hashedUserId
+      }
+    });
+  } catch (error) {
+    console.error('Error finding user by hashed ID:', error);
+    return null;
+  }
 };
 
 export const getUserOnboardingStatus = async (userId: string) => {
@@ -142,6 +155,7 @@ export const getPropertyById = async (id: string): Promise<GetPropertyById> => {
       location: true,
       payment: true,
       title: true,
+      size:true,
       status: true,
       hisnad_estate_amount_acre: true,
       hisnad_estate_amount_plot: true,

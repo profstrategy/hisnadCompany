@@ -75,6 +75,7 @@ const AppDialogBox = ({
             className="bg-gray-900 text-white hover:bg-gray-800 transition-colors focus:ring-0 focus:ring-offset-0"
             style={{ backgroundColor: 'var(--global-color-primary)', color: 'white' }}
             onClick={onConfirm}
+            disabled={isLoading}
           >
             {confirmText}
           </AlertDialogAction>

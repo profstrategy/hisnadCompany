@@ -1,5 +1,4 @@
-import { getSingularProperty, getUserById } from "@/_lib/prisma-data-service";
-import { handleHttpError } from "@/_lib/utils";
+import { getSingularProperty, getUserByHashedIdFromDB, getUserById } from "@/_lib/prisma-data-service";
 import SingularProperty from "@/app/(public-pages)/_components/properties-page/singular-property";
 
 type Params = {
@@ -8,14 +7,16 @@ type Params = {
 };
 
 export default async function AuthenticatedPropertiesPage({ params }: { params: Promise<Params> }) {
-  const awaitedParams = await params;
-  const { slug, userId } = awaitedParams
+
 
   try {
-    
+
+    const awaitedParams = await params;
+  const { slug, userId } = awaitedParams
+
     const [property, user] = await Promise.all([
       getSingularProperty(slug),
-      getUserById(userId)
+      getUserByHashedIdFromDB(userId)
     ]);
 
     if (!property) {
@@ -36,13 +37,13 @@ export default async function AuthenticatedPropertiesPage({ params }: { params: 
     return (
       <SingularProperty
         property={property}
-        userId={userId}
+        userId={user.hashedId ?? ''}
         paymentInitializationResponse={null} 
       />
     );
   } catch (error) {
     console.error('Error loading property page:', error);
-    
+
     return (
       <div className="text-center text-gray-600 p-8 bg-red-50 rounded-lg shadow-sm max-w-md mx-auto my-16">
         <h2 className="text-xl font-semibold mb-2">Error Loading Property</h2>

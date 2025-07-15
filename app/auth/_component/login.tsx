@@ -217,7 +217,7 @@ const Login = () => {
                 transition={{ delay: 1.6 }}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={() => router.push('/home')}
+                onClick={() => router.push('/')}
                 className="fixed top-8 left-8 w-12 h-12 rounded-full border-2 border-primary-600 flex items-center justify-center bg-white shadow-md cursor-pointer"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

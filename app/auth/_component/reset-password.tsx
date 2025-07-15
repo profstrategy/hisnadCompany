@@ -6,7 +6,7 @@ import { AppHeading } from '@/components/reusables/app-heading'
 import AppTextInput from '@/components/reusables/app-text-input'
 import AppButton from '@/components/reusables/app-button'
 import { useForm } from 'react-hook-form'
-import { resetPasswordClient } from '@/_lib/client-api/reset-password'
+import { resetPasswordClient } from '@/api/client-api/reset-password'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { CLIENT_ROUTES } from '@/_lib/routes'
 import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5'
@@ -30,7 +30,6 @@ const ResetPasswordPage = () => {
     reValidateMode: 'onChange'
   })
 const resetToken = searchParams.get('token')
-console.log(resetToken)
   const handleResetPassword = async (formState: resetPasswordTypeSchema) => {
     setIsSubmitting(true)
     try {
@@ -46,7 +45,6 @@ console.log(resetToken)
         }
       }
     } catch (erorr) {
-      // error handled in the client call funtion
     } finally { setIsSubmitting(false) }
   }
   return (

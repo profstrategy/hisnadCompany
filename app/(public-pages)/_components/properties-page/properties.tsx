@@ -1,21 +1,71 @@
 'use client';
 import { CLIENT_ROUTES } from '@/_lib/routes';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
+import { useEffect, useState } from 'react';
 import { SegregatedProperties } from '@/constants/types';
-import { formatFullNumber } from '@/_lib/utils';
+import { formatFullNumber, hashedData, hashUserId } from '@/_lib/utils';
+import { useGlobalStore } from '@/providers/store-provider';
+import PropertiesSkeleton from '../../properties/properties-skeleton-page';
+import { AppErrorToast, AppSuccessToast } from '@/components/reusables/app-toast';
+import { verifyPropertySelectionToken } from '@/_lib/tokens/select-property-token';
 
 interface PropertiesProps {
     pkg: SegregatedProperties;
     theme?: 'light' | 'dark';
 }
 
-export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) => {
+export const Properties = ({ pkg, theme }: PropertiesProps) => {
+    const searchParams = useSearchParams();
+    const setOnboardingData = useGlobalStore(state => state.actions.setConfirmedUserData);
+    const [isLoading, setIsLoading] = useState(true);
+    const token = searchParams.get('token');
+
+    const initializeUser = async () => {
+        setIsLoading(true)
+        try {
+            const tokenData = await verifyPropertySelectionToken(token ?? '');
+
+            if (tokenData) {
+                // Create onboarding data if token is valid
+                const onboardingData = {
+                    success: true,
+                    userId: tokenData.userId
+                };
+
+                setOnboardingData(onboardingData);
+            }
+            if (tokenData?.success) {
+                AppSuccessToast({ message: 'Email confirmation successful, Please select a property of your choice' });
+            }else{ return }
+        } catch (tokenError) {
+
+        } finally { setIsLoading(false) }
+    }
+
+    useEffect(() => {
+        initializeUser();
+    }, []);
+
+    if (isLoading) {
+        <PropertiesSkeleton theme='light' />
+    }
+
+    return (
+        <section>
+            <PropertyCard pkg={pkg} theme={theme} />
+        </section>
+    )
+
+};
+
+const PropertyCard = ({ pkg, theme = 'light' }: PropertiesProps) => {
+    const searchParams = useSearchParams();
+    const token = searchParams.get('token')
     const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
+    const currentOnboardingData = useGlobalStore(state => state.context.confirmedUserData);
 
     const themeStyles = {
         light: {
@@ -48,21 +98,29 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
 
     const styles = themeStyles[theme];
 
-    const handleClick = () => {
-        const onboardingId = localStorage.getItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID)
-        // Check if user is onboarded
-        if (onboardingId) {
+    const handleClick = async () => {
+        try {
+            // Validate required data first
+            if (!pkg?.slug) {
+                console.error('No property slug available');
+                AppErrorToast({ message: 'Property information not available' });
+                return;
+            }
 
-            // For onboarded users, include userId in the route
-            const onboardedUserLink = CLIENT_ROUTES.PublicPages.properties.onboarded(
-                pkg?.slug ?? '',
-                onboardingId
-            );
-            return router.push(onboardedUserLink);
-        } else {
-            // For non-authenticated users, use basic route
-            const basicLink = CLIENT_ROUTES.PublicPages.properties.onboarded(pkg?.slug ?? '');
-            return router.push(basicLink);
+            const hashedId = await verifyPropertySelectionToken(token ?? '')
+            if (hashedId?.userId || currentOnboardingData) {
+                // Route based on userId availability
+                const authenticatedUserLink = CLIENT_ROUTES.PublicPages.properties.onboarded(
+                    pkg.slug,
+                    hashedId?.userId
+                );
+                router.push(authenticatedUserLink);
+            } else {
+                const basicLink = CLIENT_ROUTES.PublicPages.properties.onboarded(pkg.slug);
+                router.push(basicLink);
+            }
+        } catch (error) {
+            AppErrorToast({ message: 'An error occurred. Please try again.' });
         }
     };
 
@@ -116,6 +174,20 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
         );
     };
 
+    // const DebugInfo = () => {
+    //     if (process.env.NODE_ENV === 'development') {
+    //         return (
+    //             <div className="fixed top-4 right-4 bg-black text-white p-2 text-xs rounded z-50">
+    //                 <div>Token: {token ? 'Present' : 'None'}</div>
+    //                 <div>CurrentUserId: {currentOnboardingData?.userId || 'None'}</div>
+    //                 <div>OnboardingData: {currentOnboardingData ? 'Present' : 'None'}</div>
+    //             </div>
+    //         );
+    //     }
+    //     return null;
+    // };
+
+
     return (
         <motion.div
             className={`${styles.background} p-6 rounded-lg border ${styles.border} ${styles.hoverBorder} transition-all duration-300 flex flex-col h-full relative overflow-hidden`}
@@ -126,6 +198,9 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
             onHoverEnd={() => setIsHovered(false)}
             key={pkg.id}
         >
+            {/* Debug info - remove in production */}
+            {/* <DebugInfo /> */}
+
             {/* Floating badge for status */}
             {pkg.status === 'Available' && (
                 <motion.div
@@ -236,4 +311,4 @@ export const Properties: React.FC<PropertiesProps> = ({ pkg, theme = 'dark' }) =
             </motion.button>
         </motion.div>
     );
-};
+}

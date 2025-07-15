@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import AppButton from '@/components/reusables/app-button'
 import { AppHeading } from '@/components/reusables/app-heading'
 import AppTextInput from '@/components/reusables/app-text-input'
@@ -13,7 +13,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useOnboardingValidation } from '@/hooks/useOnboardingValidation'
 import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5'
 import { AppPhoneInputController } from '@/components/reusables/app-phone-input'
-import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys'
+import { AppSuccessToast } from '@/components/reusables/app-toast'
+import AppDialogBox from '@/components/reusables/app-dialog-box'
+import { useGlobalStore } from '@/providers/store-provider'
 
 interface OnboardingCompleteTypes {
     firstName?: string;
@@ -41,8 +43,10 @@ const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
     }
     const router = useRouter()
     const { completeOnboarding } = useOnboardingValidation()
+    const onboardingData = useGlobalStore(store => store.completedOnboardingData)
     const [showPassword, setShowPassword] = React.useState(false)
     const [isLoading, setIsloading] = React.useState(false)
+    const [successPage, setSuccessPage] = useState(false)
 
     const { handleSubmit, formState: { errors }, register, reset, control } = useForm<OnboardingCompleteTypes>({
         resolver: zodResolver(authZodValidator('finalStep')),
@@ -60,40 +64,27 @@ const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
             }
 
             // Step 2: complete onboarding process
-            const completedResult = await completeOnboarding(formData, onboardingId);
+            const completedResult = await completeOnboarding(onboardingId, formData);
+
 
             if (!completedResult) {
                 // Completion failed - message is already set by the hook
                 return;
             }
 
-            if (completedResult.success) {
+            if (completedResult.success || onboardingData?.success) {
                 reset(defaultValues);
-
-                setTimeout(() => {
-                    router.push(CLIENT_ROUTES.PublicPages.properties.index)
-                }, 1000)
+                AppSuccessToast({ message: completedResult?.message ?? '', duration: 6000 })
+                setSuccessPage(true)
             }
 
-            localStorage.setItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID, completedResult.user?.userId || '');
-            localStorage.setItem(LOCAL_STORAGE_KEYS.STATUS, completedResult.user?.status || 'pending');
-            localStorage.setItem(LOCAL_STORAGE_KEYS.ONBOARDING_EMAIL, completedResult.user?.email || '');
         } catch (error) {
             console.error('Completion error:', error);
             // Error is already handled by the hook
+        } finally {
+            setIsloading(false)
         }
     };
-
-    const getMessageStyles = () => {
-        switch (status) {
-            case 'success':
-                return 'text-green-600 bg-green-50 border border-green-200'
-            case 'error':
-                return 'text-red-600 bg-red-50 border border-red-200'
-            default:
-                return 'text-gray-600 bg-gray-50 border border-gray-200'
-        }
-    }
 
     return (
         <motion.div
@@ -102,6 +93,15 @@ const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
             transition={{ duration: 0.3 }}
             className="min-h-screen flex items-center justify-center bg-gray-50 p-4"
         >
+           {successPage && <AppDialogBox
+                open={successPage}
+                onOpenChange={setSuccessPage}
+                title='Onboarding successful, Congratulations😍, Check your email'
+                confirmText='Back Home'
+                onCancel={() => router.push('/')}
+                onConfirm={() => router.push('/')}
+                description={onboardingData?.message}
+            />}
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -226,7 +226,7 @@ const OnboardingFinalStep = ({ onboardingId }: { onboardingId: string }) => {
                             type='submit'
                             variant='primary'
                             className="w-full h-11 font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors"
-
+                            disabled={isLoading}
                         >
                             {isLoading ? (
                                 <div className="flex items-center justify-center space-x-2">

@@ -2,7 +2,7 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { ACCOUNT_TYPE, STATUS } from "./generic";
-import { Type } from "@prisma/client";
+import { Size, Type } from "@prisma/client";
 
 export interface NavItems {
   id: string;
@@ -91,6 +91,7 @@ export interface GetPropertyById {
   location: string;
   status: "Available" | "Sold";
   type: Type;
+  size: Size
   category: string;
   payment: string[];
   featured_farmland_amount_plot: number | null;
@@ -170,19 +171,23 @@ export interface CustomSession extends Session {
 }
 
 export interface RegisterEmailApiResponse {
-  success: boolean;
-  message: string;
+  success?: boolean;
+  message?: string;
   email?: string;
-  registeredEmail?: string;
   userId?: string;
   status?: string;
-  isReturningUser?: boolean;
-  isReturningPendingUser?: boolean;
-  shouldRedirectToProperties?: boolean;
+ resendEmailModal?: boolean
+ isReturningPendingUser?: boolean
   statusCode?: number;
 }
 
+export interface PersistData {
+  email?: string;
+  id?: string;
+}
+
 export interface CompleteOnboardingApiResponse {
+   showSendLinkToEmailModal?: boolean
   success?: boolean;
   message?: string;
   user?: {
@@ -193,6 +198,12 @@ export interface CompleteOnboardingApiResponse {
     status: string;
     accountType: ACCOUNT_TYPE;
   };
+}
+
+export interface ConfirmedUserApiResponse {
+  success?: boolean;
+  message?: string;
+  userId: string
 }
 
 export interface UserDataType {
@@ -260,4 +271,48 @@ export interface ResetPasswordResponse {
   description: string;
   redirectToLogin: string;
   success?: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export interface PropertyData {
+  id: string;
+  type: string;
+  slug: string;
+  size?: number;
+  userId?: string;
+}
+
+export interface UserData {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  status?: string;
+}
+
+export interface ApiResponseUserProperty {
+  success: boolean;
+  message?: string;
+  error?: string;
+  data?: {
+    fullname: string;
+    property_id: string;
+    property_type: string;
+    property_name: string;
+    status: string;
+    size: string;
+    amount_paid: string | number;
+    payment_plan: string;
+    amount_remaining: string | number;
+  };
+}
+export type VerifyEmailConfirmResponseType = {
+  message: string,
+  success: boolean,
+  userId: string
 }

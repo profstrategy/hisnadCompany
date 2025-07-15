@@ -37,8 +37,8 @@ const SingularProperty = ({
 }: SingularPropertyProp) => {
     const searchParams = useSearchParams();
 
-    const propertySize = searchParams.get('size') as (typeof sizeOptions)[keyof typeof sizeOptions] || sizeOptions.PLOT;
-    const paymentPlan = searchParams.get('plan') as (typeof Payment_plan)[keyof typeof Payment_plan] || Payment_plan.FULL_PAYMENT;
+    searchParams.get('size') as (typeof sizeOptions)[keyof typeof sizeOptions] || sizeOptions.PLOT;
+    searchParams.get('plan') as (typeof Payment_plan)[keyof typeof Payment_plan] || Payment_plan.FULL_PAYMENT;
 
     const {
         // state
@@ -78,6 +78,7 @@ const SingularProperty = ({
 
                 {/* Payment Options */}
                 <PropertyPaymentOptions
+                userId={userId}
                     property={property}
                     loadingStates={loadingStates}
                     onBtnChange={handleBtnChange}

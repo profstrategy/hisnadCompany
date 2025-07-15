@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../prisma";
-import crypto from "crypto";
+import crypto from 'crypto'
 import { CustomToken } from "@/constants/types";
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET!;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!;
@@ -113,7 +113,7 @@ export const storeRefreshToken = async (
 
   try {
    
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx:any) => {
 
       await tx.refreshToken.deleteMany({
         where: {

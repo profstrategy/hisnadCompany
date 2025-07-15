@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { PaymentInitializationResponse } from "@/constants/types";
 import { AppErrorToast } from "@/components/reusables/app-toast";
-import { PaymentInitialization } from "./client-api/initialize-payment";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -133,17 +132,19 @@ export const handleHttpError = async (
     case 409:
       AppErrorToast({
         message: data?.message || "Subscription already exists",
-        description: `${data?.paymentStatus === paymentStatus.INCOMPLETE ? `Click continue to continue with payment, ${data?.status} status` : data?.paymentStatus === paymentStatus.COMPLETED ? data.description : data?.paymentStatus === paymentStatus.ACTIVE ? data.description : ''}`,
+        description: `${data?.paymentStatus === paymentStatus.INCOMPLETE ? `Click continue to continue with payment, ${data?.status} status` : data?.paymentStatus === paymentStatus.COMPLETED ? data.description : data?.paymentStatus === paymentStatus.ACTIVE ? data.description : ""}`,
         action: {
           label: `${
-            data?.paymentStatus === paymentStatus.INCOMPLETE || paymentStatus.ACTIVE
+            data?.paymentStatus === paymentStatus.INCOMPLETE ||
+            paymentStatus.ACTIVE
               ? "Continue Payment"
               : data?.paymentStatus === paymentStatus.COMPLETED
-              ? "Send me a link"
-              : ""
+                ? "Send me a link"
+                : ""
           }`,
           onClick: () => {
-            data?.paymentStatus === paymentStatus.INCOMPLETE || paymentStatus.ACTIVE
+            data?.paymentStatus === paymentStatus.INCOMPLETE ||
+            paymentStatus.ACTIVE
               ? redirect(
                   CLIENT_ROUTES.PublicPages.make_payment(
                     data?.initialized_payment_id ?? "",
@@ -152,8 +153,8 @@ export const handleHttpError = async (
                   )
                 )
               : data?.paymentStatus === paymentStatus.COMPLETED
-              ? ""
-              : "";
+                ? ""
+                : "";
           },
         },
       });
@@ -292,3 +293,31 @@ export const formatFullNumber = (
 ): string => {
   return formatNumber(value, { showFullNumber: true, currency, locale });
 };
+
+export const extractInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((itm) => itm.charAt(0) + itm.charAt(itm.length - 1).toUpperCase())
+    .join("");
+};
+
+export const hashUserId = async (userId: string): Promise<string> => {
+  try {
+    // Convert string to ArrayBuffer
+    const encoder = new TextEncoder();
+    const data = encoder.encode(userId);
+    
+    // Hash the data using SHA-256
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    
+    // Convert ArrayBuffer to hex string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    return hashHex;
+  } catch (error) {
+    console.error('Error hashing user ID:', error);
+    throw error;
+  }
+};
+

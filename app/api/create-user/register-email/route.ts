@@ -1,5 +1,7 @@
 import { prisma } from "@/_lib/prisma";
+import { getUserByHashedIdFromDB } from "@/_lib/prisma-data-service";
 import { generateOnboardingToken } from "@/_lib/tokens/onboarding-token";
+import { hashUserId } from "@/_lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -31,31 +33,31 @@ export async function POST(request: NextRequest) {
     if (completedStatuses.includes(existingUser.status)) {
   return NextResponse.json(
     {
-      message: "You have completed onboarding process, Redirecting to properties page...",
+      message: "You have completed onboarding process, please validate your account first...",
       registeredEmail: existingUser.email,
       status: existingUser.status,
       success: true,
-      shouldRedirectToProperties: true,
+      resendEmailModal: true,
       action: 'redirect' 
     },
     { status: 200 }
   );
 }
 
+const onboardingId = await getUserByHashedIdFromDB(existingUser.hashedId ?? '');
       // If user is pending, generate token and return success
       if (existingUser.status === 'pending') {
-        const onboardingToken = generateOnboardingToken(existingUser.id);
-        console.log("Generated onboarding token for existing pending user:", onboardingToken);
+        
+        console.log("Generated onboarding token for existing pending user:", onboardingId);
 
         return NextResponse.json(
           {
-            userId: onboardingToken,
+            userId: onboardingId?.hashedId,
             message: `Welcome back! We found your email ${existingUser.email} in our database. Continue your onboarding process.`,
             email: existingUser.email,
             status: existingUser.status,
             success: true,
             isReturningPendingUser: true,
-            shouldRedirectToProperties: false,
           },
           { status: 200 }
         );
@@ -65,6 +67,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           message: `We found your email ${existingUser.email} with status: ${existingUser.status}`,
+          userId: onboardingId?.hashedId,
           email: existingUser.email,
           status: existingUser.status,
           success: false,
@@ -75,9 +78,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // create hash id
+    const hashId = await hashUserId(crypto.randomUUID())
+
     // Create a new pending user
     const pendingUser = await prisma.user.create({
       data: {
+        hashedId:hashId,
         email: cleanEmail,
         status: "pending",
         created_at: new Date().toISOString(),
@@ -85,13 +92,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Generate secure token for new user
-    const onboardingToken = generateOnboardingToken(pendingUser.id);
-    console.log("Generated onboarding token for new user:", onboardingToken);
+    // const onboardingId = generateOnboardingToken(pendingUser.id);
 
     // Return successful response
     return NextResponse.json(
       {
-        userId: onboardingToken,
+        userId: hashId,
         status: pendingUser.status,
         message: "Email registered successfully",
         success: true,
