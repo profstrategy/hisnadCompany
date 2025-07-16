@@ -12,6 +12,7 @@ type State = {
     completedOnboardingData: CompleteOnboardingApiResponse | null
 }
 
+
 type Action = {
    actions : { 
     setConfirmedUserData: (data: State['context']['confirmedUserData']) => void,
