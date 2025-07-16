@@ -1,5 +1,5 @@
 import { getPropertyById, getUserById } from "@/_lib/prisma-data-service";
-import { ApiResponseUserProperty, PropertyData, UserData } from "@/constants/types";
+import { ApiResponseUserProperty } from "@/constants/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest): Promise<NextResponse<ApiResponseUserProperty>> {
