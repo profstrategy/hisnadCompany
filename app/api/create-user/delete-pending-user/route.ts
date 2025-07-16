@@ -1,16 +1,17 @@
+// app/api/create-user/delete-pending-user/route.ts
 import { prisma } from "@/_lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(response: NextResponse) {
+export async function DELETE(request: NextRequest) {
   try {
-    if (!response.headers.get('content-type')?.includes('application/json')) {
+    if (!request.headers.get('content-type')?.includes('application/json')) {
       return NextResponse.json(
         { success: false, error: 'Content-Type must be application/json' },
         { status: 400 }
       );
     }
 
-    const { email } = await response.json();
+    const { email } = await request.json();
     
     // Validate email
     if (!email || typeof email !== 'string' || !email.includes('@')) {
@@ -29,7 +30,7 @@ export async function POST(response: NextResponse) {
       { status: 200 }
     );
     
-  } catch (error:any) {
+  } catch (error: any) {
     if (error.code === 'P2025') { 
       return NextResponse.json(
         { success: false, error: 'User not found' },
