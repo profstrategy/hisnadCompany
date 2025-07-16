@@ -5,8 +5,6 @@ import AppTextInput from '@/components/reusables/app-text-input'
 import AppButton from '@/components/reusables/app-button'
 import { AppHeading } from '@/components/reusables/app-heading'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
-import { CLIENT_ROUTES } from '@/_lib/routes'
 import { forgotPassword } from '@/api/client-api/forgot-password'
 import { Logo } from '@/components/reusables/navbar'
 
@@ -15,7 +13,6 @@ export default function ForgotPasswordPage() {
         email: string;
     }
     const [isSubmitting, setIsSubmitting] = React.useState(false);
-    const router = useRouter()
 
     const defaultValues: FormData = {
         email: ''
