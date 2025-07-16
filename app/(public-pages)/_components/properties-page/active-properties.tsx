@@ -5,7 +5,6 @@ import { PropertySkeleton } from "./properties-skeleton";
 import { GetActiveProperties } from "@/constants/types";
 
 
-
 const ActiveProperties: React.FC = async () => {
     const activeProperties: GetActiveProperties[] = await getActiveProperties()
     return (
