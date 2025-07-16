@@ -57,7 +57,7 @@ const TestimonialCard = ({ theme = 'light', testimony }: TestimonialProps) => {
         return stars;
     };
 
-    const containerVariants = {
+    const containerVariants:any = {
         hidden: { opacity: 0, y: 30 },
         visible: {
             opacity: 1,
@@ -74,7 +74,7 @@ const TestimonialCard = ({ theme = 'light', testimony }: TestimonialProps) => {
         }
     };
 
-    const childVariants = {
+    const childVariants:any = {
         hidden: { opacity: 0, y: 10 },
         visible: {
             opacity: 1,

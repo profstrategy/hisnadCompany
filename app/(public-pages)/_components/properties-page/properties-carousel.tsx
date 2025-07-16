@@ -6,10 +6,10 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useRouter } from 'next/navigation';
 import { CLIENT_ROUTES } from '@/_lib/routes';
 import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
-import { SegregatedProperties } from '@/constants/types';
+import { GetActiveProperties } from '@/constants/types';
 
 interface PropertiesCarouselProps {
-    segregatedproperties: SegregatedProperties[]
+    segregatedproperties: GetActiveProperties[]
 }
 
 const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) => {
