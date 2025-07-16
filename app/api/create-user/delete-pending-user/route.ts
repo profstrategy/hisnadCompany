@@ -1,17 +1,17 @@
 import { prisma } from "@/_lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function DELETE(request: NextResponse) {
+export async function DELETE(response: NextResponse) {
   try {
     // Validate content type
-    if (!request.headers.get('content-type')?.includes('application/json')) {
+    if (!response.headers.get('content-type')?.includes('application/json')) {
       return NextResponse.json(
         { success: false, error: 'Content-Type must be application/json' },
         { status: 400 }
       );
     }
 
-    const { email } = await request.json();
+    const { email } = await response.json();
     
     // Validate email
     if (!email || typeof email !== 'string' || !email.includes('@')) {
