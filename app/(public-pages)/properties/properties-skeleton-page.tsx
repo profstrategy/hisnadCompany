@@ -26,7 +26,7 @@ export default function PropertiesSkeleton ({ theme = 'dark' }:SkeletonProps){
 
   const styles = themeStyles[theme];
 
-  const shimmerAnimation = {
+  const shimmerAnimation:any = {
     initial: { x: '-100%' },
     animate: { 
       x: '100%',
