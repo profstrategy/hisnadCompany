@@ -1,9 +1,8 @@
 import { prisma } from "@/_lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function DELETE(response: NextResponse) {
+export async function POST(response: NextResponse) {
   try {
-    // Validate content type
     if (!response.headers.get('content-type')?.includes('application/json')) {
       return NextResponse.json(
         { success: false, error: 'Content-Type must be application/json' },
