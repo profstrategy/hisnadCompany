@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
       // update the onboardingUser with the provided data
       // Use the actual database ID field, not hashedId
       const updatedUser = await prisma.user.update({
-        where: { id: onboardingUser.id }, 
+        where: { id: onboardingUser.id },
         data: {
           firstName: firstName,
           lastName: lastName,
@@ -180,10 +180,14 @@ async function sendPropertySelectionEmail(resend: any, newToken = false, user?: 
       throw new Error("User object is required");
     }
 
+    const baseUrl = process.env.NEXTAUTH_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
+        'http://localhost:3000');
+
     const renewExistingToken = generateNewPropertySelectionToken(user.hashedId);
     const propertySelectionToken = generatePropertySelectionToken(user.hashedId);
     const validatedToken = newToken ? renewExistingToken : propertySelectionToken;
-    const selectPropertyUrl = `${process.env.NEXTAUTH_URL}/properties?token=${validatedToken}`;
+    const selectPropertyUrl = `${baseUrl}/properties?token=${validatedToken}`;
     const emailResult = await resend.emails.send({
       from: "noreply@hisnad.com",
       to: user.email,
