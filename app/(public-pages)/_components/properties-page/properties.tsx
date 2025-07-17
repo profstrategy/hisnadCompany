@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { SegregatedProperties } from '@/constants/types';
-import { formatFullNumber, hashedData, hashUserId } from '@/_lib/utils';
+import { formatFullNumber } from '@/_lib/utils';
 import { useGlobalStore } from '@/providers/store-provider';
 import PropertiesSkeleton from '../../properties/properties-skeleton-page';
 import { AppErrorToast, AppSuccessToast } from '@/components/reusables/app-toast';

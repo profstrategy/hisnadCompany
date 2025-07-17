@@ -98,12 +98,12 @@ const MobileNavMenu = ({
   const userStatus = useGlobalStore(data => data.completedOnboardingData?.user)
   const router = useRouter();
 const session = useSession()
-  const handleGetStarted = () => {
-    setIsOpen(false);
-    if(session.data?.user.email) return router.push(CLIENT_ROUTES.PublicPages.auth.login)
-    if(userStatus?.status === STATUS.ONBOARDED) return router.push(CLIENT_ROUTES.PublicPages.properties.index);
-    if(userStatus?.status === STATUS.PENDING) return router.push(CLIENT_ROUTES.PublicPages.onboarding.confirmAccess)
-  }
+  // const handleGetStarted = () => {
+  //   setIsOpen(false);
+  //   if(session.data?.user.email) return router.push(CLIENT_ROUTES.PublicPages.auth.login)
+  //   if(userStatus?.status === STATUS.ONBOARDED) return router.push(CLIENT_ROUTES.PublicPages.properties.index);
+  //   if(userStatus?.status === STATUS.PENDING) return router.push(CLIENT_ROUTES.PublicPages.onboarding.confirmAccess)
+  // }
   
   return (
     <AnimatePresence>
@@ -185,7 +185,7 @@ const session = useSession()
                   variant="primary"
                   className="w-full py-3 text-lg text-white"
                   icon={<IoMdArrowRoundForward className="w-5 h-5" />}
-                  onClick={handleGetStarted}
+                  onClick={() => userStatus?.status === STATUS.ONBOARDED ? router.push(CLIENT_ROUTES.PublicPages.properties.index) : session.data?.user.email ? router.push(CLIENT_ROUTES.PublicPages.auth.login) : router.push(CLIENT_ROUTES.PublicPages.onboarding.confirmAccess)}
                 >
                   { userStatus?.status === STATUS.ONBOARDED ? 'Select a property' : session.data?.user.email ? 'Login' : 'Get Started' }
                 </AppButton>

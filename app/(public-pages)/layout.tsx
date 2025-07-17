@@ -1,6 +1,8 @@
 import Footer from "@/components/reusables/footer";
-import Navbar from "@/components/reusables/navbar";
 import WhatsaapChat from "@/components/reusables/whatsaap-chat";
+import dynamic from "next/dynamic";
+
+const Navbar = dynamic(() => import("@/components/reusables/navbar"));
 
 export default function PublicPagesLayout({ children }: { children: React.ReactNode }) {
     return (

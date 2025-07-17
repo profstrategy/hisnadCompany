@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 
 const InitializePaymentPageSkeleton = () => {
   // Shimmer animation variants
-  const shimmer = {
+  const shimmer:any = {
     initial: { backgroundPosition: '-200px 0' },
     animate: { 
       backgroundPosition: '200px 0',
@@ -16,7 +16,7 @@ const InitializePaymentPageSkeleton = () => {
   }
 
   // Pulse animation for elements
-  const pulse = {
+  const pulse:any = {
     initial: { opacity: 0.6 },
     animate: { 
       opacity: 1,

@@ -24,15 +24,14 @@ const TeamCard = ({ theme = 'light', team }: TeamProps) => {
     } = team;
 
 
-    const containerVariants = {
+    const containerVariants:any = {
         hidden: { opacity: 0, y: 30 },
         visible: {
             opacity: 1,
             y: 0,
             transition: {
                 duration: 0.5,
-                ease: [0.16, 1, 0.3, 1],
-                staggerChildren: 0.1,
+                ease: "easeOut",
             },
         },
         hover: {
@@ -41,7 +40,7 @@ const TeamCard = ({ theme = 'light', team }: TeamProps) => {
         }
     };
 
-    const childVariants = {
+    const childVariants:any = {
         hidden: { opacity: 0, y: 10 },
         visible: {
             opacity: 1,
@@ -98,6 +97,7 @@ const TeamCard = ({ theme = 'light', team }: TeamProps) => {
             whileInView="visible"
             viewport={{ once: true, margin: '0px 0px -100px 0px' }}
             variants={containerVariants}
+            transition={{ staggerChildren: 0.1 }}
             className={`relative w-full h-auto rounded-2xl ${styles.shadow} transition-all duration-300`}
         >
             <motion.div

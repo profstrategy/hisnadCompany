@@ -13,6 +13,12 @@ import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5'
 import { authZodValidator, resetPasswordTypeSchema } from '@/schemas/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+export const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+)
+
 const ResetPasswordPage = () => {
   const router = useRouter()
   const defaultValues = {
