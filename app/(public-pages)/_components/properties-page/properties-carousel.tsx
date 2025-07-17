@@ -5,19 +5,19 @@ import Image from 'next/image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useRouter } from 'next/navigation';
 import { CLIENT_ROUTES } from '@/_lib/routes';
-import { LOCAL_STORAGE_KEYS } from '@/constants/local-storage-keys';
 import { GetActiveProperties } from '@/constants/types';
+import { useGlobalStore } from '@/providers/store-provider';
 
 interface PropertiesCarouselProps {
     segregatedproperties: GetActiveProperties[]
 }
 
-const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) => {
+const PropertiesCarousel = ({ segregatedproperties }: PropertiesCarouselProps) => {
     const { setApi, count, current } = useSlider();
-    const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.ONBOARDING_ID);
     const [hovered, setHovered] = React.useState<number | null>(null);
     const [angleMap, setAngleMap] = React.useState<{ [key: number]: number }>({});
     const router = useRouter()
+    const userId = useGlobalStore(data => data.context.confirmedUserData?.userId)
 
     const handleMouseMove = (id: number, e: React.MouseEvent<HTMLDivElement>) => {
         const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -28,7 +28,7 @@ const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) =>
     };
 
     const getButtonTransform = (angle: number) => {
-        const radius = 60; 
+        const radius = 60;
         const rad = (angle * Math.PI) / 180;
         const x = radius * Math.cos(rad);
         const y = radius * Math.sin(rad);
@@ -75,16 +75,16 @@ const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) =>
                                             </button>
                                         )}
 
-<button
-                                                className="text-white px-6 py-3 rounded-lg font-medium border border-white transition-all duration-300 absolute md:hidden block"
-                                                style={{
-                                                    transition: 'transform 0.1s linear',
-                                                }}
+                                        <button
+                                            className="text-white px-6 py-3 rounded-lg font-medium border border-white transition-all duration-300 absolute md:hidden block"
+                                            style={{
+                                                transition: 'transform 0.1s linear',
+                                            }}
 
-                                                onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.onboarded(property.slug ?? '', userId)}`)}
-                                            >
-                                                View property details &gt;
-                                            </button>
+                                            onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.onboarded(property.slug ?? '', userId)}`)}
+                                        >
+                                            View property details &gt;
+                                        </button>
                                     </div>
                                     <div className="grid gap-1">
                                         <h2 className="text-base sm:text-lg font-bold text-white">
@@ -98,11 +98,11 @@ const PropertiesCarousel = ({ segregatedproperties }:PropertiesCarouselProps) =>
                     ))}
                 </CarouselContent>
                 {current > 0 && (
-  <CarouselPrevious className="bg-white border-[1px] border-[#333333] z-10 md:left-8/12 left-9/12 top-6 md:top-80 absolute" />
-)}
-{current < count - 1 && (
-  <CarouselNext className="bg-white border-[1px] border-[#333333] z-10 absolute md:left-7/12 left-7/12 md:top-80 top-6" />
-)}
+                    <CarouselPrevious className="bg-white border-[1px] border-[#333333] z-10 md:left-8/12 left-9/12 top-6 md:top-80 absolute" />
+                )}
+                {current < count - 1 && (
+                    <CarouselNext className="bg-white border-[1px] border-[#333333] z-10 absolute md:left-7/12 left-7/12 md:top-80 top-6" />
+                )}
 
             </Carousel>
         </div>

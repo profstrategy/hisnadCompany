@@ -7,7 +7,7 @@ import CallUs from '@/components/reusables/call-us'
 const Inspection = () => {
     return (
         <div className='' id='inspection-form'>
-            <div className='flex flex-col items-center justify-center gap-4 py-10'>
+            {/* <div className='flex flex-col items-center justify-center gap-4 py-10'>
                 <AppHeading className='h1'>COME SITE-SEE TODAY!</AppHeading>
                 <h1 className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>Site inspection is always a delightful experience for our clients, and prospects. You get to come take in the exquisite land property deals we have in store.</h1>
                 <div className='grid md:grid-cols-3 grid-cols-1 w-full overflow-hidden gap-4 '>
@@ -42,7 +42,7 @@ const Inspection = () => {
                     <InspectionForm />
                 </div>
 
-            </div>
+            </div> */}
 
             <div><CallUs /></div>
         </div>
