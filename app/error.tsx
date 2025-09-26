@@ -1,5 +1,6 @@
 'use client';
 
+import { CLIENT_ROUTES } from '@/_lib/routes';
 import Link from 'next/link';
 import { FaExclamationTriangle } from 'react-icons/fa';
 
@@ -37,8 +38,8 @@ export default function Error({
             </form>
 
             <Link
-              href="/contact"
-              className="inline-block px-6 py-3 bg-white text-primary border border-primary rounded-lg hover:bg-gray-50 transition-colors"
+              href={CLIENT_ROUTES.PublicPages.contact}
+              className="inline-block px-6 py-3 bg-white text-primary border border-primary rounded-lg hover:bg-gray-500 transition-colors"
             >
               Contact Support
             </Link>

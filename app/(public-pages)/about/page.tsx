@@ -6,7 +6,7 @@ export default function AboutPublicPage() {
     console.log({ AboutHisnad, Testimonial, TeamPage });
 
     return (
-        <div>
+        <div className="pt-12 mb-20">
             <AboutHisnad />
             <Testimonial />
             <TeamPage />

@@ -147,6 +147,43 @@ const properties = [
       { id: "Outright/ 3 Months Payment", payment: "Balance" },
     ],
   },
+
+   {
+    type: "Featured_Farmland",
+    id: '3cf28db2-45c9-4f9e-8de1-652d86ea0958',
+    mainImage: {
+      id: 3,
+      urls: [
+        "https://res.cloudinary.com/dcuie3jbl/image/upload/v1748250851/featured-2_rnmtah.jpg",
+        "https://res.cloudinary.com/dcuie3jbl/image/upload/v1748250835/featured-1_llvfoi.jpg",
+      ],
+    },
+    tier: "Farmland",
+    status: "Available",
+    featured_farmland_amount_plot: 500000,
+    featured_farmland_amount_acre: 2100000,
+    size: 'plot',
+    title: "Flourish farm Estate (Featured Farmland)",
+    slug: "flourish-farm-estate",
+    location: "Ikanna Balogun, Obafemi Owode local government, Ogun State.",
+    description:
+      "Freehold farmland along Lagos-Ibadan Expressway, Ikanna Balogun, Obafemi Owode local government, Ogun State with turnkey agribusiness management. Ideal for investors seeking 18-25% annual ROI through long-term and short-term cultivation.",
+    category: "Agricultural Investment/Farmland",
+    features: [
+      "10% discount for bulk purchases",
+      "Deed of Assignment",
+      "Registered Survey Plan",
+      "Certificate of occupancy (in view)",
+    ],
+    benefit: [
+      "Free 10kg premium hybrid maize seeds per acre and Free 20 bundles of cassava stems per acre",
+    ],
+    documents: [],
+    payment: [
+      { id: "Initial Payment Plan", payment: "Initial Deposit" },
+      { id: "Outright/ 3 Months Payment", payment: "Balance" },
+    ],
+  },
 ];
 
 async function main() {
