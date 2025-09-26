@@ -1,4 +1,4 @@
-import { getSingularProperty, getUserByHashedIdFromDB, getUserById } from "@/_lib/prisma-data-service";
+import { getSingularProperty, getUserByHashedIdFromDB } from "@/_lib/prisma-data-service";
 import SingularProperty from "@/app/(public-pages)/_components/properties-page/singular-property";
 
 type Params = {

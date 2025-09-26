@@ -6,6 +6,7 @@ import { splitPhoneNumber } from '@/_lib/utils'
 import Image from 'next/image'
 import { houses } from '@/public'
 import Link from 'next/link'
+import { CLIENT_ROUTES } from '@/_lib/routes'
 
 const CallUs = () => {
     return (
@@ -32,7 +33,7 @@ const CallUs = () => {
                             </CardHeader>
 
                             <CardContent className='flex flex-col sm:flex-row gap-3 sm:gap-4 w-full items-center justify-center p-2 sm:p-4'>
-                                <Link href={'/properties'} className='w-full sm:w-auto'>
+                                <Link href={CLIENT_ROUTES.PublicPages.properties.index} className='w-full sm:w-auto'>
                                     <AppButton
                                         variant='primary'
                                         className="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm md:text-base font-medium rounded-lg bg-primary-600 hover:bg-primary-700 text-white shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"

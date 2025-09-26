@@ -28,6 +28,7 @@ export const address: OfficeAddress[] = [
 export const navItems: NavItems[] = [
   { id: "/", item: "Home" },
   { id: "/properties", item: "Our-Properties" },
+  { id: "/contact", item: "Contact" },
   { id: "/about", item: "About" },
 ];
 
@@ -132,9 +133,9 @@ export const teamContents: TeamTypes[] = [
   },
 
   {
-    id: "chief_surveyor",
+    id: "farm_manager",
     name: " Salman Olabode Miftau",
-    role: "Chief Surveyor",
+    role: "Farm Manager",
     phone: "08023462549",
     mail: "adeniji.architecture@gmail.com",
     image: muftau,
