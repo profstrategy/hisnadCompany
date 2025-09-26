@@ -156,9 +156,9 @@ const SingularPropertyImageContentAndFeatureSection = ({ findPropertyById }:Prop
                             Secure your spot today with our easy payment options.
                         </p>
                         <div className="space-y-6">
-                            <AppButton variant="primary" className="w-full text-white bg-primary hover:bg-primary-dark transition-colors" onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.parallel}`)}>
+                            {/* <AppButton variant="primary" className="w-full text-white bg-primary hover:bg-primary-dark transition-colors" onClick={() => router.push(`${CLIENT_ROUTES.PublicPages.properties.parallel}`)}>
                                 Book Inspection
-                            </AppButton>
+                            </AppButton> */}
                             <Link href="tel:+234 810 444 1104"
                                 target="_blank"
                                 rel="noopener noreferrer">

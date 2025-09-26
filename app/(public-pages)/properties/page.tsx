@@ -11,7 +11,7 @@ const PropertiesSection = dynamic(() => import('@/app/(public-pages)/_components
 const page = async () => {
     const allActiveProperties: SegregatedProperties[] = await getAllProperties()
     return (
-        <div>
+        <div className='pt-12 mb-20'>
             <Suspense fallback={<PropertiesSkeleton />}>
             <PropertiesSection allActiveProperties={allActiveProperties} />
             </Suspense>

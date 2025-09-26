@@ -25,10 +25,10 @@ export function latLongToVector3(lat: number, lon: number, radius = 2.5) {
 
 export const splitPhoneNumber = (str: string) => {
   const formatNumber = str.split("").join("");
-  return `${formatNumber.substring(0, 4)} ${formatNumber.substring(
-    4,
-    7
-  )} ${formatNumber.substring(7, 10)} ${formatNumber.substring(10)}`;
+  return `${formatNumber.substring(0, 3)} ${formatNumber.substring(
+    3,
+    6
+  )} ${formatNumber.substring(6, 10)} ${formatNumber.substring(10)}`;
 };
 
 export const addSearchParamsToUrl = (
