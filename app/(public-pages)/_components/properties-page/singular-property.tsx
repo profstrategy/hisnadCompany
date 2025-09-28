@@ -8,7 +8,7 @@ import { Payment_plan, sizeOptions } from '@/constants/generic';
 import SingularPropertyImageContentAndFeatureSection from './singular-property-ext';
 import PropertyHeader from './property-header';
 import PropertyPaymentOptions from './property-payment-options';
-import { usePropertyPaymentHandler } from '@/hooks/usePropertyPaymentHandler';
+import { usePropertyPaymentValidation } from '@/hooks/usePropertyPaymentValidation';
 
 type SingularPropertyProp = {
     property: SegregatedProperties | null;
@@ -45,7 +45,7 @@ const SingularProperty = ({
         loadingStates,
         // Handlers
         handleBtnChange,
-    } = usePropertyPaymentHandler({
+    } =usePropertyPaymentValidation({
         property,
         userId,
         paymentInitializationResponse

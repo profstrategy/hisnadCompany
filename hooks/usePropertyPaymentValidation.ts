@@ -14,7 +14,7 @@ type UsePropertyPaymentHandlerProps = {
   paymentInitializationResponse?: PaymentInitializationResponse | null;
 };
 
-export function usePropertyPaymentHandler({
+export function usePropertyPaymentValidation({
   property,
   userId,
   paymentInitializationResponse

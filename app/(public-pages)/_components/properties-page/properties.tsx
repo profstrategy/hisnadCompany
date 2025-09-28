@@ -102,7 +102,6 @@ const PropertyCard = ({ pkg, theme = 'light' }: PropertiesProps) => {
         try {
             // Validate required data first
             if (!pkg?.slug) {
-                console.error('No property slug available');
                 AppErrorToast({ message: 'Property information not available' });
                 return;
             }

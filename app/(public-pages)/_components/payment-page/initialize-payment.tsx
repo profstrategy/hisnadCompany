@@ -10,6 +10,7 @@ import { Subscriptions } from '@/constants/types';
 import { formatFullNumber, removeNoneAlphanumericEntity } from '@/_lib/utils';
 import { CLIENT_ROUTES } from '@/_lib/routes';
 import { Payment_plan } from '@/constants/generic';
+import { useGlobalStore } from '@/providers/store-provider';
 
 interface InitializePaymentPageProps {
   initialized_sub: Subscriptions
@@ -19,6 +20,7 @@ const InitializePaymentPage = ({ initialized_sub }: InitializePaymentPageProps) 
   const router = useRouter();
   const [isInstallment, setIsInstallment] = React.useState<boolean>(false)
   const [installment, setInstallment] = React.useState<string>()
+  const currentOnboardingData = useGlobalStore(state => state.context.confirmedUserData);
 
 // update URL as amount changes
   useSearchParams().get('plan') as (typeof Payment_plan[keyof typeof Payment_plan]) || Payment_plan.FULL_PAYMENT
@@ -57,7 +59,7 @@ const InitializePaymentPage = ({ initialized_sub }: InitializePaymentPageProps) 
         transition={{ delay: 0.2, duration: 0.5 }}
         className='bg-white rounded-2xl w-full max-w-md md:max-w-2xl flex flex-col items-center justify-center py-10 px-6 sm:px-10 md:px-12 shadow-xl border border-gray-200'
       >
-        {/* Branding Section */}
+        {/* Branding Section
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -68,7 +70,7 @@ const InitializePaymentPage = ({ initialized_sub }: InitializePaymentPageProps) 
           <div className='text-center'>
             <p className='text-gray-600 text-sm'>Secure and simple property payments</p>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         <motion.div
           initial={{ width: 0 }}
@@ -200,7 +202,7 @@ const InitializePaymentPage = ({ initialized_sub }: InitializePaymentPageProps) 
         whileTap={{ scale: 0.95 }}
         onClick={() => router.push(CLIENT_ROUTES.PublicPages.properties.onboarded(
           initialized_sub.property_select ?? '',
-          initialized_sub.user_id
+          currentOnboardingData?.userId
         ))}
         className="fixed top-28 left-8 w-14 h-14 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center shadow-lg cursor-pointer hover:border-indigo-300 transition-all duration-200"
       >

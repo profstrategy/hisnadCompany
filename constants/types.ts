@@ -316,3 +316,9 @@ export type VerifyEmailConfirmResponseType = {
   success: boolean,
   userId: string
 }
+
+export enum PaymentEnum {
+  amount = 'amount',
+  initialized_payment_id = 'initialized_payment_id',
+  size = 'size'
+}

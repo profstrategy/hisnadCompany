@@ -1,4 +1,3 @@
-import { CLIENT_ROUTES } from "@/_lib/routes";
 import {
   AppErrorToast,
   AppLoadingToast,
@@ -123,7 +122,6 @@ export const useOnboardingValidation = () => {
       completedOnboardingData(data)
       return data;
     } catch (error) {
-      console.error("Error completing onboarding:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       AppErrorToast({ message: errorMessage })
@@ -191,7 +189,6 @@ export const useOnboardingValidation = () => {
 
       return response.ok;
     } catch (error) {
-      console.error("Error deleting pending user:", error);
       return false;
     }
   };
@@ -213,7 +210,6 @@ export const useOnboardingValidation = () => {
         status: data.status,
       };
     } catch (error) {
-      console.error("Error fetching onboarding status:", error);
       return null;
     }
   };
