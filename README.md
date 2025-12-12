@@ -21,6 +21,9 @@ A web application for managing Real Estate and Agriculture services.
 ## Tech Stack
 
 - Next.js
+- Prisma ORM for db query
+- Supabse for db
+- Cloudinary for image storage
 - TypeScript
 - React Query for API data fetching
 - Shadcn UI components
