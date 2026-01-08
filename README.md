@@ -42,12 +42,13 @@ The system supports secure user onboarding, role-based dashboards, payment proce
 - RESTful APIs – Backend integrations
 
 ## Project Structure
-app/          # Next.js app directory
-api/          # API services and type definitions
-components/   # Reusable UI components
-lib/          # Utility functions and constants
-public/       # Static assets
-styles/       # Global styles and Tailwind CSS
+- app/          # Next.js app directory
+- api/          # API services and type definitions
+- components/   # Reusable UI components
+- lib/          # Utility functions and constants
+- public/       # Static assets
+- styles/       # Global styles and Tailwind CSS
+
 
 ## Purpose
 This project was built to streamline the management of real estate and agricultural investments by providing a secure, scalable, and data-driven platform that improves operational efficiency and enhances transparency for both administrators and clients.
